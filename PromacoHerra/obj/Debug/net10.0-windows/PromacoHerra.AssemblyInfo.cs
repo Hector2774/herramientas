@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PromacoHerra")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+280b24cee2c7f0d169ab6fb15e8a9a3b390ee7fc")]
 [assembly: System.Reflection.AssemblyProductAttribute("PromacoHerra")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PromacoHerra")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
