@@ -44,6 +44,7 @@ namespace PromacoHerra
             dgvDetalle.DataSource = Db.Query(@"
         SELECT 
             d.PrestamoDetalleId,
+            d.PrestamoId,
             h.HerramientaId,
             h.Codigo,
             h.Nombre,
@@ -92,6 +93,7 @@ namespace PromacoHerra
 
             int detalleId = Convert.ToInt32(row.Cells["PrestamoDetalleId"].Value);
             int herramientaId = Convert.ToInt32(row.Cells["HerramientaId"].Value);
+            int prestamoId = Convert.ToInt32(row.Cells["PrestamoId"].Value);
 
             using var cn = Db.GetConnection();
             cn.Open();
@@ -151,6 +153,30 @@ namespace PromacoHerra
                 tx.Rollback();
                 MessageBox.Show("Error: " + ex.Message);
             }
+
+            var cmd3 = new Microsoft.Data.SqlClient.SqlCommand(@"
+            SELECT COUNT(*)
+            FROM PrestamoDetalle
+            WHERE PrestamoId = @PrestamoId
+              AND FechaDevuelta IS NULL
+        ", cn, tx);
+
+            cmd3.Parameters.AddWithValue("@PrestamoId", prestamoId);
+            int pendientes = Convert.ToInt32(cmd3.ExecuteScalar());
+
+            if (pendientes == 0)
+            {
+                var cmd4 = new Microsoft.Data.SqlClient.SqlCommand(@"
+                UPDATE Prestamo
+                SET FechaCierre = GETDATE()
+                WHERE PrestamoId = @PrestamoId
+            ", cn, tx);
+
+                cmd4.Parameters.AddWithValue("@PrestamoId", prestamoId);
+                cmd4.ExecuteNonQuery();
+            }
+
+            CargarPrestamos();
         }
 
 

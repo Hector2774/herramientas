@@ -48,11 +48,47 @@ namespace PromacoHerra
         ORDER BY Nombre
     ");
         }
+        public void AplicarDisenoDataGrid(DataGridView dgv)
+        {
+            // 1. Configuración general y bordes
+            dgv.BackgroundColor = Color.White;
+            dgv.BorderStyle = BorderStyle.None;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal; // Líneas divisorias solo horizontales
+            dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
+            // 2. Estilo del encabezado (Columnas)
+            // Desactivar los estilos visuales por defecto es OBLIGATORIO para que el color de fondo funcione
+            dgv.EnableHeadersVisualStyles = false;
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(41, 128, 185); // Un azul profesional
+            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgv.ColumnHeadersHeight = 35;
+
+            // 3. Estilo de las celdas (Filas)
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10);
+            dgv.DefaultCellStyle.BackColor = Color.White;
+            dgv.DefaultCellStyle.ForeColor = Color.FromArgb(64, 64, 64); // Texto gris oscuro para no cansar la vista
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(52, 152, 219); // Azul más claro al seleccionar
+            dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgv.DefaultCellStyle.Padding = new Padding(5, 0, 0, 0); // Un poco de espacio para que el texto no pegue al borde
+
+            // 4. Filas alternas (Efecto cebra)
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245); // Gris muy claro
+
+            // 5. Comportamientos visuales
+            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect; // Selecciona toda la fila, no solo una celda
+            dgv.RowHeadersVisible = false; // Oculta la columna vacía de la izquierda (la de la flechita)
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; // Hace que las columnas ocupen todo el ancho
+            dgv.AllowUserToResizeRows = false;
+            dgv.AllowUserToAddRows = false; // Oculta la última fila vacía (si agregas datos por código)
+        }
         private void FrmHerramientas_Load(object sender, EventArgs e)
         {
             CargarHerramientas();
             CargarEstados();
             HabilitarControles(false);
+            AplicarDisenoDataGrid(dgvHerramientas);
         }
 
         private void btnNuevo_Click(object sender, EventArgs e)
