@@ -3,20 +3,76 @@
   "WorkspaceRootPath": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\thememanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmherramientas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmherramientas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmempleados.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmempleados.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmherramientas.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmherramientas.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmherramientas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmherramientas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmdashboard.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdashboard.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\services\\prestamoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\services\\prestamoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmdevolucion.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdevolucion.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmprestamo.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprestamo.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\services\\mantenimientoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\services\\mantenimientoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\services\\herramientaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\services\\herramientaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\data\\db.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,32 +83,36 @@
       "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprincipal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\services\\empleadoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\services\\empleadoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmempleados.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmempleados.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\models\\empleadodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\models\\empleadodto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmempleados.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmempleados.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmprincipal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprincipal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmlogin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmlogin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmdevolucion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmlogin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmlogin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmprestamo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|c:\\users\\hecto\\source\\repos\\promacoherra\\promacoherra\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmempleados.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmempleados.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|C:\\Users\\hecto\\source\\repos\\PromacoHerra\\promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{3FD876B8-5EEB-B285-54F9-565F45472DF8}|PromacoHerra\\PromacoHerra.csproj|solutionrelative:promacoherra\\frmreportes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,129 +122,105 @@
       "DocumentGroups": [
         {
           "DockedWidth": 355,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "FrmReportes.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmReportes.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs [Design]",
-              "RelativeToolTip": "PromacoHerra\\FrmReportes.cs [Design]",
+              "DocumentIndex": 6,
+              "Title": "FrmDashboard.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDashboard.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmDashboard.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDashboard.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmDashboard.cs",
+              "ViewState": "AgIAAGQBAAAAAAAAAAAAwKwBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:06:22.116Z",
+              "WhenOpened": "2026-03-24T20:45:34.324Z",
               "IsPinned": true,
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Db.cs",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Data\\Db.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\Data\\Db.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Data\\Db.cs",
-              "RelativeToolTip": "PromacoHerra\\Data\\Db.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-22T22:27:37.273Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "FrmDevolucion.cs",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmDevolucion.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs",
-              "RelativeToolTip": "PromacoHerra\\FrmDevolucion.cs",
-              "ViewState": "AgIAAJkAAAAAAAAAAAAswLIAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T03:41:00.555Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "FrmDevolucion.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmDevolucion.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs [Dise\u00F1o]",
-              "RelativeToolTip": "PromacoHerra\\FrmDevolucion.cs [Dise\u00F1o]",
+              "DocumentIndex": 2,
+              "Title": "FrmEmpleados.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmEmpleados.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.cs [Dise\u00F1o]",
+              "RelativeToolTip": "PromacoHerra\\FrmEmpleados.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-21T17:09:33.25Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "FrmPrestamo.cs",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrestamo.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.cs",
-              "RelativeToolTip": "PromacoHerra\\FrmPrestamo.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAAcwEoAAABGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T02:46:16.36Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-06-10T02:23:13.358Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "FrmHerramientas.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmHerramientas.Designer.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmHerramientas.Designer.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmHerramientas.Designer.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmHerramientas.Designer.cs",
+              "ViewState": "AgIAACkBAAAAAAAAAAAAAJEDAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T18:08:40.348Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "FrmHerramientas.cs",
               "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmHerramientas.cs",
               "RelativeDocumentMoniker": "PromacoHerra\\FrmHerramientas.cs",
               "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmHerramientas.cs",
               "RelativeToolTip": "PromacoHerra\\FrmHerramientas.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAgwFYAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T00:31:04.665Z",
+              "WhenOpened": "2026-03-25T22:58:35.445Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "FrmPrincipal.cs [Dise\u00F1o]",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrincipal.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs [Dise\u00F1o]",
-              "RelativeToolTip": "PromacoHerra\\FrmPrincipal.cs [Dise\u00F1o]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T20:40:41.32Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "FrmPrincipal.cs",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrincipal.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs",
-              "RelativeToolTip": "PromacoHerra\\FrmPrincipal.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAYwEIAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T20:38:40.499Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
               "Title": "FrmPrestamo.cs [Dise\u00F1o]",
               "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.cs",
               "RelativeDocumentMoniker": "PromacoHerra\\FrmPrestamo.cs",
               "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.cs [Dise\u00F1o]",
               "RelativeToolTip": "PromacoHerra\\FrmPrestamo.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T20:26:14.279Z"
+              "WhenOpened": "2026-03-25T06:48:12.373Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "FrmReportes.cs",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\FrmReportes.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs",
-              "RelativeToolTip": "PromacoHerra\\FrmReportes.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
+              "Title": "ThemeManager.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\ThemeManager.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\ThemeManager.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\ThemeManager.cs",
+              "RelativeToolTip": "PromacoHerra\\ThemeManager.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAGIAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:07:21.944Z",
+              "WhenOpened": "2026-03-24T21:17:41.423Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "FrmDevolucion.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmDevolucion.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmDevolucion.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T22:05:40.289Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FrmDashboard.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDashboard.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmDashboard.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDashboard.cs [Dise\u00F1o]",
+              "RelativeToolTip": "PromacoHerra\\FrmDashboard.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T17:19:37.255Z"
             },
             {
               "$type": "Document",
@@ -195,30 +231,234 @@
               "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmHerramientas.cs [Dise\u00F1o]",
               "RelativeToolTip": "PromacoHerra\\FrmHerramientas.cs [Dise\u00F1o]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-21T02:52:27.124Z"
+              "WhenOpened": "2026-03-25T06:54:53.262Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "FrmReportes.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmReportes.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmReportes.cs",
+              "ViewState": "AgIAAP8AAAAAAAAAAAAAwEEBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T22:35:16.935Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FrmDashboard.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDashboard.Designer.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmDashboard.Designer.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDashboard.Designer.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmDashboard.Designer.cs",
+              "ViewState": "AgIAAAsBAAAAAAAAAAAAwE0BAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-05T20:11:24.79Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 11,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Program.cs",
-              "RelativeDocumentMoniker": "PromacoHerra\\Program.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Program.cs",
-              "RelativeToolTip": "PromacoHerra\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Title": "Prestamoservice.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\Prestamoservice.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\Services\\Prestamoservice.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\Prestamoservice.cs",
+              "RelativeToolTip": "PromacoHerra\\Services\\Prestamoservice.cs",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAkwGkAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T20:41:39.978Z"
+              "WhenOpened": "2026-07-28T03:47:03.959Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Db.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Data\\Db.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\Data\\Db.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Data\\Db.cs",
+              "RelativeToolTip": "PromacoHerra\\Data\\Db.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAH0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T03:46:07.401Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 12,
-              "Title": "FrmEmpleados.cs [Dise\u00F1o]",
+              "Title": "FrmDevolucion.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmDevolucion.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.cs [Dise\u00F1o]*",
+              "RelativeToolTip": "PromacoHerra\\FrmDevolucion.cs [Dise\u00F1o]*",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T22:02:06.258Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "FrmDevolucion.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.Designer.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmDevolucion.Designer.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmDevolucion.Designer.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmDevolucion.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAM0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T19:39:19.133Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "EmpleadoDTO.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Models\\EmpleadoDTO.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\Models\\EmpleadoDTO.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Models\\EmpleadoDTO.cs",
+              "RelativeToolTip": "PromacoHerra\\Models\\EmpleadoDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-10T02:19:35.262Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "EmpleadoService.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\EmpleadoService.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\Services\\EmpleadoService.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\EmpleadoService.cs",
+              "RelativeToolTip": "PromacoHerra\\Services\\EmpleadoService.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAQwBcAAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-10T02:20:03.282Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "FrmEmpleados.cs",
               "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.cs",
               "RelativeDocumentMoniker": "PromacoHerra\\FrmEmpleados.cs",
-              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.cs [Dise\u00F1o]",
-              "RelativeToolTip": "PromacoHerra\\FrmEmpleados.cs [Dise\u00F1o]",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmEmpleados.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwBcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T19:27:18.973Z"
+              "WhenOpened": "2026-06-10T02:23:17.938Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "FrmEmpleados.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.Designer.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmEmpleados.Designer.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmEmpleados.Designer.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmEmpleados.Designer.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAAwGQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-11T23:16:51.348Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "FrmPrestamo.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.Designer.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrestamo.Designer.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.Designer.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmPrestamo.Designer.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAAAIwGoAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T18:48:14.624Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "FrmPrestamo.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrestamo.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrestamo.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmPrestamo.cs",
+              "ViewState": "AgIAALYAAAAAAAAAAAAAwPgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T18:48:22.058Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Herramientaservice.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\Herramientaservice.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\Services\\Herramientaservice.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\Herramientaservice.cs",
+              "RelativeToolTip": "PromacoHerra\\Services\\Herramientaservice.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAAwHkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T03:46:56.727Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Mantenimientoservice.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\Mantenimientoservice.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\Services\\Mantenimientoservice.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\Services\\Mantenimientoservice.cs",
+              "RelativeToolTip": "PromacoHerra\\Services\\Mantenimientoservice.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAAwHkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-28T03:47:19.462Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "FrmPrincipal.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrincipal.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmPrincipal.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAIAwwBYAAABeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T20:19:38.15Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "FrmPrincipal.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmPrincipal.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmPrincipal.cs [Dise\u00F1o]",
+              "RelativeToolTip": "PromacoHerra\\FrmPrincipal.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T22:48:46.868Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "FrmLogin.cs",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmLogin.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmLogin.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmLogin.cs",
+              "RelativeToolTip": "PromacoHerra\\FrmLogin.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAwwEcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T20:16:22.362Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "FrmLogin.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmLogin.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmLogin.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmLogin.cs [Dise\u00F1o]",
+              "RelativeToolTip": "PromacoHerra\\FrmLogin.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-26T20:14:49.033Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "FrmReportes.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs",
+              "RelativeDocumentMoniker": "PromacoHerra\\FrmReportes.cs",
+              "ToolTip": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\FrmReportes.cs [Dise\u00F1o]",
+              "RelativeToolTip": "PromacoHerra\\FrmReportes.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-24T22:00:39.578Z"
             }
           ]
         },

@@ -1,286 +1,278 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using PromacoHerra.Data;
+using PromacoHerra.Services;
 
 namespace PromacoHerra
 {
     public partial class FrmDevolucion : Form
     {
+        // Guarda el PrestamoId seleccionado en el grid superior
+        private int? _prestamoIdSeleccionado = null;
+
         public FrmDevolucion()
         {
-            
             InitializeComponent();
-            this.Load += new System.EventHandler(this.FrmDevolucion_Load);
-            this.dgvPrestamos.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPrestamos_CellClick);
-            this.btnDevolver.Click += new System.EventHandler(this.btnDevolver_Click);
-            this.btnDevolverTodo.Click += new System.EventHandler(this.btnDevolverTodo_Click);
-            this.dgvDetalle.RowPrePaint += dgvDetalle_RowPrePaint;
+            ThemeManager.ApplyTheme(this);
+
+            this.Load += FrmDevolucion_Load;
+            dgvPrestamos.CellClick += dgvPrestamos_CellClick;
+            dgvDetalle.RowPrePaint += dgvDetalle_RowPrePaint;
+            btnDevolver.Click += btnDevolver_Click;
+            btnDevolverTodo.Click += btnDevolverTodo_Click;
+            txtBuscar.TextChanged += txtBuscar_TextChanged;
+            dgvPrestamos.RowPrePaint += dgvPrestamos_RowPrePaint;
         }
-
-        private void CargarPrestamos()
-        {
-            dgvPrestamos.DataSource = Db.Query(@"
-        SELECT 
-            e.EmpleadoId,
-            e.Nombre AS Empleado,
-            COUNT(p.PrestamoId) AS PrestamosActivos
-        FROM Prestamo p
-        INNER JOIN Empleado e ON e.EmpleadoId = p.EmpleadoId
-        WHERE p.FechaCierre IS NULL
-        GROUP BY e.EmpleadoId, e.Nombre
-        ORDER BY e.Nombre
-    ");
-
-            dgvPrestamos.Columns["EmpleadoId"].Visible = false;
-        }
-
-        private void CargarDetallePorEmpleado(int empleadoId)
-        {
-            dgvDetalle.DataSource = Db.Query(@"
-        SELECT 
-            d.PrestamoDetalleId,
-            d.PrestamoId,
-            h.HerramientaId,
-            h.Codigo,
-            h.Nombre,
-            p.FechaDevolucion,
-            d.FechaDevuelta
-        FROM PrestamoDetalle d
-        INNER JOIN Herramienta h ON h.HerramientaId = d.HerramientaId
-        INNER JOIN Prestamo p ON p.PrestamoId = d.PrestamoId
-        WHERE FechaDevuelta IS NULL AND p.EmpleadoId = " + empleadoId + @"
-          AND p.FechaCierre IS NULL
-    ");
-
-            dgvDetalle.Columns["PrestamoDetalleId"].Visible = false;
-            dgvDetalle.Columns["HerramientaId"].Visible = false;
-        }
-
-
 
         private void FrmDevolucion_Load(object sender, EventArgs e)
         {
-            CargarPrestamos();
             CargarEstados();
+
+            // Usa el nuevo método separado
+            int vencidos = DevolucionService.MarcarVencidosYContar();
+            CargarPrestamos();
+
+            if (vencidos > 0)
+                MessageBox.Show(
+                    $"⚠ {vencidos} préstamo(s) marcado(s) como vencido(s) al abrir.",
+                    "Préstamos vencidos", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
+        // ── Cargar grid de préstamos activos ──────────────────────
+        private void CargarPrestamos()
+        {
+            var dt = DevolucionService.ObtenerPrestamosActivos();
+            dgvPrestamos.DataSource = dt;
+
+            OcultarColumna(dgvPrestamos, "PrestamoId");
+
+            RenombrarColumna(dgvPrestamos, "Empleado", "Empleado");
+            RenombrarColumna(dgvPrestamos, "CodigoEmpleado", "Código");
+            RenombrarColumna(dgvPrestamos, "Departamento", "Departamento");
+            RenombrarColumna(dgvPrestamos, "FechaPrestamo", "Fecha préstamo");
+            RenombrarColumna(dgvPrestamos, "FechaDevolucionEsperada", "Fecha límite");
+            RenombrarColumna(dgvPrestamos, "Estado", "Estado");
+            RenombrarColumna(dgvPrestamos, "DiasAtraso", "Días atraso");
+            RenombrarColumna(dgvPrestamos, "HerramientasPendientes", "Pendientes");
+
+          
+            _prestamoIdSeleccionado = null;
+            dgvDetalle.DataSource = null;
+        }
+
+        // ── Seleccionar préstamo → cargar su detalle ───────────────
         private void dgvPrestamos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
-            int empleadoId = Convert.ToInt32(
-                dgvPrestamos.Rows[e.RowIndex].Cells["EmpleadoId"].Value
-            );
+            _prestamoIdSeleccionado = Convert.ToInt32(
+                dgvPrestamos.Rows[e.RowIndex].Cells["PrestamoId"].Value);
 
-            CargarDetallePorEmpleado(empleadoId);
+            CargarDetalle(_prestamoIdSeleccionado.Value);
         }
 
+        private void CargarDetalle(int prestamoId)
+        {
+            var dt = DevolucionService.ObtenerDetallePendiente(prestamoId);
+            dgvDetalle.DataSource = dt;
 
+            OcultarColumna(dgvDetalle, "PrestamoDetalleId");
+            OcultarColumna(dgvDetalle, "HerramientaId");
+
+            RenombrarColumna(dgvDetalle, "CodigoHerramienta", "Código");
+            RenombrarColumna(dgvDetalle, "Herramienta", "Herramienta");
+            RenombrarColumna(dgvDetalle, "Marca", "Marca");
+            RenombrarColumna(dgvDetalle, "Categoria", "Categoría");
+            RenombrarColumna(dgvDetalle, "EstadoDevolucion", "Estado");
+        }
+
+        // ── Buscar en grid de préstamos ────────────────────────────
+        private void txtBuscar_TextChanged(object sender, EventArgs e)
+        {
+            var term = txtBuscar.Text.Trim().ToLower();
+            foreach (DataGridViewRow row in dgvPrestamos.Rows)
+            {
+                var empleado = row.Cells["Empleado"].Value?.ToString().ToLower() ?? "";
+                var codigo = row.Cells["CodigoEmpleado"].Value?.ToString().ToLower() ?? "";
+                row.Visible = string.IsNullOrEmpty(term)
+                               || empleado.Contains(term)
+                               || codigo.Contains(term);
+            }
+        }
+
+        // ── Botón: Devolver herramienta seleccionada ───────────────
         private void btnDevolver_Click(object sender, EventArgs e)
         {
             if (dgvDetalle.CurrentRow == null)
             {
-                MessageBox.Show("Seleccione una herramienta");
+                MessageBox.Show("Seleccione una herramienta del detalle.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            var row = dgvDetalle.CurrentRow;
+            if (cboEstado.SelectedIndex < 0)
+            {
+                MessageBox.Show("Seleccione el estado de devolución.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-            int detalleId = Convert.ToInt32(row.Cells["PrestamoDetalleId"].Value);
-            int herramientaId = Convert.ToInt32(row.Cells["HerramientaId"].Value);
-            int prestamoId = Convert.ToInt32(row.Cells["PrestamoId"].Value);
+            int detalleId = Convert.ToInt32(
+                dgvDetalle.CurrentRow.Cells["PrestamoDetalleId"].Value);
+            string estado = cboEstado.SelectedItem.ToString();
+            string obs = txtObservacion.Text.Trim();
 
-            using var cn = Db.GetConnection();
-            cn.Open();
+            // Confirmación extra si regresa dañada o perdida
+            if (estado == "Dañado" || estado == "Perdido")
+            {
+                string msg = estado == "Dañado"
+                    ? "La herramienta se marcará como Dañada y no volverá al stock hasta pasar por mantenimiento."
+                    : "La herramienta se marcará como Perdida y se descontará del stock total permanentemente.";
 
-            using var tx = cn.BeginTransaction();
+                var confirm = MessageBox.Show(
+                    msg + "\n\n¿Confirmar?", $"Devolución — {estado}",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.Yes) return;
+            }
 
             try
             {
-                // 1. marcar devolución
-                var cmd1 = new Microsoft.Data.SqlClient.SqlCommand(@"
-            UPDATE PrestamoDetalle
-            SET 
-                FechaDevuelta = GETDATE(),
-                ObservacionDevolucion = @Obs
-            WHERE PrestamoDetalleId = @Id
-              AND FechaDevuelta IS NULL
-        ", cn, tx);
+                DevolucionService.RegistrarUna(detalleId, estado, obs);
 
-                cmd1.Parameters.AddWithValue("@Id", detalleId);
-                cmd1.Parameters.AddWithValue("@Obs", txtObservacion.Text);
+                MessageBox.Show("Devolución registrada correctamente.", "Éxito",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                int filas = cmd1.ExecuteNonQuery();
-
-                if (filas == 0)
-                {
-                    tx.Rollback();
-                    MessageBox.Show("Ya fue devuelta");
-                    return;
-                }
-
-                // 2. actualizar estado herramienta
-                var cmd2 = new Microsoft.Data.SqlClient.SqlCommand(@"
-            UPDATE Herramienta
-            SET Estado = @Estado
-            WHERE HerramientaId = @Id
-        ", cn, tx);
-
-                cmd2.Parameters.AddWithValue("@Estado", cboEstado.Text);
-                cmd2.Parameters.AddWithValue("@Id", herramientaId);
-                cmd2.ExecuteNonQuery();
-
-                tx.Commit();
-
-                MessageBox.Show("Devolución registrada");
-
-                txtObservacion.Clear();
-                cboEstado.SelectedIndex = 0;
-
-                // 🔥 recargar detalle por empleado
-                int empleadoId = Convert.ToInt32(dgvPrestamos.CurrentRow.Cells["EmpleadoId"].Value);
-                CargarDetallePorEmpleado(empleadoId);
-
+                LimpiarControlesDev();
                 CargarPrestamos();
+
+                // Si el préstamo sigue activo, recargar su detalle
+                if (_prestamoIdSeleccionado.HasValue)
+                    CargarDetalle(_prestamoIdSeleccionado.Value);
             }
             catch (Exception ex)
             {
-                tx.Rollback();
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show(ex.Message, "Error al registrar devolución",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            var cmd3 = new Microsoft.Data.SqlClient.SqlCommand(@"
-            SELECT COUNT(*)
-            FROM PrestamoDetalle
-            WHERE PrestamoId = @PrestamoId
-              AND FechaDevuelta IS NULL
-        ", cn, tx);
-
-            cmd3.Parameters.AddWithValue("@PrestamoId", prestamoId);
-            int pendientes = Convert.ToInt32(cmd3.ExecuteScalar());
-
-            if (pendientes == 0)
-            {
-                var cmd4 = new Microsoft.Data.SqlClient.SqlCommand(@"
-                UPDATE Prestamo
-                SET FechaCierre = GETDATE()
-                WHERE PrestamoId = @PrestamoId
-            ", cn, tx);
-
-                cmd4.Parameters.AddWithValue("@PrestamoId", prestamoId);
-                cmd4.ExecuteNonQuery();
-            }
-
-            CargarPrestamos();
         }
 
-
+        // ── Botón: Devolver todas las herramientas del préstamo ────
         private void btnDevolverTodo_Click(object sender, EventArgs e)
         {
-            if (dgvPrestamos.CurrentRow == null)
+            if (_prestamoIdSeleccionado == null)
             {
-                MessageBox.Show("Seleccione un préstamo");
+                MessageBox.Show("Seleccione un préstamo de la lista.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            int prestamoId = Convert.ToInt32(dgvPrestamos.CurrentRow.Cells["PrestamoId"].Value);
+            if (cboEstado.SelectedIndex < 0)
+            {
+                MessageBox.Show("Seleccione el estado de devolución.", "Aviso",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
-            using var cn = Db.GetConnection();
-            cn.Open();
+            string estado = cboEstado.SelectedItem.ToString();
+            string obs = txtObservacion.Text.Trim();
 
-            using var tx = cn.BeginTransaction();
+            string msg = estado == "Bueno"
+                ? "Se devolverán todas las herramientas pendientes en estado Bueno."
+                : $"Todas las herramientas se marcarán como {estado}. ¿Confirmar?";
+
+            var confirm = MessageBox.Show(msg, "Devolver todo",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (confirm != DialogResult.Yes) return;
 
             try
             {
-                // devolver todos los detalles
-                var cmd1 = new Microsoft.Data.SqlClient.SqlCommand(@"
-            UPDATE PrestamoDetalle
-            SET FechaDevuelta = GETDATE()
-            WHERE PrestamoId = @Id AND FechaDevuelta IS NULL
-        ", cn, tx);
+                DevolucionService.RegistrarTodas(
+                    _prestamoIdSeleccionado.Value, estado, obs);
 
-                cmd1.Parameters.AddWithValue("@Id", prestamoId);
-                cmd1.ExecuteNonQuery();
+                MessageBox.Show("Todas las herramientas devueltas correctamente.", "Éxito",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // actualizar herramientas
-                var cmd2 = new Microsoft.Data.SqlClient.SqlCommand(@"
-            UPDATE Herramienta
-            SET Estado = 'Disponible'
-            WHERE HerramientaId IN (
-                SELECT HerramientaId 
-                FROM PrestamoDetalle 
-                WHERE PrestamoId = @Id
-            )
-        ", cn, tx);
-
-                cmd2.Parameters.AddWithValue("@Id", prestamoId);
-                cmd2.ExecuteNonQuery();
-
-                // cerrar préstamo
-                var cmd3 = new Microsoft.Data.SqlClient.SqlCommand(@"
-            UPDATE Prestamo
-            SET FechaCierre = GETDATE()
-            WHERE PrestamoId = @Id
-        ", cn, tx);
-
-                cmd3.Parameters.AddWithValue("@Id", prestamoId);
-                cmd3.ExecuteNonQuery();
-
-                tx.Commit();
-
-                MessageBox.Show("Préstamo cerrado");
-
+                LimpiarControlesDev();
+                _prestamoIdSeleccionado = null;
                 CargarPrestamos();
                 dgvDetalle.DataSource = null;
             }
             catch (Exception ex)
             {
-                tx.Rollback();
-                MessageBox.Show("Error: " + ex.Message);
+                MessageBox.Show(ex.Message, "Error al devolver",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void CargarEstados()
+        // ── Color de filas del grid de préstamos ───────────────────
+        private void dgvPrestamos_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            cboEstado.Items.Clear();
-            cboEstado.Items.Add("Disponible");
-            cboEstado.Items.Add("Dañada");
-            cboEstado.Items.Add("Baja");
+            var row = dgvPrestamos.Rows[e.RowIndex];
 
-            cboEstado.SelectedIndex = 0;
+            // Verificar que las columnas ya existen antes de leerlas
+            if (!dgvPrestamos.Columns.Contains("Estado") ||
+                !dgvPrestamos.Columns.Contains("DiasAtraso")) return;
+
+            var estado = row.Cells["Estado"].Value?.ToString() ?? "";
+            int dias = 0;
+
+            if (row.Cells["DiasAtraso"].Value != null &&
+                row.Cells["DiasAtraso"].Value != DBNull.Value)
+                dias = Convert.ToInt32(row.Cells["DiasAtraso"].Value);
+
+            if (estado == "Vencido" || dias > 0)
+            {
+                row.DefaultCellStyle.BackColor = Color.FromArgb(255, 200, 200);
+                row.DefaultCellStyle.ForeColor = Color.DarkRed;
+            }
+            else if (dias == 0)
+            {
+                row.DefaultCellStyle.BackColor = Color.FromArgb(255, 235, 180);
+                row.DefaultCellStyle.ForeColor = Color.DarkOrange;
+            }
+            else
+            {
+                // A tiempo — restaurar color por defecto
+                row.DefaultCellStyle.BackColor = Color.Empty;
+                row.DefaultCellStyle.ForeColor = Color.Empty;
+            }
         }
 
         private void dgvDetalle_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
         {
-            var row = dgvDetalle.Rows[e.RowIndex];
-
-            if (row.Cells["FechaDevolucion"].Value == null) return;
-
-            DateTime fechaLimite = Convert.ToDateTime(row.Cells["FechaDevolucion"].Value);
-
-            if (DateTime.Now.Date > fechaLimite.Date)
-            {
-                // ATRASADO
-                row.DefaultCellStyle.BackColor = Color.Red;
-                row.DefaultCellStyle.ForeColor = Color.White;
-            }
-            else if (DateTime.Now.Date == fechaLimite.Date)
-            {
-                // VENCE HOY
-                row.DefaultCellStyle.BackColor = Color.Orange;
-            }
-            else
-            {
-                // A TIEMPO
-                row.DefaultCellStyle.BackColor = Color.LightGreen;
-            }
+            // Sin color en el detalle — la información visual está en el grid de préstamos
         }
 
+        // ── Cargar estados de devolución ───────────────────────────
+        private void CargarEstados()
+        {
+            cboEstado.Items.Clear();
+            cboEstado.Items.Add("Bueno");
+            cboEstado.Items.Add("Dañado");
+            cboEstado.Items.Add("Perdido");
+            cboEstado.SelectedIndex = 0;
+        }
 
+        // ── Helpers ────────────────────────────────────────────────
+        private void LimpiarControlesDev()
+        {
+            txtObservacion.Clear();
+            cboEstado.SelectedIndex = 0;
+        }
+
+        private void OcultarColumna(DataGridView dgv, string nombre)
+        {
+            if (dgv.Columns.Contains(nombre))
+                dgv.Columns[nombre].Visible = false;
+        }
+
+        private void RenombrarColumna(DataGridView dgv, string nombre, string header)
+        {
+            if (dgv.Columns.Contains(nombre))
+                dgv.Columns[nombre].HeaderText = header;
+        }
     }
 }

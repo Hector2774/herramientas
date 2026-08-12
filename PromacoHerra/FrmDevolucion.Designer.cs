@@ -1,209 +1,206 @@
 ﻿namespace PromacoHerra
 {
-  
-        partial class FrmDevolucion
+    partial class FrmDevolucion
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
         {
-            private System.ComponentModel.IContainer components = null;
+            if (disposing && (components != null)) components.Dispose();
+            base.Dispose(disposing);
+        }
 
-            private System.Windows.Forms.Label lblTitulo;
+        private void InitializeComponent()
+        {
+            panel1 = new System.Windows.Forms.Panel();
+            panel5 = new System.Windows.Forms.Panel();
+            txtObservacion = new System.Windows.Forms.TextBox();
+            lblObservacion = new System.Windows.Forms.Label();
+            btnDevolver = new System.Windows.Forms.Button();
+            btnDevolverTodo = new System.Windows.Forms.Button();
+            lblEstado = new System.Windows.Forms.Label();
+            cboEstado = new System.Windows.Forms.ComboBox();
+            grpDetalle = new System.Windows.Forms.GroupBox();
+            panel2 = new System.Windows.Forms.Panel();
+            dgvDetalle = new System.Windows.Forms.DataGridView();
+            grpPrestamos = new System.Windows.Forms.GroupBox();
+            panel4 = new System.Windows.Forms.Panel();
+            dgvPrestamos = new System.Windows.Forms.DataGridView();
+            panel3 = new System.Windows.Forms.Panel();
+            txtBuscar = new System.Windows.Forms.TextBox();
+            lblBuscar = new System.Windows.Forms.Label();
+            lblTitulo = new System.Windows.Forms.Label();
 
-            private System.Windows.Forms.GroupBox grpPrestamos;
-            private System.Windows.Forms.Label lblBuscar;
-            private System.Windows.Forms.TextBox txtBuscar;
-            private System.Windows.Forms.DataGridView dgvPrestamos;
+            panel1.SuspendLayout();
+            panel5.SuspendLayout();
+            grpDetalle.SuspendLayout();
+            panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvDetalle).BeginInit();
+            grpPrestamos.SuspendLayout();
+            panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvPrestamos).BeginInit();
+            panel3.SuspendLayout();
+            SuspendLayout();
 
-            private System.Windows.Forms.GroupBox grpDetalle;
-            private System.Windows.Forms.DataGridView dgvDetalle;
+            // panel1 — contenedor raíz
+            panel1.Controls.Add(panel5);
+            panel1.Controls.Add(grpDetalle);
+            panel1.Controls.Add(grpPrestamos);
+            panel1.Controls.Add(lblTitulo);
+            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(1055, 818);
 
-            private System.Windows.Forms.Button btnDevolver;
-            private System.Windows.Forms.Button btnDevolverTodo;
-            private System.Windows.Forms.Button btnCerrar;
+            // lblTitulo
+            lblTitulo.Dock = System.Windows.Forms.DockStyle.Top;
+            lblTitulo.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            lblTitulo.Name = "lblTitulo";
+            lblTitulo.Size = new System.Drawing.Size(1055, 60);
+            lblTitulo.Text = "Devolución de Herramientas";
+            lblTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
+            // grpPrestamos
+            grpPrestamos.Controls.Add(panel3);
+            grpPrestamos.Controls.Add(panel4);
+            grpPrestamos.Location = new System.Drawing.Point(20, 81);
+            grpPrestamos.Name = "grpPrestamos";
+            grpPrestamos.Size = new System.Drawing.Size(1010, 263);
+            grpPrestamos.TabStop = false;
+            grpPrestamos.Text = "Préstamos Activos";
+
+            // panel3 — buscador
+            panel3.Controls.Add(lblBuscar);
+            panel3.Controls.Add(txtBuscar);
+            panel3.Location = new System.Drawing.Point(20, 19);
+            panel3.Name = "panel3";
+            panel3.Size = new System.Drawing.Size(344, 35);
+
+            lblBuscar.Location = new System.Drawing.Point(8, 8);
+            lblBuscar.Size = new System.Drawing.Size(54, 23);
+            lblBuscar.Text = "Buscar:";
+
+            txtBuscar.Location = new System.Drawing.Point(68, 3);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.Size = new System.Drawing.Size(250, 23);
+            txtBuscar.PlaceholderText = "Nombre o código empleado...";
+
+            // panel4 — grid préstamos
+            panel4.Controls.Add(dgvPrestamos);
+            panel4.Location = new System.Drawing.Point(20, 61);
+            panel4.Name = "panel4";
+            panel4.Size = new System.Drawing.Size(970, 196);
+
+            dgvPrestamos.AllowUserToAddRows = false;
+            dgvPrestamos.AllowUserToDeleteRows = false;
+            dgvPrestamos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dgvPrestamos.Dock = System.Windows.Forms.DockStyle.Fill;
+            dgvPrestamos.MultiSelect = false;
+            dgvPrestamos.Name = "dgvPrestamos";
+            dgvPrestamos.ReadOnly = true;
+            dgvPrestamos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+
+            // grpDetalle
+            grpDetalle.Controls.Add(panel2);
+            grpDetalle.Location = new System.Drawing.Point(20, 360);
+            grpDetalle.Name = "grpDetalle";
+            grpDetalle.Size = new System.Drawing.Size(1010, 205);
+            grpDetalle.TabStop = false;
+            grpDetalle.Text = "Detalle del Préstamo";
+
+            // panel2 — grid detalle
+            panel2.Controls.Add(dgvDetalle);
+            panel2.Location = new System.Drawing.Point(10, 22);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(990, 172);
+
+            dgvDetalle.AllowUserToAddRows = false;
+            dgvDetalle.AllowUserToDeleteRows = false;
+            dgvDetalle.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDetalle.Dock = System.Windows.Forms.DockStyle.Fill;
+            dgvDetalle.MultiSelect = false;
+            dgvDetalle.Name = "dgvDetalle";
+            dgvDetalle.ReadOnly = true;
+            dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+
+            // panel5 — controles de devolución
+            panel5.Controls.Add(lblObservacion);
+            panel5.Controls.Add(txtObservacion);
+            panel5.Controls.Add(lblEstado);
+            panel5.Controls.Add(cboEstado);
+            panel5.Controls.Add(btnDevolver);
+            panel5.Controls.Add(btnDevolverTodo);
+            panel5.Location = new System.Drawing.Point(20, 578);
+            panel5.Name = "panel5";
+            panel5.Size = new System.Drawing.Size(1010, 90);
+
+            lblObservacion.Location = new System.Drawing.Point(3, 21);
+            lblObservacion.Size = new System.Drawing.Size(94, 23);
+            lblObservacion.Text = "Observación:";
+
+            txtObservacion.Location = new System.Drawing.Point(103, 18);
+            txtObservacion.Name = "txtObservacion";
+            txtObservacion.Size = new System.Drawing.Size(300, 23);
+
+            lblEstado.Location = new System.Drawing.Point(420, 21);
+            lblEstado.Size = new System.Drawing.Size(90, 23);
+            lblEstado.Text = "Estado devolución:";
+
+            // cboEstado — valores correctos: Bueno / Dañado / Perdido
+            cboEstado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cboEstado.Location = new System.Drawing.Point(515, 18);
+            cboEstado.Name = "cboEstado";
+            cboEstado.Size = new System.Drawing.Size(130, 23);
+
+            btnDevolver.Location = new System.Drawing.Point(5, 52);
+            btnDevolver.Name = "btnDevolver";
+            btnDevolver.Size = new System.Drawing.Size(200, 36);
+            btnDevolver.Text = "Devolver seleccionado";
+            btnDevolver.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+
+            btnDevolverTodo.Location = new System.Drawing.Point(215, 52);
+            btnDevolverTodo.Name = "btnDevolverTodo";
+            btnDevolverTodo.Size = new System.Drawing.Size(200, 36);
+            btnDevolverTodo.Text = "Devolver todo";
+            btnDevolverTodo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+
+            // Form
+            ClientSize = new System.Drawing.Size(1055, 818);
+            Controls.Add(panel1);
+            Name = "FrmDevolucion";
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Devoluciones";
+
+            panel1.ResumeLayout(false);
+            panel5.ResumeLayout(false);
+            panel5.PerformLayout();
+            grpDetalle.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvDetalle).EndInit();
+            grpPrestamos.ResumeLayout(false);
+            panel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvPrestamos).EndInit();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
+            ResumeLayout(false);
+        }
+
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblObservacion;
         private System.Windows.Forms.TextBox txtObservacion;
         private System.Windows.Forms.Label lblEstado;
         private System.Windows.Forms.ComboBox cboEstado;
-
-
-        protected override void Dispose(bool disposing)
-            {
-                if (disposing && (components != null))
-                {
-                    components.Dispose();
-                }
-                base.Dispose(disposing);
-            }
-
-        private void InitializeComponent()
-        {
-            lblTitulo = new Label();
-            grpPrestamos = new GroupBox();
-            lblBuscar = new Label();
-            txtBuscar = new TextBox();
-            dgvPrestamos = new DataGridView();
-            grpDetalle = new GroupBox();
-            dgvDetalle = new DataGridView();
-            btnDevolver = new Button();
-            btnDevolverTodo = new Button();
-            btnCerrar = new Button();
-            lblObservacion = new Label();
-            txtObservacion = new TextBox();
-            lblEstado = new Label();
-            cboEstado = new ComboBox();
-            grpPrestamos.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvPrestamos).BeginInit();
-            grpDetalle.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvDetalle).BeginInit();
-            SuspendLayout();
-            // 
-            // lblTitulo
-            // 
-            lblTitulo.Dock = DockStyle.Top;
-            lblTitulo.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lblTitulo.Location = new Point(0, 0);
-            lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(829, 60);
-            lblTitulo.TabIndex = 5;
-            lblTitulo.Text = "Devolución de Herramientas";
-            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // grpPrestamos
-            // 
-            grpPrestamos.Controls.Add(lblBuscar);
-            grpPrestamos.Controls.Add(txtBuscar);
-            grpPrestamos.Controls.Add(dgvPrestamos);
-            grpPrestamos.Location = new Point(20, 70);
-            grpPrestamos.Name = "grpPrestamos";
-            grpPrestamos.Size = new Size(760, 200);
-            grpPrestamos.TabIndex = 4;
-            grpPrestamos.TabStop = false;
-            grpPrestamos.Text = "Préstamos Activos";
-            // 
-            // lblBuscar
-            // 
-            lblBuscar.Location = new Point(20, 30);
-            lblBuscar.Name = "lblBuscar";
-            lblBuscar.Size = new Size(54, 23);
-            lblBuscar.TabIndex = 0;
-            lblBuscar.Text = "Buscar:";
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.Location = new Point(80, 25);
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(250, 23);
-            txtBuscar.TabIndex = 1;
-            // 
-            // dgvPrestamos
-            // 
-            dgvPrestamos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvPrestamos.Location = new Point(20, 60);
-            dgvPrestamos.MultiSelect = false;
-            dgvPrestamos.Name = "dgvPrestamos";
-            dgvPrestamos.ReadOnly = true;
-            dgvPrestamos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPrestamos.Size = new Size(720, 120);
-            dgvPrestamos.TabIndex = 2;
-            
-            // 
-            // grpDetalle
-            // 
-            grpDetalle.Controls.Add(dgvDetalle);
-            grpDetalle.Location = new Point(20, 280);
-            grpDetalle.Name = "grpDetalle";
-            grpDetalle.Size = new Size(760, 200);
-            grpDetalle.TabIndex = 3;
-            grpDetalle.TabStop = false;
-            grpDetalle.Text = "Detalle del Préstamo";
-            // 
-            // dgvDetalle
-            // 
-            dgvDetalle.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvDetalle.Location = new Point(20, 30);
-            dgvDetalle.MultiSelect = false;
-            dgvDetalle.Name = "dgvDetalle";
-            dgvDetalle.ReadOnly = true;
-            dgvDetalle.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDetalle.Size = new Size(720, 150);
-            dgvDetalle.TabIndex = 0;
-            // 
-            // btnDevolver
-            // 
-            btnDevolver.Location = new Point(24, 514);
-            btnDevolver.Name = "btnDevolver";
-            btnDevolver.Size = new Size(200, 40);
-            btnDevolver.TabIndex = 2;
-            btnDevolver.Text = "Devolver Seleccionado";
-            // 
-            // btnDevolverTodo
-            // 
-            btnDevolverTodo.Location = new Point(244, 514);
-            btnDevolverTodo.Name = "btnDevolverTodo";
-            btnDevolverTodo.Size = new Size(200, 40);
-            btnDevolverTodo.TabIndex = 1;
-            btnDevolverTodo.Text = "Devolver Todo";
-            // 
-            // btnCerrar
-            // 
-            btnCerrar.Location = new Point(644, 514);
-            btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(140, 40);
-            btnCerrar.TabIndex = 0;
-            btnCerrar.Text = "Cerrar";
-            // 
-            // lblObservacion
-            // 
-            lblObservacion.Location = new Point(20, 490);
-            lblObservacion.Name = "lblObservacion";
-            lblObservacion.Size = new Size(94, 23);
-            lblObservacion.TabIndex = 0;
-            lblObservacion.Text = "Observación:";
-            // 
-            // txtObservacion
-            // 
-            txtObservacion.Location = new Point(120, 485);
-            txtObservacion.Name = "txtObservacion";
-            txtObservacion.Size = new Size(300, 23);
-            txtObservacion.TabIndex = 1;
-            // 
-            // lblEstado
-            // 
-            lblEstado.Location = new Point(450, 490);
-            lblEstado.Name = "lblEstado";
-            lblEstado.Size = new Size(64, 23);
-            lblEstado.TabIndex = 2;
-            lblEstado.Text = "Estado:";
-            // 
-            // cboEstado
-            // 
-            cboEstado.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboEstado.Location = new Point(520, 485);
-            cboEstado.Name = "cboEstado";
-            cboEstado.Size = new Size(150, 23);
-            cboEstado.TabIndex = 3;
-            // 
-            // FrmDevolucion
-            // 
-            ClientSize = new Size(829, 577);
-            Controls.Add(lblObservacion);
-            Controls.Add(txtObservacion);
-            Controls.Add(lblEstado);
-            Controls.Add(cboEstado);
-            Controls.Add(btnCerrar);
-            Controls.Add(btnDevolverTodo);
-            Controls.Add(btnDevolver);
-            Controls.Add(grpDetalle);
-            Controls.Add(grpPrestamos);
-            Controls.Add(lblTitulo);
-            Name = "FrmDevolucion";
-            StartPosition = FormStartPosition.CenterScreen;
-            Text = "Devoluciones";
-            grpPrestamos.ResumeLayout(false);
-            grpPrestamos.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvPrestamos).EndInit();
-            grpDetalle.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvDetalle).EndInit();
-            ResumeLayout(false);
-            PerformLayout();
-        }
+        private System.Windows.Forms.Button btnDevolver;
+        private System.Windows.Forms.Button btnDevolverTodo;
+        private System.Windows.Forms.GroupBox grpDetalle;
+        private System.Windows.Forms.DataGridView dgvDetalle;
+        private System.Windows.Forms.GroupBox grpPrestamos;
+        private System.Windows.Forms.Label lblBuscar;
+        private System.Windows.Forms.TextBox txtBuscar;
+        private System.Windows.Forms.DataGridView dgvPrestamos;
     }
-    }
+}
