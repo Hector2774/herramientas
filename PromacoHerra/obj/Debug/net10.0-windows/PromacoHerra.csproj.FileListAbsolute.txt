@@ -88,3 +88,4 @@ C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\
 C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\RBush.dll
 C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\SixLabors.Fonts.dll
 C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\obj\Debug\net10.0-windows\PromacoHerra.FrmLogin.resources
+C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\FontAwesome.Sharp.dll

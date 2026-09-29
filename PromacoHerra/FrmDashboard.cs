@@ -119,7 +119,7 @@ namespace PromacoHerra
                 {
                     Tag = "numero",
                     Dock = DockStyle.Bottom,
-                    Font = new Font("Segoe UI", 22F, FontStyle.Bold),
+                    Font = new Font("Segoe UI", 24F, FontStyle.Bold),
                     TextAlign = ContentAlignment.MiddleCenter,
                     Height = 45,
                     ForeColor = lbl.ForeColor
@@ -156,7 +156,7 @@ namespace PromacoHerra
                 flowAlertasPanel.Controls.Add(new Label
                 {
                     Text = "✅  Sin alertas activas",
-                    Font = new Font("Segoe UI", 10F),
+                    Font = new Font("Segoe UI", 11.5F),
                     ForeColor = Color.FromArgb(22, 163, 74),
                     AutoSize = true,
                     Margin = new Padding(12, 16, 0, 0)
@@ -257,7 +257,8 @@ namespace PromacoHerra
             {
                 Location = new Point(10, 52),
                 Size = new Size(575, 298),
-                BackColor = Color.White
+                BackColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right
             };
             _graficaCanvas.Paint += GraficaInventario_Paint;
             panelGrafica.Controls.Add(_graficaCanvas);
@@ -309,7 +310,7 @@ namespace PromacoHerra
                 g.DrawLine(penGuia, marginLeft, yGuia, marginLeft + w, yGuia);
 
                 int labelVal = (int)(maxVal * (guias - i) / (float)guias);
-                using var fntEje = new Font("Segoe UI", 7.5f);
+                using var fntEje = new Font("Segoe UI", 8.5f);
                 g.DrawString(labelVal.ToString(), fntEje, Brushes.Gray,
                     2, yGuia - 7);
             }
@@ -319,8 +320,8 @@ namespace PromacoHerra
             g.DrawLine(penEje, marginLeft, baseY, marginLeft + w, baseY);
 
             // Barras
-            using var fntBar = new Font("Segoe UI", 8f);
-            using var fntNum = new Font("Segoe UI", 9f, FontStyle.Bold);
+            using var fntBar = new Font("Segoe UI", 9f);
+            using var fntNum = new Font("Segoe UI", 10.5f, FontStyle.Bold);
 
             for (int i = 0; i < barCount; i++)
             {
@@ -374,7 +375,7 @@ namespace PromacoHerra
 
         private static void DrawNoData(Graphics g, int w, int h)
         {
-            using var f = new Font("Segoe UI", 11F);
+            using var f = new Font("Segoe UI", 12.5F);
             var sz = g.MeasureString("Sin datos aún", f);
             g.DrawString("Sin datos aún", f, Brushes.LightGray,
                 (w - sz.Width) / 2, (h - sz.Height) / 2);

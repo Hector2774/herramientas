@@ -14,12 +14,12 @@
         {
             panel1 = new System.Windows.Forms.Panel();
             panel5 = new System.Windows.Forms.Panel();
-            txtObservacion = new System.Windows.Forms.TextBox();
+            txtObservacion = new PromacoHerra.Controls.MaterialTextBox();
             lblObservacion = new System.Windows.Forms.Label();
-            btnDevolver = new System.Windows.Forms.Button();
-            btnDevolverTodo = new System.Windows.Forms.Button();
+            btnDevolver = new PromacoHerra.Controls.MaterialButton();
+            btnDevolverTodo = new PromacoHerra.Controls.MaterialButton();
             lblEstado = new System.Windows.Forms.Label();
-            cboEstado = new System.Windows.Forms.ComboBox();
+            cboEstado = new PromacoHerra.Controls.MaterialComboBox();
             grpDetalle = new System.Windows.Forms.GroupBox();
             panel2 = new System.Windows.Forms.Panel();
             dgvDetalle = new System.Windows.Forms.DataGridView();
@@ -27,7 +27,7 @@
             panel4 = new System.Windows.Forms.Panel();
             dgvPrestamos = new System.Windows.Forms.DataGridView();
             panel3 = new System.Windows.Forms.Panel();
-            txtBuscar = new System.Windows.Forms.TextBox();
+            txtBuscar = new PromacoHerra.Controls.MaterialTextBox();
             lblBuscar = new System.Windows.Forms.Label();
             lblTitulo = new System.Windows.Forms.Label();
 
@@ -53,13 +53,14 @@
 
             // lblTitulo
             lblTitulo.Dock = System.Windows.Forms.DockStyle.Top;
-            lblTitulo.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new System.Drawing.Size(1055, 60);
             lblTitulo.Text = "Devolución de Herramientas";
             lblTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // grpPrestamos
+            grpPrestamos.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grpPrestamos.Controls.Add(panel3);
             grpPrestamos.Controls.Add(panel4);
             grpPrestamos.Location = new System.Drawing.Point(20, 81);
@@ -85,6 +86,7 @@
             txtBuscar.PlaceholderText = "Nombre o código empleado...";
 
             // panel4 — grid préstamos
+            panel4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             panel4.Controls.Add(dgvPrestamos);
             panel4.Location = new System.Drawing.Point(20, 61);
             panel4.Name = "panel4";
@@ -100,6 +102,7 @@
             dgvPrestamos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 
             // grpDetalle
+            grpDetalle.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             grpDetalle.Controls.Add(panel2);
             grpDetalle.Location = new System.Drawing.Point(20, 360);
             grpDetalle.Name = "grpDetalle";
@@ -108,6 +111,7 @@
             grpDetalle.Text = "Detalle del Préstamo";
 
             // panel2 — grid detalle
+            panel2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             panel2.Controls.Add(dgvDetalle);
             panel2.Location = new System.Drawing.Point(10, 22);
             panel2.Name = "panel2";
@@ -123,6 +127,7 @@
             dgvDetalle.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 
             // panel5 — controles de devolución
+            panel5.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             panel5.Controls.Add(lblObservacion);
             panel5.Controls.Add(txtObservacion);
             panel5.Controls.Add(lblEstado);
@@ -151,21 +156,27 @@
             cboEstado.Name = "cboEstado";
             cboEstado.Size = new System.Drawing.Size(130, 23);
 
+            btnDevolver.Icon = FontAwesome.Sharp.IconChar.Undo;
+            btnDevolver.IconSize = 22;
             btnDevolver.Location = new System.Drawing.Point(5, 52);
             btnDevolver.Name = "btnDevolver";
             btnDevolver.Size = new System.Drawing.Size(200, 36);
             btnDevolver.Text = "Devolver seleccionado";
-            btnDevolver.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            btnDevolver.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
 
+            btnDevolverTodo.Icon = FontAwesome.Sharp.IconChar.CheckDouble;
+            btnDevolverTodo.IconSize = 22;
             btnDevolverTodo.Location = new System.Drawing.Point(215, 52);
             btnDevolverTodo.Name = "btnDevolverTodo";
             btnDevolverTodo.Size = new System.Drawing.Size(200, 36);
             btnDevolverTodo.Text = "Devolver todo";
-            btnDevolverTodo.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            btnDevolverTodo.Font = new System.Drawing.Font("Segoe UI", 10.5F, System.Drawing.FontStyle.Bold);
 
             // Form
             ClientSize = new System.Drawing.Size(1055, 818);
             Controls.Add(panel1);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "FrmDevolucion";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Devoluciones";
@@ -191,16 +202,16 @@
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Label lblObservacion;
-        private System.Windows.Forms.TextBox txtObservacion;
+        private PromacoHerra.Controls.MaterialTextBox txtObservacion;
         private System.Windows.Forms.Label lblEstado;
-        private System.Windows.Forms.ComboBox cboEstado;
-        private System.Windows.Forms.Button btnDevolver;
-        private System.Windows.Forms.Button btnDevolverTodo;
+        private PromacoHerra.Controls.MaterialComboBox cboEstado;
+        private PromacoHerra.Controls.MaterialButton btnDevolver;
+        private PromacoHerra.Controls.MaterialButton btnDevolverTodo;
         private System.Windows.Forms.GroupBox grpDetalle;
         private System.Windows.Forms.DataGridView dgvDetalle;
         private System.Windows.Forms.GroupBox grpPrestamos;
         private System.Windows.Forms.Label lblBuscar;
-        private System.Windows.Forms.TextBox txtBuscar;
+        private PromacoHerra.Controls.MaterialTextBox txtBuscar;
         private System.Windows.Forms.DataGridView dgvPrestamos;
     }
 }

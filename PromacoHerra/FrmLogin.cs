@@ -14,6 +14,7 @@ namespace PromacoHerra
         public FrmLogin()
         {
             InitializeComponent();
+            ThemeManager.ApplyTheme(this);
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
         }

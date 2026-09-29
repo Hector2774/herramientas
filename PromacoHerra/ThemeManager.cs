@@ -23,12 +23,24 @@ namespace PromacoHerra
         public static Color WarningOrange = Color.FromArgb(217, 119, 6);
         public static Color DangerRed = Color.FromArgb(185, 28, 28);
 
+        // ── Geometría compartida por los controles Material ────────
+        // Un solo número por familia de control para que el radio de esquinas
+        // sea consistente en toda la app (botones vs. tarjetas).
+        public static int CornerRadiusButton = 8;
+        public static int CornerRadiusCard = 20;
+
+        // ── Tipografía compartida ────────────────────────────────
+        // Un solo tamaño base para todo lo que antes usaba "9.5f" a mano —
+        // subirlo acá sube la letra en toda la app de una sola vez.
+        public static float BaseFontSize = 11f;
+        public static float SmallBoldFontSize = 10.5f; // GroupBox / encabezados chicos en negrita
+
         // ── Entry point ────────────────────────────────────────────
         public static void ApplyTheme(Form form)
         {
             form.BackColor = AppBackground;
             form.ForeColor = TextPrimary;
-            form.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
+            form.Font = new Font("Segoe UI", BaseFontSize, FontStyle.Regular);
 
             ApplyToControls(form.Controls);
             StylizeTabs(form);
@@ -40,7 +52,17 @@ namespace PromacoHerra
             foreach (Control ctrl in controls)
             {
                 StyleControl(ctrl);
-                if (ctrl.HasChildren)
+
+                // Los wrapper Material (TextBox/ComboBox) ya se estilizan a sí mismos en su
+                // constructor — no dejar que el recorrido baje a re-estilizar su TextBox/ComboBox
+                // interno con las reglas clásicas (le pondría de vuelta el borde 3D, por ejemplo).
+                // EmpleadoPickerControl también fija su propio look (botón de lupa siempre azul)
+                // y no debe perderlo por la heurística genérica de texto.
+                bool esCompuestoAutoestilizado = ctrl is Controls.MaterialTextBox
+                    || ctrl is Controls.MaterialComboBox
+                    || ctrl is Controls.EmpleadoPickerControl;
+
+                if (ctrl.HasChildren && !esCompuestoAutoestilizado)
                     ApplyToControls(ctrl.Controls);
             }
         }
@@ -49,6 +71,18 @@ namespace PromacoHerra
         {
             switch (ctrl)
             {
+                // Los tipos Material van ANTES que sus equivalentes clásicos: en un switch de
+                // pattern matching el primer case que matchea gana, y MaterialButton también
+                // matchearía "case Button btn" (es su subclase) si no se ordenara así.
+                case Controls.MaterialButton mbtn:
+                    StyleMaterialButton(mbtn);
+                    break;
+
+                case Controls.MaterialTextBox:
+                case Controls.MaterialComboBox:
+                    // Ya se autoestilizan con los colores de ThemeManager en su constructor.
+                    break;
+
                 case Button btn:
                     StyleButton(btn);
                     break;
@@ -61,32 +95,32 @@ namespace PromacoHerra
                     txt.BackColor = CardBackground;
                     txt.ForeColor = TextPrimary;
                     txt.BorderStyle = BorderStyle.FixedSingle;
-                    txt.Font = new Font("Segoe UI", 9.5f);
+                    txt.Font = new Font("Segoe UI", BaseFontSize);
                     break;
 
                 case ComboBox cmb:
                     cmb.ForeColor = TextPrimary;
                     cmb.BackColor = CardBackground;
                     cmb.FlatStyle = FlatStyle.Flat;
-                    cmb.Font = new Font("Segoe UI", 9.5f);
+                    cmb.Font = new Font("Segoe UI", BaseFontSize);
                     break;
 
                 case NumericUpDown nud:
                     nud.BackColor = CardBackground;
                     nud.ForeColor = TextPrimary;
-                    nud.Font = new Font("Segoe UI", 9.5f);
+                    nud.Font = new Font("Segoe UI", BaseFontSize);
                     break;
 
                 case DateTimePicker dtp:
                     dtp.CalendarForeColor = TextPrimary;
                     dtp.CalendarMonthBackground = CardBackground;
-                    dtp.Font = new Font("Segoe UI", 9.5f);
+                    dtp.Font = new Font("Segoe UI", BaseFontSize);
                     break;
 
                 case GroupBox gb:
                     // Sin borde visible — solo el título en azul marino
                     gb.ForeColor = AccentBlue;
-                    gb.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+                    gb.Font = new Font("Segoe UI", SmallBoldFontSize, FontStyle.Bold);
                     gb.Paint += GroupBox_Paint;
                     break;
 
@@ -105,12 +139,38 @@ namespace PromacoHerra
                     tc.DrawMode = TabDrawMode.OwnerDrawFixed;
                     tc.DrawItem += TabControl_DrawItem;
                     tc.Appearance = TabAppearance.Normal;
-                    tc.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
-                    tc.ItemSize = new Size(0, 36);
+                    tc.Font = new Font("Segoe UI", BaseFontSize, FontStyle.Regular);
+                    tc.ItemSize = new Size(0, 42);
                     //tc.SizeMode = TabSizeMode.Fixed;
                     tc.Padding = new Point(20, 8);
                     break;
             }
+        }
+
+        // ══════════════════════════════════════════════════════════
+        // MATERIALBUTTON — misma heurística de variante que StyleButton,
+        // pero delegando el color/hover/redondeo al propio control.
+        // ══════════════════════════════════════════════════════════
+        private static void StyleMaterialButton(Controls.MaterialButton btn)
+        {
+            btn.CornerRadius = CornerRadiusButton;
+
+            bool esSidebar = btn.Parent?.Dock == DockStyle.Left ||
+                             btn.Parent?.BackColor == SidebarColor;
+
+            if (esSidebar)
+                btn.Variant = Controls.MaterialButtonVariant.Sidebar;
+            else if (btn.Text.Contains("Guardar") || btn.Text.Contains("Abrir") ||
+                     btn.Text.Contains("Sincronizar") || btn.Text.Contains("Generar") ||
+                     btn.Text.Contains("Registrar") || btn.Text.Contains("Seleccionar"))
+                btn.Variant = Controls.MaterialButtonVariant.Primary;
+            else if (btn.Text.Contains("Eliminar") || btn.Text.Contains("Dar de Baja") ||
+                     btn.Text.Contains("Cerrar"))
+                btn.Variant = Controls.MaterialButtonVariant.Danger;
+            else if (btn.Text.Contains("Cancelar") || btn.Text.Contains("Devolver"))
+                btn.Variant = Controls.MaterialButtonVariant.Secondary;
+            else
+                btn.Variant = Controls.MaterialButtonVariant.Default;
         }
 
         // ══════════════════════════════════════════════════════════
@@ -120,7 +180,7 @@ namespace PromacoHerra
         {
             btn.FlatStyle = FlatStyle.Flat;
             btn.Cursor = Cursors.Hand;
-            btn.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
+            btn.Font = new Font("Segoe UI", SmallBoldFontSize, FontStyle.Bold);
 
             bool esSidebar = btn.Parent?.Dock == DockStyle.Left ||
                              btn.Parent?.BackColor == SidebarColor;
@@ -138,7 +198,7 @@ namespace PromacoHerra
                 }
                 else if (btn.Text.Contains("Guardar") || btn.Text.Contains("Abrir") ||
                          btn.Text.Contains("Sincronizar") || btn.Text.Contains("Generar") ||
-                         btn.Text.Contains("Registrar"))
+                         btn.Text.Contains("Registrar") || btn.Text.Contains("Seleccionar"))
                 {
                     // Botón primario — azul sólido
                     btn.BackColor = btn.Enabled ? AccentBlue : Color.FromArgb(180, 200, 230);
@@ -239,8 +299,8 @@ namespace PromacoHerra
                 {
                     tc.DrawMode = TabDrawMode.OwnerDrawFixed;
                     tc.DrawItem += TabControl_DrawItem;
-                    tc.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
-                    tc.ItemSize = new Size(140, 36);
+                    tc.Font = new Font("Segoe UI", BaseFontSize, FontStyle.Regular);
+                    tc.ItemSize = new Size(150, 42);
                     tc.SizeMode = TabSizeMode.Fixed;
                     tc.Padding = new Point(16, 8);
                     tc.BackColor = AppBackground;
@@ -249,7 +309,7 @@ namespace PromacoHerra
                     foreach (TabPage tp in tc.TabPages)
                     {
                         tp.BackColor = AppBackground;
-                        tp.Font = new Font("Segoe UI", 9.5f);
+                        tp.Font = new Font("Segoe UI", BaseFontSize);
                     }
                 }
                 if (ctrl.HasChildren)
@@ -278,7 +338,7 @@ namespace PromacoHerra
                     g.DrawLine(pen, bounds.Left, bounds.Top + 1,
                                    bounds.Right, bounds.Top + 1);
 
-                TextRenderer.DrawText(g, tab.Text, new Font("Segoe UI", 9.5f, FontStyle.Bold),
+                TextRenderer.DrawText(g, tab.Text, new Font("Segoe UI", BaseFontSize, FontStyle.Bold),
                     bounds, AccentBlue,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             }
@@ -288,7 +348,7 @@ namespace PromacoHerra
                 using (var brush = new SolidBrush(Color.FromArgb(235, 237, 243)))
                     g.FillRectangle(brush, bounds);
 
-                TextRenderer.DrawText(g, tab.Text, new Font("Segoe UI", 9.5f),
+                TextRenderer.DrawText(g, tab.Text, new Font("Segoe UI", BaseFontSize),
                     bounds, TextSecondary,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
             }
@@ -309,30 +369,46 @@ namespace PromacoHerra
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgv.MultiSelect = false;
 
-            // Headers
+            // Headers — se envuelven y crecen en altura si el texto no cabe
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = SidebarColor;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = TextOnDark;
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.5f, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", BaseFontSize, FontStyle.Bold);
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10, 0, 0, 0);
-            dgv.ColumnHeadersHeight = 40;
-            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(10, 6, 6, 6);
+            dgv.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgv.ColumnHeadersHeight = 48;
+            dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 
-            // Celdas
+            // Celdas — el texto se envuelve en vez de cortarse
             dgv.DefaultCellStyle.BackColor = CardBackground;
             dgv.DefaultCellStyle.ForeColor = TextPrimary;
-            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 9.5f);
+            dgv.DefaultCellStyle.Font = new Font("Segoe UI", BaseFontSize);
             dgv.DefaultCellStyle.SelectionBackColor = AccentBlueSoft;
             dgv.DefaultCellStyle.SelectionForeColor = TextPrimary;
-            dgv.DefaultCellStyle.Padding = new Padding(10, 0, 10, 0);
-            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+            dgv.DefaultCellStyle.Padding = new Padding(10, 6, 10, 6);
+            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 
             // Filas alternas
             dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 253);
 
-            // Altura de filas
-            dgv.RowTemplate.Height = 38;
+            // Altura de filas — mínimo 46px (antes 38), pero crece si el contenido envuelto lo requiere
+            dgv.RowTemplate.Height = 46;
+            dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+            // Si el formulario no definió un modo explícito, las columnas se
+            // reparten el ancho disponible en vez de quedar con un ancho fijo
+            if (dgv.AutoSizeColumnsMode == DataGridViewAutoSizeColumnsMode.None)
+                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dgv.AllowUserToResizeColumns = true;
+            foreach (DataGridViewColumn col in dgv.Columns)
+                if (col.MinimumWidth < 40) col.MinimumWidth = 40;
+
+            dgv.ColumnAdded += (s, e) =>
+            {
+                if (e.Column.MinimumWidth < 40) e.Column.MinimumWidth = 40;
+            };
 
             // Separador horizontal entre filas
             dgv.AdvancedCellBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.Single;

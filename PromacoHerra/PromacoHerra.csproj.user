@@ -1,6 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Compile Update="Controls\EmpleadoPickerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\MaterialButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\MaterialCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\MaterialComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\MaterialRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Controls\MaterialTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="FrmBuscarEmpleado.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="FrmDashboard.cs">
       <SubType>Form</SubType>
     </Compile>

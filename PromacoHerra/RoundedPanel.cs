@@ -1,57 +1,106 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using PromacoHerra.Controls;
 
 namespace PromacoHerra
 {
-    // Esta clase crea un Panel personalizado con bordes redondeados suavizados.
+    // Panel tipo "tarjeta" Material: esquinas redondeadas recortadas de verdad (Region, no solo
+    // dibujadas) y una sombra sutil simulada con capas concéntricas semitransparentes pintadas en
+    // un margen reservado (ShadowSize) alrededor de la tarjeta.
     public class RoundedPanel : Panel
     {
-        // Propiedad para ajustar el radio de la curvatura desde el diseñador
-        public int CornerRadius { get; set; } = 20; // Default 20px
+        private int _cornerRadius = 20;
+        private int _shadowSize = 6;
+        private bool _showShadow = true;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int CornerRadius
+        {
+            get => _cornerRadius;
+            set { _cornerRadius = value; AplicarRegion(); Invalidate(); }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int ShadowSize
+        {
+            get => _shadowSize;
+            set { _shadowSize = value; AplicarPadding(); AplicarRegion(); Invalidate(); }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool ShowShadow
+        {
+            get => _showShadow;
+            set { _showShadow = value; AplicarPadding(); Invalidate(); }
+        }
 
         public RoundedPanel()
         {
-            this.DoubleBuffered = true; // Evita parpadeos al redibujar
-            this.BackColor = ThemeManager.CardBackground; // Usamos el blanco por defecto del tema claro
-            this.Padding = new Padding(15); // Padding interno por defecto para que el contenido no toque la curva
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint |
+                      ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
+            DoubleBuffered = true; // Evita parpadeos al redibujar
+            BackColor = ThemeManager.CardBackground; // Usamos el blanco por defecto del tema claro
+            AplicarPadding(); // Padding interno para que el contenido no toque la curva ni la sombra
+        }
+
+        // Solo reserva el margen de la sombra (derecha/abajo); no impone un padding de
+        // contenido fijo porque cada formulario ya maneja el suyo (algunos posicionan
+        // hijos con Location absoluto, otros los acoplan con Dock a todo el ancho).
+        private void AplicarPadding()
+        {
+            int extra = _showShadow ? _shadowSize : 0;
+            Padding = new Padding(0, 0, extra, extra);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            AplicarRegion();
+        }
+
+        // El Region cubre TODO el control (no solo la tarjeta) para no recortar la sombra que se
+        // pinta en el margen reservado; el recorte real de esquinas cuadradas ocurre igual en el
+        // borde exterior del control, que es lo que ven los hijos y el hit-testing del mouse.
+        private void AplicarRegion()
+        {
+            if (Width <= 0 || Height <= 0) return;
+            using var path = RoundedGeometry.RoundedRect(new Rectangle(0, 0, Width, Height), _cornerRadius);
+            Region = new Region(path);
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias; // Activar suavizado para bordes perfectos
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            // Crear el camino (path) con los bordes redondeados
-            Rectangle rect = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
-            using (GraphicsPath path = GetRoundedPath(rect, CornerRadius))
+            int shadow = _showShadow ? _shadowSize : 0;
+            var cardRect = new Rectangle(0, 0, Width - shadow - 1, Height - shadow - 1);
+
+            if (_showShadow)
             {
-                // Pintar el fondo de la tarjeta (blanco corporativo)
-                using (SolidBrush brush = new SolidBrush(this.BackColor))
+                for (int i = shadow; i >= 1; i--)
                 {
-                    e.Graphics.FillPath(brush, path);
-                }
-
-                // Opcional: Dibujar un borde muy sutil
-                using (Pen borderPen = new Pen(ThemeManager.BorderColor, 1))
-                {
-                    e.Graphics.DrawPath(borderPen, path);
+                    var ringRect = new Rectangle(i, i, cardRect.Width, cardRect.Height);
+                    using var ringPath = RoundedGeometry.RoundedRect(ringRect, _cornerRadius);
+                    int alpha = (int)(12 * ((shadow - i + 1) / (float)shadow));
+                    using var ringBrush = new SolidBrush(Color.FromArgb(alpha, 15, 23, 42));
+                    g.FillPath(ringBrush, ringPath);
                 }
             }
-        }
 
-        // Método auxiliar para generar la forma redondeada
-        private GraphicsPath GetRoundedPath(Rectangle rect, int radius)
-        {
-            GraphicsPath path = new GraphicsPath();
-            int d = radius * 2;
-            path.AddArc(rect.X, rect.Y, d, d, 180, 90);
-            path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
-            path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
-            path.CloseFigure();
-            return path;
+            using (var path = RoundedGeometry.RoundedRect(cardRect, _cornerRadius))
+            {
+                using (var brush = new SolidBrush(BackColor))
+                    g.FillPath(brush, path);
+
+                using (var borderPen = new Pen(ThemeManager.BorderColor, 1))
+                    g.DrawPath(borderPen, path);
+            }
+
+            base.OnPaint(e);
         }
     }
 }

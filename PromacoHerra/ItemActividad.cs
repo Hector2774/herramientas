@@ -1,16 +1,27 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using PromacoHerra.Controls;
 
 namespace PromacoHerra
 {
     public class ItemActividad : UserControl
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Iniciales { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Titulo { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Subtitulo { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string TextoEstado { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Color ColorEstado { get; set; }
 
         public ItemActividad()
@@ -44,7 +55,7 @@ namespace PromacoHerra
             }
 
             // Dibujar iniciales centradas en el círculo (Texto en Azul Marino corporativo)
-            Font fontAvatar = new Font("Segoe UI", 11, FontStyle.Bold);
+            Font fontAvatar = new Font("Segoe UI", 12.5f, FontStyle.Bold);
             using (SolidBrush textBrush = new SolidBrush(ThemeManager.SidebarColor))
             {
                 StringFormat formatCentro = new StringFormat();
@@ -53,19 +64,9 @@ namespace PromacoHerra
                 g.DrawString(Iniciales, fontAvatar, textBrush, rectAvatar, formatCentro);
             }
 
-            // 2. Dibujar Textos (Título y Subtítulo)
-            Font fontTitulo = new Font("Segoe UI", 10, FontStyle.Bold);
-            Font fontSub = new Font("Segoe UI", 8.5f, FontStyle.Regular);
-
-            using (SolidBrush brushTitulo = new SolidBrush(ThemeManager.TextPrimary))     // Texto casi negro
-            using (SolidBrush brushSub = new SolidBrush(ThemeManager.TextSecondary))      // Texto gris medio
-            {
-                g.DrawString(Titulo, fontTitulo, brushTitulo, 65, 15);
-                g.DrawString(Subtitulo, fontSub, brushSub, 65, 38);
-            }
-
-            // 3. Dibujar la Etiqueta de Estado (Badge) a la derecha
-            Font fontEstado = new Font("Segoe UI", 8.5f, FontStyle.Bold);
+            // 2. Calcular primero la Etiqueta de Estado (Badge) a la derecha,
+            //    para poder reservarle su espacio y que el texto nunca se le monte encima.
+            Font fontEstado = new Font("Segoe UI", 9.5f, FontStyle.Bold);
             SizeF sizeTexto = g.MeasureString(TextoEstado, fontEstado);
 
             int badgeWidth = (int)sizeTexto.Width + 40;
@@ -75,8 +76,31 @@ namespace PromacoHerra
 
             Rectangle badgeRect = new Rectangle(badgeX, badgeY, badgeWidth, badgeHeight);
 
+            // 3. Dibujar Textos (Título y Subtítulo), recortados para no invadir el badge
+            const int textoX = 65;
+            const int margenBadge = 12; // separación mínima entre el texto y el badge
+            int anchoDisponible = Math.Max(0, badgeX - margenBadge - textoX);
+
+            Font fontTitulo = new Font("Segoe UI", 11.5f, FontStyle.Bold);
+            Font fontSub = new Font("Segoe UI", 9.5f, FontStyle.Regular);
+
+            StringFormat formatRecortado = new StringFormat
+            {
+                Trimming = StringTrimming.EllipsisCharacter,
+                FormatFlags = StringFormatFlags.NoWrap
+            };
+
+            using (SolidBrush brushTitulo = new SolidBrush(ThemeManager.TextPrimary))     // Texto casi negro
+            using (SolidBrush brushSub = new SolidBrush(ThemeManager.TextSecondary))      // Texto gris medio
+            {
+                g.DrawString(Titulo, fontTitulo, brushTitulo,
+                    new RectangleF(textoX, 15, anchoDisponible, fontTitulo.GetHeight(g) + 2), formatRecortado);
+                g.DrawString(Subtitulo, fontSub, brushSub,
+                    new RectangleF(textoX, 38, anchoDisponible, fontSub.GetHeight(g) + 2), formatRecortado);
+            }
+
             // Usamos el color de estado con una transparencia muy sutil
-            using (GraphicsPath path = GetRoundedPath(badgeRect, 12))
+            using (GraphicsPath path = RoundedGeometry.RoundedRect(badgeRect, 12))
             using (SolidBrush badgeBg = new SolidBrush(Color.FromArgb(25, ColorEstado))) // 25 de opacidad sobre fondo blanco se ve genial
             using (Pen badgePen = new Pen(ColorEstado, 1.5f))
             using (SolidBrush textEstadoBrush = new SolidBrush(ColorEstado))
@@ -89,19 +113,6 @@ namespace PromacoHerra
                 formatCentro.LineAlignment = StringAlignment.Center;
                 g.DrawString(TextoEstado, fontEstado, textEstadoBrush, badgeRect, formatCentro);
             }
-        }
-
-        // Método auxiliar para dibujar rectángulos con bordes redondeados
-        private GraphicsPath GetRoundedPath(Rectangle rect, int radius)
-        {
-            GraphicsPath path = new GraphicsPath();
-            int d = radius * 2;
-            path.AddArc(rect.X, rect.Y, d, d, 180, 90);
-            path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
-            path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
-            path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
-            path.CloseFigure();
-            return path;
         }
     }
 }

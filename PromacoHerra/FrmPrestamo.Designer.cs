@@ -7,22 +7,24 @@
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.GroupBox grpPrestamo;
         private System.Windows.Forms.Label lblEmpleado;
-        private System.Windows.Forms.ComboBox cboEmpleado;
+        private PromacoHerra.Controls.EmpleadoPickerControl pickerEmpleado;
         private System.Windows.Forms.Label lblAprobadoPor;
-        private System.Windows.Forms.ComboBox cboAprobadoPor;
+        private PromacoHerra.Controls.EmpleadoPickerControl pickerAprobador;
         private System.Windows.Forms.Label lblFechaPrestamo;
         private System.Windows.Forms.DateTimePicker dtpFecha;
         private System.Windows.Forms.Label lblFechaDevolucion;
         private System.Windows.Forms.DateTimePicker dtpFechaDevolucion;
         private System.Windows.Forms.Label lblObservaciones;
-        private System.Windows.Forms.TextBox txtObservaciones;
+        private PromacoHerra.Controls.MaterialTextBox txtObservaciones;
         private System.Windows.Forms.GroupBox grpHerramientas;
+        private System.Windows.Forms.TableLayoutPanel tlpHerramientas;
         private System.Windows.Forms.DataGridView dgvDisponibles;
+        private System.Windows.Forms.Panel pnlBotonesTransferencia;
         private System.Windows.Forms.DataGridView dgvSeleccionadas;
-        private System.Windows.Forms.Button btnAgregar;
-        private System.Windows.Forms.Button btnQuitar;
-        private System.Windows.Forms.Button btnGuardar;
-        private System.Windows.Forms.Button btnCancelar;
+        private PromacoHerra.Controls.MaterialButton btnAgregar;
+        private PromacoHerra.Controls.MaterialButton btnQuitar;
+        private PromacoHerra.Controls.MaterialButton btnGuardar;
+        private PromacoHerra.Controls.MaterialButton btnCancelar;
 
         protected override void Dispose(bool disposing)
         {
@@ -35,32 +37,36 @@
             lblTitulo = new Label();
             grpPrestamo = new GroupBox();
             lblEmpleado = new Label();
-            cboEmpleado = new ComboBox();
+            pickerEmpleado = new PromacoHerra.Controls.EmpleadoPickerControl();
             lblAprobadoPor = new Label();
-            cboAprobadoPor = new ComboBox();
+            pickerAprobador = new PromacoHerra.Controls.EmpleadoPickerControl();
             lblFechaPrestamo = new Label();
             dtpFecha = new DateTimePicker();
             lblFechaDevolucion = new Label();
             dtpFechaDevolucion = new DateTimePicker();
             lblObservaciones = new Label();
-            txtObservaciones = new TextBox();
+            txtObservaciones = new PromacoHerra.Controls.MaterialTextBox();
             grpHerramientas = new GroupBox();
+            tlpHerramientas = new TableLayoutPanel();
             dgvDisponibles = new DataGridView();
+            pnlBotonesTransferencia = new Panel();
+            btnAgregar = new PromacoHerra.Controls.MaterialButton();
+            btnQuitar = new PromacoHerra.Controls.MaterialButton();
             dgvSeleccionadas = new DataGridView();
-            btnAgregar = new Button();
-            btnQuitar = new Button();
-            btnGuardar = new Button();
-            btnCancelar = new Button();
+            btnGuardar = new PromacoHerra.Controls.MaterialButton();
+            btnCancelar = new PromacoHerra.Controls.MaterialButton();
             grpPrestamo.SuspendLayout();
             grpHerramientas.SuspendLayout();
+            tlpHerramientas.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvDisponibles).BeginInit();
+            pnlBotonesTransferencia.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvSeleccionadas).BeginInit();
             SuspendLayout();
             // 
             // lblTitulo
             // 
             lblTitulo.Dock = DockStyle.Top;
-            lblTitulo.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lblTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
             lblTitulo.Location = new Point(0, 0);
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new Size(925, 60);
@@ -70,10 +76,11 @@
             // 
             // grpPrestamo
             // 
+            grpPrestamo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             grpPrestamo.Controls.Add(lblEmpleado);
-            grpPrestamo.Controls.Add(cboEmpleado);
+            grpPrestamo.Controls.Add(pickerEmpleado);
             grpPrestamo.Controls.Add(lblAprobadoPor);
-            grpPrestamo.Controls.Add(cboAprobadoPor);
+            grpPrestamo.Controls.Add(pickerAprobador);
             grpPrestamo.Controls.Add(lblFechaPrestamo);
             grpPrestamo.Controls.Add(dtpFecha);
             grpPrestamo.Controls.Add(lblFechaDevolucion);
@@ -86,72 +93,73 @@
             grpPrestamo.TabIndex = 1;
             grpPrestamo.TabStop = false;
             grpPrestamo.Text = "Datos del Préstamo";
+            grpPrestamo.Enter += grpPrestamo_Enter;
             // 
             // lblEmpleado
             // 
             lblEmpleado.Location = new Point(15, 30);
             lblEmpleado.Name = "lblEmpleado";
-            lblEmpleado.Size = new Size(75, 23);
+            lblEmpleado.Size = new Size(110, 23);
             lblEmpleado.TabIndex = 0;
             lblEmpleado.Text = "Empleado:";
             // 
-            // cboEmpleado
+            // pickerEmpleado
             // 
-            cboEmpleado.AutoCompleteMode = AutoCompleteMode.Append;
-            cboEmpleado.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cboEmpleado.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboEmpleado.Location = new Point(95, 27);
-            cboEmpleado.Name = "cboEmpleado";
-            cboEmpleado.Size = new Size(230, 23);
-            cboEmpleado.TabIndex = 1;
+            pickerEmpleado.Location = new Point(157, 30);
+            pickerEmpleado.MinimumSize = new Size(200, 28);
+            pickerEmpleado.Name = "pickerEmpleado";
+            pickerEmpleado.Size = new Size(200, 28);
+            pickerEmpleado.TabIndex = 1;
             // 
             // lblAprobadoPor
             // 
-            lblAprobadoPor.Location = new Point(345, 30);
+            lblAprobadoPor.Location = new Point(386, 30);
             lblAprobadoPor.Name = "lblAprobadoPor";
-            lblAprobadoPor.Size = new Size(85, 23);
+            lblAprobadoPor.Size = new Size(158, 23);
             lblAprobadoPor.TabIndex = 2;
             lblAprobadoPor.Text = "Aprobado por:";
             // 
-            // cboAprobadoPor
+            // pickerAprobador
             // 
-            cboAprobadoPor.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboAprobadoPor.Location = new Point(435, 27);
-            cboAprobadoPor.Name = "cboAprobadoPor";
-            cboAprobadoPor.Size = new Size(230, 23);
-            cboAprobadoPor.TabIndex = 3;
+            pickerAprobador.Location = new Point(592, 30);
+            pickerAprobador.MinimumSize = new Size(200, 28);
+            pickerAprobador.Name = "pickerAprobador";
+            pickerAprobador.Size = new Size(200, 28);
+            pickerAprobador.TabIndex = 3;
             // 
             // lblFechaPrestamo
             // 
             lblFechaPrestamo.Location = new Point(15, 70);
             lblFechaPrestamo.Name = "lblFechaPrestamo";
-            lblFechaPrestamo.Size = new Size(105, 23);
+            lblFechaPrestamo.Size = new Size(136, 23);
             lblFechaPrestamo.TabIndex = 4;
             lblFechaPrestamo.Text = "Fecha préstamo:";
             // 
             // dtpFecha
             // 
+            dtpFecha.CustomFormat = "dd/MM/yyyy";
             dtpFecha.Enabled = false;
-            dtpFecha.Format = DateTimePickerFormat.Short;
-            dtpFecha.Location = new Point(125, 67);
+            dtpFecha.Format = DateTimePickerFormat.Custom;
+            dtpFecha.Location = new Point(157, 70);
             dtpFecha.Name = "dtpFecha";
-            dtpFecha.Size = new Size(180, 23);
+            dtpFecha.Size = new Size(200, 23);
             dtpFecha.TabIndex = 5;
             // 
             // lblFechaDevolucion
             // 
-            lblFechaDevolucion.Location = new Point(325, 70);
+            lblFechaDevolucion.Location = new Point(386, 70);
             lblFechaDevolucion.Name = "lblFechaDevolucion";
-            lblFechaDevolucion.Size = new Size(145, 23);
+            lblFechaDevolucion.Size = new Size(200, 23);
             lblFechaDevolucion.TabIndex = 6;
             lblFechaDevolucion.Text = "Fecha devolución esperada:";
             // 
             // dtpFechaDevolucion
             // 
-            dtpFechaDevolucion.Format = DateTimePickerFormat.Short;
-            dtpFechaDevolucion.Location = new Point(475, 67);
+            dtpFechaDevolucion.CustomFormat = "dd/MM/yyyy";
+            dtpFechaDevolucion.Format = DateTimePickerFormat.Custom;
+            dtpFechaDevolucion.Location = new Point(592, 67);
             dtpFechaDevolucion.Name = "dtpFechaDevolucion";
-            dtpFechaDevolucion.Size = new Size(180, 23);
+            dtpFechaDevolucion.Size = new Size(200, 23);
             dtpFechaDevolucion.TabIndex = 7;
             // 
             // lblObservaciones
@@ -164,17 +172,27 @@
             // 
             // txtObservaciones
             // 
-            txtObservaciones.Location = new Point(115, 107);
+            txtObservaciones.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtObservaciones.BackColor = Color.White;
+            txtObservaciones.FloatingLabelText = "";
+            txtObservaciones.Location = new Point(157, 110);
+            txtObservaciones.MaxLength = 32767;
+            txtObservaciones.MinimumSize = new Size(0, 32);
+            txtObservaciones.Multiline = false;
             txtObservaciones.Name = "txtObservaciones";
-            txtObservaciones.Size = new Size(540, 23);
+            txtObservaciones.Padding = new Padding(0, 0, 0, 4);
+            txtObservaciones.PasswordChar = '\0';
+            txtObservaciones.PlaceholderText = "";
+            txtObservaciones.ReadOnly = false;
+            txtObservaciones.SelectionStart = 0;
+            txtObservaciones.Size = new Size(540, 32);
             txtObservaciones.TabIndex = 9;
+            txtObservaciones.UseFloatingLabel = false;
             // 
             // grpHerramientas
             // 
-            grpHerramientas.Controls.Add(dgvDisponibles);
-            grpHerramientas.Controls.Add(dgvSeleccionadas);
-            grpHerramientas.Controls.Add(btnAgregar);
-            grpHerramientas.Controls.Add(btnQuitar);
+            grpHerramientas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            grpHerramientas.Controls.Add(tlpHerramientas);
             grpHerramientas.Location = new Point(20, 238);
             grpHerramientas.Name = "grpHerramientas";
             grpHerramientas.Size = new Size(880, 340);
@@ -182,67 +200,125 @@
             grpHerramientas.TabStop = false;
             grpHerramientas.Text = "Selección de Herramientas";
             // 
+            // tlpHerramientas
+            // 
+            tlpHerramientas.ColumnCount = 3;
+            tlpHerramientas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+            tlpHerramientas.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90F));
+            tlpHerramientas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+            tlpHerramientas.Controls.Add(dgvDisponibles, 0, 0);
+            tlpHerramientas.Controls.Add(pnlBotonesTransferencia, 1, 0);
+            tlpHerramientas.Controls.Add(dgvSeleccionadas, 2, 0);
+            tlpHerramientas.Dock = DockStyle.Fill;
+            tlpHerramientas.Location = new Point(3, 19);
+            tlpHerramientas.Name = "tlpHerramientas";
+            tlpHerramientas.Padding = new Padding(7, 6, 7, 6);
+            tlpHerramientas.RowCount = 1;
+            tlpHerramientas.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpHerramientas.Size = new Size(874, 318);
+            tlpHerramientas.TabIndex = 0;
+            // 
             // dgvDisponibles
             // 
             dgvDisponibles.AllowUserToAddRows = false;
             dgvDisponibles.AllowUserToDeleteRows = false;
             dgvDisponibles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvDisponibles.Location = new Point(10, 25);
+            dgvDisponibles.Dock = DockStyle.Fill;
+            dgvDisponibles.Location = new Point(10, 9);
+            dgvDisponibles.Margin = new Padding(3, 3, 6, 3);
             dgvDisponibles.MultiSelect = false;
             dgvDisponibles.Name = "dgvDisponibles";
             dgvDisponibles.ReadOnly = true;
             dgvDisponibles.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDisponibles.Size = new Size(380, 300);
+            dgvDisponibles.Size = new Size(376, 300);
             dgvDisponibles.TabIndex = 0;
+            // 
+            // pnlBotonesTransferencia
+            // 
+            pnlBotonesTransferencia.Anchor = AnchorStyles.None;
+            pnlBotonesTransferencia.Controls.Add(btnAgregar);
+            pnlBotonesTransferencia.Controls.Add(btnQuitar);
+            pnlBotonesTransferencia.Location = new Point(399, 113);
+            pnlBotonesTransferencia.Margin = new Padding(0);
+            pnlBotonesTransferencia.Name = "pnlBotonesTransferencia";
+            pnlBotonesTransferencia.Size = new Size(75, 91);
+            pnlBotonesTransferencia.TabIndex = 1;
+            // 
+            // btnAgregar
+            // 
+            btnAgregar.CornerRadius = 8;
+            btnAgregar.FlatStyle = FlatStyle.Flat;
+            btnAgregar.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
+            btnAgregar.Icon = FontAwesome.Sharp.IconChar.ArrowRight;
+            btnAgregar.IconColor = null;
+            btnAgregar.IconSize = 22;
+            btnAgregar.Location = new Point(0, 0);
+            btnAgregar.Name = "btnAgregar";
+            btnAgregar.Size = new Size(75, 38);
+            btnAgregar.TabIndex = 0;
+            btnAgregar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            // 
+            // btnQuitar
+            // 
+            btnQuitar.CornerRadius = 8;
+            btnQuitar.FlatStyle = FlatStyle.Flat;
+            btnQuitar.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
+            btnQuitar.Icon = FontAwesome.Sharp.IconChar.ArrowLeft;
+            btnQuitar.IconColor = null;
+            btnQuitar.IconSize = 22;
+            btnQuitar.Location = new Point(0, 53);
+            btnQuitar.Name = "btnQuitar";
+            btnQuitar.Size = new Size(75, 38);
+            btnQuitar.TabIndex = 1;
+            btnQuitar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
             // 
             // dgvSeleccionadas
             // 
             dgvSeleccionadas.AllowUserToAddRows = false;
             dgvSeleccionadas.AllowUserToDeleteRows = false;
             dgvSeleccionadas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvSeleccionadas.Location = new Point(480, 25);
+            dgvSeleccionadas.Dock = DockStyle.Fill;
+            dgvSeleccionadas.Location = new Point(488, 9);
+            dgvSeleccionadas.Margin = new Padding(6, 3, 3, 3);
             dgvSeleccionadas.MultiSelect = false;
             dgvSeleccionadas.Name = "dgvSeleccionadas";
             dgvSeleccionadas.ReadOnly = true;
             dgvSeleccionadas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvSeleccionadas.Size = new Size(390, 300);
+            dgvSeleccionadas.Size = new Size(376, 300);
             dgvSeleccionadas.TabIndex = 1;
-            // 
-            // btnAgregar
-            // 
-            btnAgregar.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnAgregar.Location = new Point(398, 120);
-            btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(75, 38);
-            btnAgregar.TabIndex = 2;
-            btnAgregar.Text = ">>";
-            // 
-            // btnQuitar
-            // 
-            btnQuitar.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnQuitar.Location = new Point(398, 175);
-            btnQuitar.Name = "btnQuitar";
-            btnQuitar.Size = new Size(75, 38);
-            btnQuitar.TabIndex = 3;
-            btnQuitar.Text = "<<";
+            dgvSeleccionadas.CellContentClick += dgvSeleccionadas_CellContentClick;
             // 
             // btnGuardar
             // 
-            btnGuardar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnGuardar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnGuardar.CornerRadius = 8;
+            btnGuardar.FlatStyle = FlatStyle.Flat;
+            btnGuardar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnGuardar.Icon = FontAwesome.Sharp.IconChar.Save;
+            btnGuardar.IconColor = null;
+            btnGuardar.IconSize = 22;
             btnGuardar.Location = new Point(640, 590);
             btnGuardar.Name = "btnGuardar";
             btnGuardar.Size = new Size(120, 40);
             btnGuardar.TabIndex = 3;
             btnGuardar.Text = "Guardar";
+            btnGuardar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
             // 
             // btnCancelar
             // 
-            btnCancelar.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnCancelar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancelar.CornerRadius = 8;
+            btnCancelar.FlatStyle = FlatStyle.Flat;
+            btnCancelar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnCancelar.Icon = FontAwesome.Sharp.IconChar.Close;
+            btnCancelar.IconColor = null;
+            btnCancelar.IconSize = 22;
             btnCancelar.Location = new Point(775, 590);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(120, 40);
             btnCancelar.TabIndex = 4;
             btnCancelar.Text = "Cancelar";
+            btnCancelar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
             // 
             // FrmPrestamo
             // 
@@ -252,13 +328,16 @@
             Controls.Add(grpHerramientas);
             Controls.Add(btnGuardar);
             Controls.Add(btnCancelar);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "FrmPrestamo";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Préstamos";
             grpPrestamo.ResumeLayout(false);
-            grpPrestamo.PerformLayout();
             grpHerramientas.ResumeLayout(false);
+            tlpHerramientas.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvDisponibles).EndInit();
+            pnlBotonesTransferencia.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvSeleccionadas).EndInit();
             ResumeLayout(false);
         }

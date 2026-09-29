@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lcZ3ePC4Hio=",
+  "dgSpecHash": "7L3t1Oyl2hY=",
   "success": true,
   "projectFilePath": "C:\\Users\\hecto\\source\\repos\\PromacoHerra\\PromacoHerra\\PromacoHerra.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "C:\\Users\\hecto\\.nuget\\packages\\documentformat.openxml\\3.1.1\\documentformat.openxml.3.1.1.nupkg.sha512",
     "C:\\Users\\hecto\\.nuget\\packages\\documentformat.openxml.framework\\3.1.1\\documentformat.openxml.framework.3.1.1.nupkg.sha512",
     "C:\\Users\\hecto\\.nuget\\packages\\excelnumberformat\\1.1.0\\excelnumberformat.1.1.0.nupkg.sha512",
+    "C:\\Users\\hecto\\.nuget\\packages\\fontawesome.sharp\\6.6.0\\fontawesome.sharp.6.6.0.nupkg.sha512",
     "C:\\Users\\hecto\\.nuget\\packages\\itext\\9.5.0\\itext.9.5.0.nupkg.sha512",
     "C:\\Users\\hecto\\.nuget\\packages\\itext.bouncy-castle-adapter\\9.5.0\\itext.bouncy-castle-adapter.9.5.0.nupkg.sha512",
     "C:\\Users\\hecto\\.nuget\\packages\\itext.commons\\9.5.0\\itext.commons.9.5.0.nupkg.sha512",

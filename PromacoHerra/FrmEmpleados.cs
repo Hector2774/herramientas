@@ -58,7 +58,7 @@ namespace PromacoHerra
             finally
             {
                 btnSincronizar.Enabled = true;
-                btnSincronizar.Text = "⟳  Sincronizar empleados";
+                btnSincronizar.Text = "Sincronizar empleados";
             }
         }
 

@@ -13,10 +13,10 @@ namespace PromacoHerra
         private System.ComponentModel.IContainer components = null;
 
         private System.Windows.Forms.Label lblTitulo;
-        private System.Windows.Forms.Button btnSincronizar;
+        private PromacoHerra.Controls.MaterialButton btnSincronizar;
         private System.Windows.Forms.Label lblSincronizacion;
         private System.Windows.Forms.Label lblBuscar;
-        private System.Windows.Forms.TextBox txtBuscar;
+        private PromacoHerra.Controls.MaterialTextBox txtBuscar;
         private System.Windows.Forms.DataGridView dgvEmpleados;
 
         protected override void Dispose(bool disposing)
@@ -28,10 +28,10 @@ namespace PromacoHerra
         private void InitializeComponent()
         {
             lblTitulo = new System.Windows.Forms.Label();
-            btnSincronizar = new System.Windows.Forms.Button();
+            btnSincronizar = new PromacoHerra.Controls.MaterialButton();
             lblSincronizacion = new System.Windows.Forms.Label();
             lblBuscar = new System.Windows.Forms.Label();
-            txtBuscar = new System.Windows.Forms.TextBox();
+            txtBuscar = new PromacoHerra.Controls.MaterialTextBox();
             dgvEmpleados = new System.Windows.Forms.DataGridView();
 
             ((System.ComponentModel.ISupportInitialize)dgvEmpleados).BeginInit();
@@ -39,17 +39,19 @@ namespace PromacoHerra
 
             // lblTitulo
             lblTitulo.Dock = System.Windows.Forms.DockStyle.Top;
-            lblTitulo.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
+            lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             lblTitulo.Size = new System.Drawing.Size(800, 60);
             lblTitulo.TabIndex = 0;
             lblTitulo.Text = "Empleados";
             lblTitulo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // btnSincronizar
+            btnSincronizar.Icon = FontAwesome.Sharp.IconChar.SyncAlt;
+            btnSincronizar.IconSize = 22;
             btnSincronizar.Location = new System.Drawing.Point(20, 75);
-            btnSincronizar.Size = new System.Drawing.Size(180, 36);
+            btnSincronizar.Size = new System.Drawing.Size(190, 36);
             btnSincronizar.TabIndex = 1;
-            btnSincronizar.Text = "⟳  Sincronizar empleados";
+            btnSincronizar.Text = "Sincronizar empleados";
 
             // lblSincronizacion
             lblSincronizacion.Location = new System.Drawing.Point(215, 83);
@@ -73,12 +75,13 @@ namespace PromacoHerra
             // dgvEmpleados
             dgvEmpleados.AllowUserToAddRows = false;
             dgvEmpleados.AllowUserToDeleteRows = false;
+            dgvEmpleados.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dgvEmpleados.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             dgvEmpleados.Location = new System.Drawing.Point(20, 162);
             dgvEmpleados.MultiSelect = false;
             dgvEmpleados.ReadOnly = true;
             dgvEmpleados.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dgvEmpleados.Size = new System.Drawing.Size(740, 300);
+            dgvEmpleados.Size = new System.Drawing.Size(760, 318);
             dgvEmpleados.TabIndex = 5;
 
             // FrmEmpleados
@@ -89,6 +92,8 @@ namespace PromacoHerra
             Controls.Add(lblBuscar);
             Controls.Add(txtBuscar);
             Controls.Add(dgvEmpleados);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "FrmEmpleados";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Empleados";

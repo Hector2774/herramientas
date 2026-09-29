@@ -376,6 +376,7 @@ namespace PromacoHerra
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect
             };
             frmHistorial.Controls.Add(dgv);
+            ThemeManager.ApplyTheme(frmHistorial);
             frmHistorial.ShowDialog(this);
         }
 
@@ -404,5 +405,15 @@ namespace PromacoHerra
         private void OK(string m) => MessageBox.Show(m, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void Error(string m) => MessageBox.Show(m, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         private DialogResult Confirmar(string m) => MessageBox.Show(m, "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+        private void dgvHerramientas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void cboHerramientaMant_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

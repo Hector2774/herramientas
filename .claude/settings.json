@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "mssql": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@launchscout/mssql-mcp-server"
+      ],
+      "env": {
+        "MSSQL_SERVER": "localhost",
+        "MSSQL_DATABASE": "PROMACO_Herramientas",
+        "MSSQL_TRUSTED_CONNECTION": "true"
+      }
+    }
+  }
+}

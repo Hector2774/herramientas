@@ -5,10 +5,10 @@
         private System.ComponentModel.IContainer components = null;
 
         // Tus controles solicitados
-        private System.Windows.Forms.TextBox txtUsuario;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.Button btnSalir;
+        private PromacoHerra.Controls.MaterialTextBox txtUsuario;
+        private PromacoHerra.Controls.MaterialTextBox txtPassword;
+        private PromacoHerra.Controls.MaterialButton btnLogin;
+        private PromacoHerra.Controls.MaterialButton btnSalir;
 
         // Controles de diseño adicionales
         private PromacoHerra.RoundedPanel panelLogin;
@@ -30,11 +30,11 @@
             this.panelLogin = new PromacoHerra.RoundedPanel();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblUsuario = new System.Windows.Forms.Label();
-            this.txtUsuario = new System.Windows.Forms.TextBox();
+            this.txtUsuario = new PromacoHerra.Controls.MaterialTextBox();
             this.lblPassword = new System.Windows.Forms.Label();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.btnLogin = new System.Windows.Forms.Button();
-            this.btnSalir = new System.Windows.Forms.Button();
+            this.txtPassword = new PromacoHerra.Controls.MaterialTextBox();
+            this.btnLogin = new PromacoHerra.Controls.MaterialButton();
+            this.btnSalir = new PromacoHerra.Controls.MaterialButton();
 
             this.panelLogin.SuspendLayout();
             this.SuspendLayout();
@@ -60,7 +60,7 @@
             // lblTitulo
             // 
             this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.Location = new System.Drawing.Point(85, 40);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(180, 32);
@@ -71,7 +71,7 @@
             // lblUsuario
             // 
             this.lblUsuario.AutoSize = true;
-            this.lblUsuario.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblUsuario.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
             this.lblUsuario.Location = new System.Drawing.Point(40, 110);
             this.lblUsuario.Name = "lblUsuario";
             this.lblUsuario.Size = new System.Drawing.Size(60, 19);
@@ -80,7 +80,7 @@
             // 
             // txtUsuario
             // 
-            this.txtUsuario.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtUsuario.Font = new System.Drawing.Font("Segoe UI", 12.5F);
             this.txtUsuario.Location = new System.Drawing.Point(40, 135);
             this.txtUsuario.Name = "txtUsuario";
             this.txtUsuario.Size = new System.Drawing.Size(270, 27);
@@ -90,7 +90,7 @@
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 11.5F, System.Drawing.FontStyle.Bold);
             this.lblPassword.Location = new System.Drawing.Point(40, 190);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(84, 19);
@@ -99,7 +99,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 12.5F);
             this.txtPassword.Location = new System.Drawing.Point(40, 215);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '●'; // Ocultar caracteres
@@ -109,7 +109,9 @@
             // 
             // btnLogin
             // 
-            this.btnLogin.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnLogin.Font = new System.Drawing.Font("Segoe UI", 12.5F, System.Drawing.FontStyle.Bold);
+            this.btnLogin.Icon = FontAwesome.Sharp.IconChar.SignInAlt;
+            this.btnLogin.IconSize = 26;
             this.btnLogin.Location = new System.Drawing.Point(40, 280);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(270, 45);
@@ -120,7 +122,9 @@
             // 
             // btnSalir
             // 
-            this.btnSalir.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.btnSalir.Font = new System.Drawing.Font("Segoe UI", 11.5F);
+            this.btnSalir.Icon = FontAwesome.Sharp.IconChar.SignOutAlt;
+            this.btnSalir.IconSize = 26;
             this.btnSalir.Location = new System.Drawing.Point(40, 340);
             this.btnSalir.Name = "btnSalir";
             this.btnSalir.Size = new System.Drawing.Size(270, 40);

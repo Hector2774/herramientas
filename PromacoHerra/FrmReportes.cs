@@ -23,13 +23,14 @@ namespace PromacoHerra
             btnGenerar.Click += btnGenerar_Click;
             btnExcel.Click += btnExcel_Click;
             btnPDF.Click += btnPDF_Click;
+            btnEmpleadoTodos.Click += (s, e) => pickerEmpleado.EstablecerTodos();
         }
 
         // ── Carga inicial ──────────────────────────────────────────
         private void FrmReportes_Load(object sender, EventArgs e)
         {
             CargarTiposReporte();
-            CargarEmpleados();
+            pickerEmpleado.EstablecerTodos();
             CargarHerramientas();
             CargarResumen();
 
@@ -49,23 +50,6 @@ namespace PromacoHerra
             cboTipoReporte.Items.Add("Herramientas dañadas");
             cboTipoReporte.Items.Add("Costos de mantenimiento");
             cboTipoReporte.SelectedIndex = 0;
-        }
-
-        private void CargarEmpleados()
-        {
-            var dt = Db.Query(
-                "SELECT EmpleadoId, Nombre FROM Empleado WHERE Activo = 1 ORDER BY Nombre");
-
-            var dtFinal = dt.Clone();
-            var filaTodos = dtFinal.NewRow();
-            filaTodos["EmpleadoId"] = 0;
-            filaTodos["Nombre"] = "Todos";
-            dtFinal.Rows.Add(filaTodos);
-            foreach (DataRow row in dt.Rows) dtFinal.ImportRow(row);
-
-            cboEmpleado.DataSource = dtFinal;
-            cboEmpleado.DisplayMember = "Nombre";
-            cboEmpleado.ValueMember = "EmpleadoId";
         }
 
         private void CargarHerramientas()
@@ -102,7 +86,7 @@ namespace PromacoHerra
         // ── Botón Generar ──────────────────────────────────────────
         private void btnGenerar_Click(object sender, EventArgs e)
         {
-            int? empleadoId = Convert.ToInt32(cboEmpleado.SelectedValue) == 0 ? null : Convert.ToInt32(cboEmpleado.SelectedValue);
+            int? empleadoId = pickerEmpleado.EmpleadoId == 0 ? null : pickerEmpleado.EmpleadoId;
             int? herramientaId = Convert.ToInt32(cboHerramienta.SelectedValue) == 0 ? null : Convert.ToInt32(cboHerramienta.SelectedValue);
             DateTime desde = dtpDesde.Value.Date;
             DateTime hasta = dtpHasta.Value.Date;

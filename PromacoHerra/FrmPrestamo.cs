@@ -24,7 +24,6 @@ namespace PromacoHerra
         // ── Carga inicial ──────────────────────────────────────────
         private void FrmPrestamo_Load(object sender, EventArgs e)
         {
-            CargarEmpleados();
             CargarHerramientasDisponibles();
             InicializarGridSeleccionadas();
 
@@ -34,24 +33,6 @@ namespace PromacoHerra
             // Fecha devolución por defecto = 7 días adelante
             dtpFechaDevolucion.Value = DateTime.Now.AddDays(7);
             dtpFechaDevolucion.MinDate = DateTime.Now.AddDays(1);
-        }
-
-        // ── Cargar combos ──────────────────────────────────────────
-        private void CargarEmpleados()
-        {
-            var dt = EmpleadoService_Local.ObtenerParaCombo();
-
-            // Empleado solicitante
-            cboEmpleado.DataSource = dt;
-            cboEmpleado.DisplayMember = "Nombre";
-            cboEmpleado.ValueMember = "EmpleadoId";
-            cboEmpleado.SelectedIndex = -1;
-
-            // Aprobador — misma fuente, DataTable clonada para ser independiente
-            cboAprobadoPor.DataSource = dt.Copy();
-            cboAprobadoPor.DisplayMember = "Nombre";
-            cboAprobadoPor.ValueMember = "EmpleadoId";
-            cboAprobadoPor.SelectedIndex = -1;
         }
 
         private void CargarHerramientasDisponibles()
@@ -141,21 +122,21 @@ namespace PromacoHerra
         private void btnGuardar_Click(object sender, EventArgs e)
         {
             // Validaciones
-            if (cboEmpleado.SelectedValue == null)
+            if (pickerEmpleado.EmpleadoId == 0)
             {
                 MessageBox.Show("Seleccione el empleado solicitante.", "Campo requerido",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (cboAprobadoPor.SelectedValue == null)
+            if (pickerAprobador.EmpleadoId == 0)
             {
                 MessageBox.Show("Seleccione quién aprueba el préstamo.", "Campo requerido",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (cboEmpleado.SelectedValue.ToString() == cboAprobadoPor.SelectedValue.ToString())
+            if (pickerEmpleado.EmpleadoId == pickerAprobador.EmpleadoId)
             {
                 MessageBox.Show("El empleado no puede aprobar su propio préstamo.", "Validación",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -185,8 +166,8 @@ namespace PromacoHerra
             try
             {
                 int prestamoId = PrestamoService.Registrar(
-                    empleadoId: Convert.ToInt32(cboEmpleado.SelectedValue),
-                    aprobadoPorId: Convert.ToInt32(cboAprobadoPor.SelectedValue),
+                    empleadoId: pickerEmpleado.EmpleadoId,
+                    aprobadoPorId: pickerAprobador.EmpleadoId,
                     fechaDevolucionEsperada: dtpFechaDevolucion.Value,
                     observaciones: txtObservaciones.Text.Trim(),
                     herramientaIds: ids);
@@ -214,8 +195,8 @@ namespace PromacoHerra
         // ── Helpers ────────────────────────────────────────────────
         private void LimpiarFormulario()
         {
-            cboEmpleado.SelectedIndex = -1;
-            cboAprobadoPor.SelectedIndex = -1;
+            pickerEmpleado.Limpiar();
+            pickerAprobador.Limpiar();
             txtObservaciones.Clear();
             dtpFecha.Value = DateTime.Now;
             dtpFechaDevolucion.Value = DateTime.Now.AddDays(7);
@@ -235,15 +216,15 @@ namespace PromacoHerra
             if (dgv.Columns.Contains(nombre))
                 dgv.Columns[nombre].HeaderText = header;
         }
-    }
 
-    // ── Helper local para el ComboBox de empleados ─────────────────
-    // Usa Db.Query directamente porque solo necesita Id y Nombre,
-    // sin pasar por el EmpleadoService completo.
-    internal static class EmpleadoService_Local
-    {
-        public static System.Data.DataTable ObtenerParaCombo() =>
-            PromacoHerra.Data.Db.Query(
-                "SELECT EmpleadoId, Nombre FROM Empleado WHERE Activo = 1 ORDER BY Nombre");
+        private void dgvSeleccionadas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void grpPrestamo_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }
