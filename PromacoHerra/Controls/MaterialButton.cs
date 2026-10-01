@@ -13,7 +13,8 @@ namespace PromacoHerra.Controls
         Primary,
         Secondary,
         Danger,
-        Sidebar
+        Sidebar,
+        Success
     }
 
     // Button plano, sin relieve 3D, con esquinas redondeadas recortadas de verdad (Region)
@@ -131,6 +132,10 @@ namespace PromacoHerra.Controls
                 case MaterialButtonVariant.Primary:
                     return (ThemeManager.AccentBlue, ThemeManager.TextOnDark,
                             Color.Transparent, Color.FromArgb(0, 65, 150));
+
+                case MaterialButtonVariant.Success:
+                    return (ThemeManager.SuccessGreen, ThemeManager.TextOnDark,
+                            Color.Transparent, Color.FromArgb(21, 128, 61));
 
                 case MaterialButtonVariant.Danger:
                     return (Color.FromArgb(254, 242, 242), ThemeManager.DangerRed,

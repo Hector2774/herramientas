@@ -4,88 +4,107 @@
     {
         private System.ComponentModel.IContainer components = null;
 
-        // Título
+        // ── Encabezado ──
+        private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Label lblTitulo;
-        private System.Windows.Forms.TabControl tabControl;
+        private System.Windows.Forms.FlowLayoutPanel flpHeaderAcciones;
+        private PromacoHerra.Controls.MaterialButton btnNuevaHerramienta;
+        private PromacoHerra.Controls.MaterialButton btnDarDeBaja;
+        private System.Windows.Forms.TabControl tabMain;
         private System.Windows.Forms.TabPage tabHerramientas;
-        private System.Windows.Forms.TabPage tabCategorias;
-        private System.Windows.Forms.TabPage tabMarcas;
+        private System.Windows.Forms.TabPage tabCatalogos;
         private System.Windows.Forms.TabPage tabMantenimiento;
 
-        // ── TAB HERRAMIENTAS ──────────────────────────────────────
-        private System.Windows.Forms.GroupBox grpDatos;
-        private System.Windows.Forms.Label lblCodigo;
-        private PromacoHerra.Controls.MaterialTextBox txtCodigo;
-        private System.Windows.Forms.Label lblNombre;
-        private PromacoHerra.Controls.MaterialTextBox txtNombre;
-        private System.Windows.Forms.Label lblCategoria;
-        private PromacoHerra.Controls.MaterialComboBox cboCategoria;
-        private System.Windows.Forms.Label lblMarca;
-        private PromacoHerra.Controls.MaterialComboBox cboMarca;
-        private System.Windows.Forms.Label lblUbicacion;
-        private PromacoHerra.Controls.MaterialComboBox cboUbicacion;
-        private System.Windows.Forms.Label lblStockTotal;
-        private System.Windows.Forms.NumericUpDown nudStockTotal;
-        private System.Windows.Forms.Label lblCaracteristicas;
-        private PromacoHerra.Controls.MaterialTextBox txtCaracteristicas;
-        private PromacoHerra.Controls.MaterialButton btnNuevo;
-        private PromacoHerra.Controls.MaterialButton btnGuardar;
-        private PromacoHerra.Controls.MaterialButton btnEditar;
-        private PromacoHerra.Controls.MaterialButton btnCancelar;
-        private PromacoHerra.Controls.MaterialButton btnEliminar;
-        private System.Windows.Forms.Label lblBuscar;
-        private PromacoHerra.Controls.MaterialTextBox txtBuscar;
+        // ── Tab Herramientas: lista ──
+        private System.Windows.Forms.SplitContainer splitHerramientas;
+        private System.Windows.Forms.TableLayoutPanel tlpLista;
+        private System.Windows.Forms.Panel pnlBuscarH;
+        private FontAwesome.Sharp.IconPictureBox icoBuscarH;
+        private PromacoHerra.Controls.MaterialTextBox txtBuscarH;
+        private System.Windows.Forms.FlowLayoutPanel flpChips;
+        private System.Windows.Forms.ListBox lstHerramientas;
+        private System.Windows.Forms.Label lblListaVacia;
 
-        // ── TAB CATEGORÍAS ────────────────────────────────────────
-        private System.Windows.Forms.GroupBox grpDatosCategoria;
-        private System.Windows.Forms.Label lblNombreCategoria;
-        private PromacoHerra.Controls.MaterialTextBox txtNombreCategoria;
-        private System.Windows.Forms.Label lblDescCategoria;
-        private PromacoHerra.Controls.MaterialTextBox txtDescCategoria;
-        private PromacoHerra.Controls.MaterialButton btnNuevoCategoria;
-        private PromacoHerra.Controls.MaterialButton btnGuardarCategoria;
-        private PromacoHerra.Controls.MaterialButton btnEditarCategoria;
-        private PromacoHerra.Controls.MaterialButton btnCancelarCategoria;
-        private PromacoHerra.Controls.MaterialButton btnEliminarCategoria;
-        private System.Windows.Forms.DataGridView dgvCategorias;
+        // ── Tab Herramientas: detalle ──
+        private System.Windows.Forms.Label lblSeleccionaHerramienta;
+        private System.Windows.Forms.Panel pnlDetalle;
+        private System.Windows.Forms.Panel pnlDetalleFooter;
+        private PromacoHerra.Controls.MaterialButton btnGuardarH;
+        private PromacoHerra.Controls.MaterialButton btnCancelarH;
+        private System.Windows.Forms.Panel pnlDetalleScroll;
+        private System.Windows.Forms.TableLayoutPanel tlpDetalle;
+        private System.Windows.Forms.Panel pnlDetHeader;
+        private System.Windows.Forms.Label lblNombreDet;
+        private System.Windows.Forms.Label lblCodigoDet;
+        private PromacoHerra.Controls.MaterialButton btnUnidades;
+        private System.Windows.Forms.TableLayoutPanel tlpTiles;
+        private PromacoHerra.Controls.StockTile tileTotal;
+        private PromacoHerra.Controls.StockTile tileDisponibles;
+        private PromacoHerra.Controls.StockTile tilePrestadas;
+        private PromacoHerra.Controls.StockTile tileMantenimiento;
+        private PromacoHerra.Controls.StockTile tileDañadas;
+        private System.Windows.Forms.TableLayoutPanel tlpForm;
+        private System.Windows.Forms.Label lblCodigoF;
+        private PromacoHerra.Controls.MaterialTextBox txtCodigoF;
+        private System.Windows.Forms.Label lblUbicacionF;
+        private PromacoHerra.Controls.MaterialComboBox cboUbicacionF;
+        private System.Windows.Forms.Label lblNombreF;
+        private PromacoHerra.Controls.MaterialTextBox txtNombreF;
+        private System.Windows.Forms.Label lblCategoriaF;
+        private PromacoHerra.Controls.MaterialComboBox cboCategoriaF;
+        private System.Windows.Forms.Label lblMarcaF;
+        private PromacoHerra.Controls.MaterialComboBox cboMarcaF;
+        private System.Windows.Forms.Label lblStockInicialF;
+        private System.Windows.Forms.NumericUpDown nudStockInicial;
+        private System.Windows.Forms.Label lblCaracteristicasF;
+        private System.Windows.Forms.TextBox txtCaracteristicasF;
+        private System.Windows.Forms.Panel pnlUnidadesHeader;
+        private System.Windows.Forms.Label lblUnidadesTitulo;
+        private System.Windows.Forms.LinkLabel lnkVerTodas;
+        private System.Windows.Forms.DataGridView dgvUnidadesMini;
 
-        // ── TAB MARCAS ────────────────────────────────────────────
-        private System.Windows.Forms.GroupBox grpDatosMarca;
-        private System.Windows.Forms.Label lblNombreMarca;
-        private PromacoHerra.Controls.MaterialTextBox txtNombreMarca;
-        private System.Windows.Forms.Label lblDescMarca;
-        private PromacoHerra.Controls.MaterialTextBox txtDescMarca;
-        private PromacoHerra.Controls.MaterialButton btnNuevoMarca;
-        private PromacoHerra.Controls.MaterialButton btnGuardarMarca;
-        private PromacoHerra.Controls.MaterialButton btnEditarMarca;
-        private PromacoHerra.Controls.MaterialButton btnCancelarMarca;
-        private PromacoHerra.Controls.MaterialButton btnEliminarMarca;
-        private System.Windows.Forms.DataGridView dgvMarcas;
+        // ── Tab Catálogos ──
+        private System.Windows.Forms.TableLayoutPanel tlpCatalogos;
+        private PromacoHerra.Controls.SegmentedControl segCatalogo;
+        private System.Windows.Forms.FlowLayoutPanel flpCatForm;
+        private PromacoHerra.Controls.MaterialTextBox txtCatNombre;
+        private PromacoHerra.Controls.MaterialTextBox txtCatDescripcion;
+        private PromacoHerra.Controls.MaterialButton btnCatAgregar;
+        private PromacoHerra.Controls.MaterialButton btnCatGuardar;
+        private PromacoHerra.Controls.MaterialButton btnCatEliminar;
+        private System.Windows.Forms.LinkLabel lnkCatCancelar;
+        private System.Windows.Forms.DataGridView dgvCatalogo;
 
-        // ── TAB MANTENIMIENTO ─────────────────────────────────────
-        // Grid superior — mantenimientos activos
-        private System.Windows.Forms.GroupBox grpMantenimientosActivos;
-        private System.Windows.Forms.DataGridView dgvMantenimientos;
-        // Panel inferior — acciones
-        private System.Windows.Forms.GroupBox grpAccionMantenimiento;
-        // Abrir mantenimiento
-        private System.Windows.Forms.Label lblHerramientaMant;
-        private PromacoHerra.Controls.MaterialComboBox cboHerramientaMant;
+        // ── Tab Mantenimiento ──
+        private System.Windows.Forms.TableLayoutPanel tlpMant;
+        private System.Windows.Forms.FlowLayoutPanel flpMantTop;
+        private PromacoHerra.Controls.MaterialTextBox txtBuscarMant;
+        private PromacoHerra.Controls.ChipLabel chipMantActivos;
+        private System.Windows.Forms.DataGridView dgvMant;
+        private PromacoHerra.RoundedPanel pnlAccionesMant;
+        private PromacoHerra.Controls.MaterialButton btnNuevoMant;
+        private System.Windows.Forms.Panel pnlAbrirMant;
+        private System.Windows.Forms.Label lblAbrirTitulo;
+        private System.Windows.Forms.TableLayoutPanel tlpAbrir;
+        private System.Windows.Forms.Label lblUnidadMant;
+        private PromacoHerra.Controls.MaterialComboBox cboUnidadMant;
         private System.Windows.Forms.Label lblTipoMant;
         private PromacoHerra.Controls.MaterialComboBox cboTipoMant;
         private System.Windows.Forms.Label lblRealizadoPor;
         private PromacoHerra.Controls.MaterialTextBox txtRealizadoPor;
         private System.Windows.Forms.Label lblDescMant;
         private PromacoHerra.Controls.MaterialTextBox txtDescMant;
-        private PromacoHerra.Controls.MaterialButton btnAbrirMantenimiento;
-        // Cerrar mantenimiento
+        private PromacoHerra.Controls.MaterialButton btnAbrirMant;
+        private System.Windows.Forms.Panel pnlCerrarMant;
+        private System.Windows.Forms.Label lblCerrarTitulo;
+        private System.Windows.Forms.Label lblCerrarInfo;
+        private System.Windows.Forms.TableLayoutPanel tlpCerrar;
         private System.Windows.Forms.Label lblCosto;
-        private PromacoHerra.Controls.MaterialTextBox txtCosto;
-        private System.Windows.Forms.Label lblDescCierre;
-        private PromacoHerra.Controls.MaterialTextBox txtDescCierre;
-        private PromacoHerra.Controls.MaterialButton btnCerrarMantenimiento;
-        // Historial
-        private PromacoHerra.Controls.MaterialButton btnVerHistorial;
+        private System.Windows.Forms.NumericUpDown nudCosto;
+        private System.Windows.Forms.Label lblNotasCierre;
+        private PromacoHerra.Controls.MaterialTextBox txtNotasCierre;
+        private PromacoHerra.Controls.MaterialButton btnCerrarMant;
+        private System.Windows.Forms.LinkLabel lnkHistorial;
 
         protected override void Dispose(bool disposing)
         {
@@ -95,922 +114,1259 @@
 
         private void InitializeComponent()
         {
+            pnlHeader = new Panel();
             lblTitulo = new Label();
-            tabControl = new TabControl();
+            flpHeaderAcciones = new FlowLayoutPanel();
+            btnNuevaHerramienta = new PromacoHerra.Controls.MaterialButton();
+            btnDarDeBaja = new PromacoHerra.Controls.MaterialButton();
+            tabMain = new TabControl();
             tabHerramientas = new TabPage();
-            dgvHerramientas = new DataGridView();
-            grpDatos = new GroupBox();
-            lblCodigo = new Label();
-            txtCodigo = new PromacoHerra.Controls.MaterialTextBox();
-            lblNombre = new Label();
-            txtNombre = new PromacoHerra.Controls.MaterialTextBox();
-            lblCategoria = new Label();
-            cboCategoria = new PromacoHerra.Controls.MaterialComboBox();
-            lblMarca = new Label();
-            cboMarca = new PromacoHerra.Controls.MaterialComboBox();
-            lblUbicacion = new Label();
-            cboUbicacion = new PromacoHerra.Controls.MaterialComboBox();
-            lblStockTotal = new Label();
-            nudStockTotal = new NumericUpDown();
-            lblCaracteristicas = new Label();
-            txtCaracteristicas = new PromacoHerra.Controls.MaterialTextBox();
-            btnNuevo = new PromacoHerra.Controls.MaterialButton();
-            btnGuardar = new PromacoHerra.Controls.MaterialButton();
-            btnEditar = new PromacoHerra.Controls.MaterialButton();
-            btnCancelar = new PromacoHerra.Controls.MaterialButton();
-            btnEliminar = new PromacoHerra.Controls.MaterialButton();
-            lblBuscar = new Label();
-            txtBuscar = new PromacoHerra.Controls.MaterialTextBox();
-            tabCategorias = new TabPage();
-            grpDatosCategoria = new GroupBox();
-            lblNombreCategoria = new Label();
-            txtNombreCategoria = new PromacoHerra.Controls.MaterialTextBox();
-            lblDescCategoria = new Label();
-            txtDescCategoria = new PromacoHerra.Controls.MaterialTextBox();
-            btnNuevoCategoria = new PromacoHerra.Controls.MaterialButton();
-            btnGuardarCategoria = new PromacoHerra.Controls.MaterialButton();
-            btnEditarCategoria = new PromacoHerra.Controls.MaterialButton();
-            btnCancelarCategoria = new PromacoHerra.Controls.MaterialButton();
-            btnEliminarCategoria = new PromacoHerra.Controls.MaterialButton();
-            dgvCategorias = new DataGridView();
-            tabMarcas = new TabPage();
-            grpDatosMarca = new GroupBox();
-            lblNombreMarca = new Label();
-            txtNombreMarca = new PromacoHerra.Controls.MaterialTextBox();
-            lblDescMarca = new Label();
-            txtDescMarca = new PromacoHerra.Controls.MaterialTextBox();
-            btnNuevoMarca = new PromacoHerra.Controls.MaterialButton();
-            btnGuardarMarca = new PromacoHerra.Controls.MaterialButton();
-            btnEditarMarca = new PromacoHerra.Controls.MaterialButton();
-            btnCancelarMarca = new PromacoHerra.Controls.MaterialButton();
-            btnEliminarMarca = new PromacoHerra.Controls.MaterialButton();
-            dgvMarcas = new DataGridView();
+            splitHerramientas = new SplitContainer();
+            tlpLista = new TableLayoutPanel();
+            pnlBuscarH = new Panel();
+            txtBuscarH = new PromacoHerra.Controls.MaterialTextBox();
+            icoBuscarH = new FontAwesome.Sharp.IconPictureBox();
+            flpChips = new FlowLayoutPanel();
+            lstHerramientas = new ListBox();
+            lblListaVacia = new Label();
+            pnlDetalle = new Panel();
+            pnlDetalleScroll = new Panel();
+            tlpDetalle = new TableLayoutPanel();
+            pnlDetHeader = new Panel();
+            lblNombreDet = new Label();
+            lblCodigoDet = new Label();
+            btnUnidades = new PromacoHerra.Controls.MaterialButton();
+            tlpTiles = new TableLayoutPanel();
+            tileTotal = new PromacoHerra.Controls.StockTile();
+            tileDisponibles = new PromacoHerra.Controls.StockTile();
+            tilePrestadas = new PromacoHerra.Controls.StockTile();
+            tileMantenimiento = new PromacoHerra.Controls.StockTile();
+            tileDañadas = new PromacoHerra.Controls.StockTile();
+            tlpForm = new TableLayoutPanel();
+            lblCodigoF = new Label();
+            lblUbicacionF = new Label();
+            txtCodigoF = new PromacoHerra.Controls.MaterialTextBox();
+            cboUbicacionF = new PromacoHerra.Controls.MaterialComboBox();
+            lblNombreF = new Label();
+            txtNombreF = new PromacoHerra.Controls.MaterialTextBox();
+            lblCategoriaF = new Label();
+            lblMarcaF = new Label();
+            cboCategoriaF = new PromacoHerra.Controls.MaterialComboBox();
+            cboMarcaF = new PromacoHerra.Controls.MaterialComboBox();
+            lblStockInicialF = new Label();
+            nudStockInicial = new NumericUpDown();
+            lblCaracteristicasF = new Label();
+            txtCaracteristicasF = new TextBox();
+            pnlUnidadesHeader = new Panel();
+            lblUnidadesTitulo = new Label();
+            lnkVerTodas = new LinkLabel();
+            dgvUnidadesMini = new DataGridView();
+            pnlDetalleFooter = new Panel();
+            btnCancelarH = new PromacoHerra.Controls.MaterialButton();
+            btnGuardarH = new PromacoHerra.Controls.MaterialButton();
+            lblSeleccionaHerramienta = new Label();
+            tabCatalogos = new TabPage();
+            tlpCatalogos = new TableLayoutPanel();
+            segCatalogo = new PromacoHerra.Controls.SegmentedControl();
+            flpCatForm = new FlowLayoutPanel();
+            txtCatNombre = new PromacoHerra.Controls.MaterialTextBox();
+            txtCatDescripcion = new PromacoHerra.Controls.MaterialTextBox();
+            btnCatAgregar = new PromacoHerra.Controls.MaterialButton();
+            btnCatGuardar = new PromacoHerra.Controls.MaterialButton();
+            btnCatEliminar = new PromacoHerra.Controls.MaterialButton();
+            lnkCatCancelar = new LinkLabel();
+            dgvCatalogo = new DataGridView();
             tabMantenimiento = new TabPage();
-            grpMantenimientosActivos = new GroupBox();
-            dgvMantenimientos = new DataGridView();
-            grpAccionMantenimiento = new GroupBox();
-            lblHerramientaMant = new Label();
-            cboHerramientaMant = new PromacoHerra.Controls.MaterialComboBox();
+            tlpMant = new TableLayoutPanel();
+            flpMantTop = new FlowLayoutPanel();
+            txtBuscarMant = new PromacoHerra.Controls.MaterialTextBox();
+            chipMantActivos = new PromacoHerra.Controls.ChipLabel();
+            dgvMant = new DataGridView();
+            pnlAccionesMant = new RoundedPanel();
+            btnNuevoMant = new PromacoHerra.Controls.MaterialButton();
+            pnlAbrirMant = new Panel();
+            tlpAbrir = new TableLayoutPanel();
+            lblUnidadMant = new Label();
             lblTipoMant = new Label();
-            cboTipoMant = new PromacoHerra.Controls.MaterialComboBox();
             lblRealizadoPor = new Label();
-            txtRealizadoPor = new PromacoHerra.Controls.MaterialTextBox();
             lblDescMant = new Label();
+            cboUnidadMant = new PromacoHerra.Controls.MaterialComboBox();
+            cboTipoMant = new PromacoHerra.Controls.MaterialComboBox();
+            txtRealizadoPor = new PromacoHerra.Controls.MaterialTextBox();
             txtDescMant = new PromacoHerra.Controls.MaterialTextBox();
-            btnAbrirMantenimiento = new PromacoHerra.Controls.MaterialButton();
+            btnAbrirMant = new PromacoHerra.Controls.MaterialButton();
+            lblAbrirTitulo = new Label();
+            pnlCerrarMant = new Panel();
+            tlpCerrar = new TableLayoutPanel();
             lblCosto = new Label();
-            txtCosto = new PromacoHerra.Controls.MaterialTextBox();
-            lblDescCierre = new Label();
-            txtDescCierre = new PromacoHerra.Controls.MaterialTextBox();
-            btnCerrarMantenimiento = new PromacoHerra.Controls.MaterialButton();
-            btnVerHistorial = new PromacoHerra.Controls.MaterialButton();
-            lblSecAbrir = new Label();
-            divisor = new Label();
-            lblSecCerrar = new Label();
-            tabControl.SuspendLayout();
+            lblNotasCierre = new Label();
+            nudCosto = new NumericUpDown();
+            txtNotasCierre = new PromacoHerra.Controls.MaterialTextBox();
+            btnCerrarMant = new PromacoHerra.Controls.MaterialButton();
+            lnkHistorial = new LinkLabel();
+            lblCerrarInfo = new Label();
+            lblCerrarTitulo = new Label();
+            pnlHeader.SuspendLayout();
+            flpHeaderAcciones.SuspendLayout();
+            tabMain.SuspendLayout();
             tabHerramientas.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvHerramientas).BeginInit();
-            grpDatos.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)nudStockTotal).BeginInit();
-            tabCategorias.SuspendLayout();
-            grpDatosCategoria.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvCategorias).BeginInit();
-            tabMarcas.SuspendLayout();
-            grpDatosMarca.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvMarcas).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)splitHerramientas).BeginInit();
+            splitHerramientas.Panel1.SuspendLayout();
+            splitHerramientas.Panel2.SuspendLayout();
+            splitHerramientas.SuspendLayout();
+            tlpLista.SuspendLayout();
+            pnlBuscarH.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)icoBuscarH).BeginInit();
+            pnlDetalle.SuspendLayout();
+            pnlDetalleScroll.SuspendLayout();
+            tlpDetalle.SuspendLayout();
+            pnlDetHeader.SuspendLayout();
+            tlpTiles.SuspendLayout();
+            tlpForm.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudStockInicial).BeginInit();
+            pnlUnidadesHeader.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvUnidadesMini).BeginInit();
+            pnlDetalleFooter.SuspendLayout();
+            tabCatalogos.SuspendLayout();
+            tlpCatalogos.SuspendLayout();
+            flpCatForm.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvCatalogo).BeginInit();
             tabMantenimiento.SuspendLayout();
-            grpMantenimientosActivos.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvMantenimientos).BeginInit();
-            grpAccionMantenimiento.SuspendLayout();
+            tlpMant.SuspendLayout();
+            flpMantTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvMant).BeginInit();
+            pnlAccionesMant.SuspendLayout();
+            pnlAbrirMant.SuspendLayout();
+            tlpAbrir.SuspendLayout();
+            pnlCerrarMant.SuspendLayout();
+            tlpCerrar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCosto).BeginInit();
             SuspendLayout();
+            // 
+            // pnlHeader
+            // 
+            pnlHeader.Controls.Add(lblTitulo);
+            pnlHeader.Controls.Add(flpHeaderAcciones);
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.Padding = new Padding(20, 10, 20, 6);
+            pnlHeader.Size = new Size(1200, 64);
+            pnlHeader.TabIndex = 0;
             // 
             // lblTitulo
             // 
-            lblTitulo.Dock = DockStyle.Top;
+            lblTitulo.Dock = DockStyle.Fill;
             lblTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblTitulo.Location = new Point(0, 0);
+            lblTitulo.Location = new Point(20, 10);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(1269, 55);
+            lblTitulo.Size = new Size(794, 48);
             lblTitulo.TabIndex = 0;
-            lblTitulo.Text = "Gestión de Herramientas";
-            lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
+            lblTitulo.Text = "Herramientas";
+            lblTitulo.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // tabControl
+            // flpHeaderAcciones
             // 
-            tabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tabControl.Controls.Add(tabHerramientas);
-            tabControl.Controls.Add(tabCategorias);
-            tabControl.Controls.Add(tabMarcas);
-            tabControl.Controls.Add(tabMantenimiento);
-            tabControl.Font = new Font("Segoe UI", 11.5F);
-            tabControl.Location = new Point(12, 58);
-            tabControl.Name = "tabControl";
-            tabControl.SelectedIndex = 0;
-            tabControl.Size = new Size(1227, 916);
-            tabControl.TabIndex = 1;
+            flpHeaderAcciones.AutoSize = true;
+            flpHeaderAcciones.Controls.Add(btnNuevaHerramienta);
+            flpHeaderAcciones.Controls.Add(btnDarDeBaja);
+            flpHeaderAcciones.Dock = DockStyle.Right;
+            flpHeaderAcciones.FlowDirection = FlowDirection.RightToLeft;
+            flpHeaderAcciones.Location = new Point(814, 10);
+            flpHeaderAcciones.Name = "flpHeaderAcciones";
+            flpHeaderAcciones.Size = new Size(366, 48);
+            flpHeaderAcciones.TabIndex = 1;
+            flpHeaderAcciones.WrapContents = false;
+            // 
+            // btnNuevaHerramienta
+            // 
+            btnNuevaHerramienta.CornerRadius = 8;
+            btnNuevaHerramienta.FlatStyle = FlatStyle.Flat;
+            btnNuevaHerramienta.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnNuevaHerramienta.Icon = FontAwesome.Sharp.IconChar.Add;
+            btnNuevaHerramienta.IconColor = null;
+            btnNuevaHerramienta.IconSize = 16;
+            btnNuevaHerramienta.Location = new Point(166, 4);
+            btnNuevaHerramienta.Margin = new Padding(8, 4, 0, 0);
+            btnNuevaHerramienta.Name = "btnNuevaHerramienta";
+            btnNuevaHerramienta.Size = new Size(200, 40);
+            btnNuevaHerramienta.TabIndex = 0;
+            btnNuevaHerramienta.Text = "Nueva herramienta";
+            btnNuevaHerramienta.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            // 
+            // btnDarDeBaja
+            // 
+            btnDarDeBaja.CornerRadius = 8;
+            btnDarDeBaja.Enabled = false;
+            btnDarDeBaja.FlatStyle = FlatStyle.Flat;
+            btnDarDeBaja.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnDarDeBaja.Icon = FontAwesome.Sharp.IconChar.TrashAlt;
+            btnDarDeBaja.IconColor = null;
+            btnDarDeBaja.IconSize = 16;
+            btnDarDeBaja.Location = new Point(8, 4);
+            btnDarDeBaja.Margin = new Padding(8, 4, 0, 0);
+            btnDarDeBaja.Name = "btnDarDeBaja";
+            btnDarDeBaja.Size = new Size(150, 40);
+            btnDarDeBaja.TabIndex = 1;
+            btnDarDeBaja.Text = "Dar de baja";
+            btnDarDeBaja.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            // 
+            // tabMain
+            // 
+            tabMain.Controls.Add(tabHerramientas);
+            tabMain.Controls.Add(tabCatalogos);
+            tabMain.Controls.Add(tabMantenimiento);
+            tabMain.Dock = DockStyle.Fill;
+            tabMain.Location = new Point(0, 64);
+            tabMain.Name = "tabMain";
+            tabMain.SelectedIndex = 0;
+            tabMain.Size = new Size(1200, 656);
+            tabMain.TabIndex = 1;
             // 
             // tabHerramientas
             // 
-            tabHerramientas.Controls.Add(dgvHerramientas);
-            tabHerramientas.Controls.Add(grpDatos);
-            tabHerramientas.Controls.Add(lblBuscar);
-            tabHerramientas.Controls.Add(txtBuscar);
-            tabHerramientas.Location = new Point(4, 29);
+            tabHerramientas.Controls.Add(splitHerramientas);
+            tabHerramientas.Location = new Point(4, 24);
             tabHerramientas.Name = "tabHerramientas";
-            tabHerramientas.Padding = new Padding(8);
-            tabHerramientas.Size = new Size(1219, 883);
+            tabHerramientas.Size = new Size(1192, 628);
             tabHerramientas.TabIndex = 0;
-            tabHerramientas.Text = "  Herramientas  ";
-            // 
-            // dgvHerramientas
-            // 
-            dgvHerramientas.AllowUserToAddRows = false;
-            dgvHerramientas.AllowUserToDeleteRows = false;
-            dgvHerramientas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvHerramientas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvHerramientas.Location = new Point(8, 388);
-            dgvHerramientas.MultiSelect = false;
-            dgvHerramientas.Name = "dgvHerramientas";
-            dgvHerramientas.ReadOnly = true;
-            dgvHerramientas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvHerramientas.Size = new Size(1169, 484);
-            dgvHerramientas.TabIndex = 4;
-            // 
-            // grpDatos
-            // 
-            grpDatos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpDatos.Controls.Add(lblCodigo);
-            grpDatos.Controls.Add(txtCodigo);
-            grpDatos.Controls.Add(lblNombre);
-            grpDatos.Controls.Add(txtNombre);
-            grpDatos.Controls.Add(lblCategoria);
-            grpDatos.Controls.Add(cboCategoria);
-            grpDatos.Controls.Add(lblMarca);
-            grpDatos.Controls.Add(cboMarca);
-            grpDatos.Controls.Add(lblUbicacion);
-            grpDatos.Controls.Add(cboUbicacion);
-            grpDatos.Controls.Add(lblStockTotal);
-            grpDatos.Controls.Add(nudStockTotal);
-            grpDatos.Controls.Add(lblCaracteristicas);
-            grpDatos.Controls.Add(txtCaracteristicas);
-            grpDatos.Controls.Add(btnNuevo);
-            grpDatos.Controls.Add(btnGuardar);
-            grpDatos.Controls.Add(btnEditar);
-            grpDatos.Controls.Add(btnCancelar);
-            grpDatos.Controls.Add(btnEliminar);
-            grpDatos.Location = new Point(8, 8);
-            grpDatos.Name = "grpDatos";
-            grpDatos.Size = new Size(1197, 324);
-            grpDatos.TabIndex = 0;
-            grpDatos.TabStop = false;
-            grpDatos.Text = "Datos de la Herramienta";
-            // 
-            // lblCodigo
-            // 
-            lblCodigo.Location = new Point(17, 56);
-            lblCodigo.Name = "lblCodigo";
-            lblCodigo.Size = new Size(78, 23);
-            lblCodigo.TabIndex = 0;
-            lblCodigo.Text = "Código:";
-            // 
-            // txtCodigo
-            // 
-            txtCodigo.BackColor = Color.White;
-            txtCodigo.FloatingLabelText = "";
-            txtCodigo.Location = new Point(145, 56);
-            txtCodigo.MaxLength = 32767;
-            txtCodigo.MinimumSize = new Size(0, 38);
-            txtCodigo.Multiline = false;
-            txtCodigo.Name = "txtCodigo";
-            txtCodigo.Padding = new Padding(0, 0, 0, 4);
-            txtCodigo.PasswordChar = '\0';
-            txtCodigo.PlaceholderText = "";
-            txtCodigo.ReadOnly = false;
-            txtCodigo.SelectionStart = 0;
-            txtCodigo.Size = new Size(130, 38);
-            txtCodigo.TabIndex = 1;
-            txtCodigo.UseFloatingLabel = false;
-            // 
-            // lblNombre
-            // 
-            lblNombre.Location = new Point(407, 56);
-            lblNombre.Name = "lblNombre";
-            lblNombre.Size = new Size(76, 23);
-            lblNombre.TabIndex = 2;
-            lblNombre.Text = "Nombre:";
-            // 
-            // txtNombre
-            // 
-            txtNombre.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtNombre.BackColor = Color.White;
-            txtNombre.FloatingLabelText = "";
-            txtNombre.Location = new Point(489, 41);
-            txtNombre.MaxLength = 32767;
-            txtNombre.MinimumSize = new Size(0, 38);
-            txtNombre.Multiline = false;
-            txtNombre.Name = "txtNombre";
-            txtNombre.Padding = new Padding(0, 0, 0, 4);
-            txtNombre.PasswordChar = '\0';
-            txtNombre.PlaceholderText = "";
-            txtNombre.ReadOnly = false;
-            txtNombre.SelectionStart = 0;
-            txtNombre.Size = new Size(607, 38);
-            txtNombre.TabIndex = 3;
-            txtNombre.UseFloatingLabel = false;
-            // 
-            // lblCategoria
-            // 
-            lblCategoria.Location = new Point(17, 121);
-            lblCategoria.Name = "lblCategoria";
-            lblCategoria.Size = new Size(90, 23);
-            lblCategoria.TabIndex = 4;
-            lblCategoria.Text = "Categoría:";
-            // 
-            // cboCategoria
-            // 
-            cboCategoria.BackColor = Color.White;
-            cboCategoria.DataSource = null;
-            cboCategoria.DisplayMember = "";
-            cboCategoria.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboCategoria.Location = new Point(145, 106);
-            cboCategoria.MinimumSize = new Size(0, 38);
-            cboCategoria.Name = "cboCategoria";
-            cboCategoria.Padding = new Padding(0, 0, 0, 4);
-            cboCategoria.SelectedIndex = -1;
-            cboCategoria.SelectedItem = null;
-            cboCategoria.SelectedValue = null;
-            cboCategoria.Size = new Size(170, 38);
-            cboCategoria.TabIndex = 5;
-            cboCategoria.ValueMember = "";
-            // 
-            // lblMarca
-            // 
-            lblMarca.Location = new Point(407, 121);
-            lblMarca.Name = "lblMarca";
-            lblMarca.Size = new Size(57, 23);
-            lblMarca.TabIndex = 6;
-            lblMarca.Text = "Marca:";
-            // 
-            // cboMarca
-            // 
-            cboMarca.BackColor = Color.White;
-            cboMarca.DataSource = null;
-            cboMarca.DisplayMember = "";
-            cboMarca.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboMarca.Location = new Point(489, 106);
-            cboMarca.MinimumSize = new Size(0, 38);
-            cboMarca.Name = "cboMarca";
-            cboMarca.Padding = new Padding(0, 0, 0, 4);
-            cboMarca.SelectedIndex = -1;
-            cboMarca.SelectedItem = null;
-            cboMarca.SelectedValue = null;
-            cboMarca.Size = new Size(170, 38);
-            cboMarca.TabIndex = 7;
-            cboMarca.ValueMember = "";
-            // 
-            // lblUbicacion
-            // 
-            lblUbicacion.Location = new Point(17, 175);
-            lblUbicacion.Name = "lblUbicacion";
-            lblUbicacion.Size = new Size(90, 23);
-            lblUbicacion.TabIndex = 8;
-            lblUbicacion.Text = "Ubicación:";
-            // 
-            // cboUbicacion
-            // 
-            cboUbicacion.BackColor = Color.White;
-            cboUbicacion.DataSource = null;
-            cboUbicacion.DisplayMember = "";
-            cboUbicacion.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboUbicacion.Location = new Point(145, 160);
-            cboUbicacion.MinimumSize = new Size(0, 38);
-            cboUbicacion.Name = "cboUbicacion";
-            cboUbicacion.Padding = new Padding(0, 0, 0, 4);
-            cboUbicacion.SelectedIndex = -1;
-            cboUbicacion.SelectedItem = null;
-            cboUbicacion.SelectedValue = null;
-            cboUbicacion.Size = new Size(170, 38);
-            cboUbicacion.TabIndex = 9;
-            cboUbicacion.ValueMember = "";
-            // 
-            // lblStockTotal
-            // 
-            lblStockTotal.Location = new Point(407, 160);
-            lblStockTotal.Name = "lblStockTotal";
-            lblStockTotal.Size = new Size(48, 23);
-            lblStockTotal.TabIndex = 10;
-            lblStockTotal.Text = "Stock:";
-            // 
-            // nudStockTotal
-            // 
-            nudStockTotal.Location = new Point(489, 155);
-            nudStockTotal.Maximum = new decimal(new int[] { 999, 0, 0, 0 });
-            nudStockTotal.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            nudStockTotal.Name = "nudStockTotal";
-            nudStockTotal.Size = new Size(80, 28);
-            nudStockTotal.TabIndex = 11;
-            nudStockTotal.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
-            // lblCaracteristicas
-            // 
-            lblCaracteristicas.Location = new Point(17, 228);
-            lblCaracteristicas.Name = "lblCaracteristicas";
-            lblCaracteristicas.Size = new Size(122, 23);
-            lblCaracteristicas.TabIndex = 12;
-            lblCaracteristicas.Text = "Características:";
-            // 
-            // txtCaracteristicas
-            // 
-            txtCaracteristicas.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtCaracteristicas.BackColor = Color.White;
-            txtCaracteristicas.FloatingLabelText = "";
-            txtCaracteristicas.Location = new Point(145, 213);
-            txtCaracteristicas.MaxLength = 32767;
-            txtCaracteristicas.MinimumSize = new Size(0, 38);
-            txtCaracteristicas.Multiline = false;
-            txtCaracteristicas.Name = "txtCaracteristicas";
-            txtCaracteristicas.Padding = new Padding(0, 0, 0, 4);
-            txtCaracteristicas.PasswordChar = '\0';
-            txtCaracteristicas.PlaceholderText = "";
-            txtCaracteristicas.ReadOnly = false;
-            txtCaracteristicas.SelectionStart = 0;
-            txtCaracteristicas.Size = new Size(782, 38);
-            txtCaracteristicas.TabIndex = 13;
-            txtCaracteristicas.UseFloatingLabel = false;
-            // 
-            // btnNuevo
-            // 
-            btnNuevo.CornerRadius = 8;
-            btnNuevo.FlatStyle = FlatStyle.Flat;
-            btnNuevo.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnNuevo.Icon = FontAwesome.Sharp.IconChar.Add;
-            btnNuevo.IconColor = null;
-            btnNuevo.IconSize = 20;
-            btnNuevo.Location = new Point(7, 277);
-            btnNuevo.Name = "btnNuevo";
-            btnNuevo.Size = new Size(111, 34);
-            btnNuevo.TabIndex = 14;
-            btnNuevo.Text = "Nuevo";
-            btnNuevo.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnGuardar
-            // 
-            btnGuardar.CornerRadius = 8;
-            btnGuardar.FlatStyle = FlatStyle.Flat;
-            btnGuardar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnGuardar.Icon = FontAwesome.Sharp.IconChar.Save;
-            btnGuardar.IconColor = null;
-            btnGuardar.IconSize = 20;
-            btnGuardar.Location = new Point(124, 277);
-            btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(126, 34);
-            btnGuardar.TabIndex = 15;
-            btnGuardar.Text = "Guardar";
-            btnGuardar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnEditar
-            // 
-            btnEditar.CornerRadius = 8;
-            btnEditar.FlatStyle = FlatStyle.Flat;
-            btnEditar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnEditar.Icon = FontAwesome.Sharp.IconChar.Edit;
-            btnEditar.IconColor = null;
-            btnEditar.IconSize = 20;
-            btnEditar.Location = new Point(256, 277);
-            btnEditar.Name = "btnEditar";
-            btnEditar.Size = new Size(106, 34);
-            btnEditar.TabIndex = 16;
-            btnEditar.Text = "Editar";
-            btnEditar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnCancelar
-            // 
-            btnCancelar.CornerRadius = 8;
-            btnCancelar.FlatStyle = FlatStyle.Flat;
-            btnCancelar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnCancelar.Icon = FontAwesome.Sharp.IconChar.Close;
-            btnCancelar.IconColor = null;
-            btnCancelar.IconSize = 20;
-            btnCancelar.Location = new Point(369, 277);
-            btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(114, 34);
-            btnCancelar.TabIndex = 17;
-            btnCancelar.Text = "Cancelar";
-            btnCancelar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnEliminar
-            // 
-            btnEliminar.CornerRadius = 8;
-            btnEliminar.FlatStyle = FlatStyle.Flat;
-            btnEliminar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnEliminar.Icon = FontAwesome.Sharp.IconChar.Trash;
-            btnEliminar.IconColor = null;
-            btnEliminar.IconSize = 20;
-            btnEliminar.Location = new Point(489, 277);
-            btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(150, 34);
-            btnEliminar.TabIndex = 18;
-            btnEliminar.Text = "Dar de Baja";
-            btnEliminar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // lblBuscar
-            // 
-            lblBuscar.Location = new Point(5, 339);
-            lblBuscar.Name = "lblBuscar";
-            lblBuscar.Size = new Size(66, 23);
-            lblBuscar.TabIndex = 1;
-            lblBuscar.Text = "Buscar:";
-            // 
-            // txtBuscar
-            // 
-            txtBuscar.BackColor = Color.White;
-            txtBuscar.FloatingLabelText = "";
-            txtBuscar.Location = new Point(77, 336);
-            txtBuscar.MaxLength = 32767;
-            txtBuscar.MinimumSize = new Size(0, 38);
-            txtBuscar.Multiline = false;
-            txtBuscar.Name = "txtBuscar";
-            txtBuscar.Padding = new Padding(0, 0, 0, 4);
-            txtBuscar.PasswordChar = '\0';
-            txtBuscar.PlaceholderText = "Nombre o código...";
-            txtBuscar.ReadOnly = false;
-            txtBuscar.SelectionStart = 0;
-            txtBuscar.Size = new Size(280, 38);
-            txtBuscar.TabIndex = 2;
-            txtBuscar.UseFloatingLabel = false;
-            // 
-            // tabCategorias
-            // 
-            tabCategorias.Controls.Add(grpDatosCategoria);
-            tabCategorias.Controls.Add(dgvCategorias);
-            tabCategorias.Location = new Point(4, 29);
-            tabCategorias.Name = "tabCategorias";
-            tabCategorias.Padding = new Padding(8);
-            tabCategorias.Size = new Size(1219, 883);
-            tabCategorias.TabIndex = 1;
-            tabCategorias.Text = "  Categorías  ";
-            // 
-            // grpDatosCategoria
-            // 
-            grpDatosCategoria.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpDatosCategoria.Controls.Add(lblNombreCategoria);
-            grpDatosCategoria.Controls.Add(txtNombreCategoria);
-            grpDatosCategoria.Controls.Add(lblDescCategoria);
-            grpDatosCategoria.Controls.Add(txtDescCategoria);
-            grpDatosCategoria.Controls.Add(btnNuevoCategoria);
-            grpDatosCategoria.Controls.Add(btnGuardarCategoria);
-            grpDatosCategoria.Controls.Add(btnEditarCategoria);
-            grpDatosCategoria.Controls.Add(btnCancelarCategoria);
-            grpDatosCategoria.Controls.Add(btnEliminarCategoria);
-            grpDatosCategoria.Location = new Point(8, 8);
-            grpDatosCategoria.Name = "grpDatosCategoria";
-            grpDatosCategoria.Size = new Size(1197, 155);
-            grpDatosCategoria.TabIndex = 0;
-            grpDatosCategoria.TabStop = false;
-            grpDatosCategoria.Text = "Datos de la Categoría";
-            // 
-            // lblNombreCategoria
-            // 
-            lblNombreCategoria.Location = new Point(12, 30);
-            lblNombreCategoria.Name = "lblNombreCategoria";
-            lblNombreCategoria.Size = new Size(77, 23);
-            lblNombreCategoria.TabIndex = 0;
-            lblNombreCategoria.Text = "Nombre:";
-            // 
-            // txtNombreCategoria
-            // 
-            txtNombreCategoria.BackColor = Color.White;
-            txtNombreCategoria.FloatingLabelText = "";
-            txtNombreCategoria.Location = new Point(95, 27);
-            txtNombreCategoria.MaxLength = 32767;
-            txtNombreCategoria.MinimumSize = new Size(0, 38);
-            txtNombreCategoria.Multiline = false;
-            txtNombreCategoria.Name = "txtNombreCategoria";
-            txtNombreCategoria.Padding = new Padding(0, 0, 0, 4);
-            txtNombreCategoria.PasswordChar = '\0';
-            txtNombreCategoria.PlaceholderText = "";
-            txtNombreCategoria.ReadOnly = false;
-            txtNombreCategoria.SelectionStart = 0;
-            txtNombreCategoria.Size = new Size(200, 38);
-            txtNombreCategoria.TabIndex = 1;
-            txtNombreCategoria.UseFloatingLabel = false;
-            // 
-            // lblDescCategoria
-            // 
-            lblDescCategoria.Location = new Point(365, 30);
-            lblDescCategoria.Name = "lblDescCategoria";
-            lblDescCategoria.Size = new Size(100, 23);
-            lblDescCategoria.TabIndex = 2;
-            lblDescCategoria.Text = "Descripción:";
-            // 
-            // txtDescCategoria
-            // 
-            txtDescCategoria.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtDescCategoria.BackColor = Color.White;
-            txtDescCategoria.FloatingLabelText = "";
-            txtDescCategoria.Location = new Point(471, 27);
-            txtDescCategoria.MaxLength = 32767;
-            txtDescCategoria.MinimumSize = new Size(0, 38);
-            txtDescCategoria.Multiline = false;
-            txtDescCategoria.Name = "txtDescCategoria";
-            txtDescCategoria.Padding = new Padding(0, 0, 0, 4);
-            txtDescCategoria.PasswordChar = '\0';
-            txtDescCategoria.PlaceholderText = "";
-            txtDescCategoria.ReadOnly = false;
-            txtDescCategoria.SelectionStart = 0;
-            txtDescCategoria.Size = new Size(687, 69);
-            txtDescCategoria.TabIndex = 3;
-            txtDescCategoria.UseFloatingLabel = false;
-            // 
-            // btnNuevoCategoria
-            // 
-            btnNuevoCategoria.CornerRadius = 8;
-            btnNuevoCategoria.FlatStyle = FlatStyle.Flat;
-            btnNuevoCategoria.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnNuevoCategoria.Icon = FontAwesome.Sharp.IconChar.Add;
-            btnNuevoCategoria.IconColor = null;
-            btnNuevoCategoria.IconSize = 20;
-            btnNuevoCategoria.Location = new Point(15, 102);
-            btnNuevoCategoria.Name = "btnNuevoCategoria";
-            btnNuevoCategoria.Size = new Size(115, 34);
-            btnNuevoCategoria.TabIndex = 4;
-            btnNuevoCategoria.Text = "Nuevo";
-            btnNuevoCategoria.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnGuardarCategoria
-            // 
-            btnGuardarCategoria.CornerRadius = 8;
-            btnGuardarCategoria.FlatStyle = FlatStyle.Flat;
-            btnGuardarCategoria.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnGuardarCategoria.Icon = FontAwesome.Sharp.IconChar.Save;
-            btnGuardarCategoria.IconColor = null;
-            btnGuardarCategoria.IconSize = 20;
-            btnGuardarCategoria.Location = new Point(136, 102);
-            btnGuardarCategoria.Name = "btnGuardarCategoria";
-            btnGuardarCategoria.Size = new Size(126, 34);
-            btnGuardarCategoria.TabIndex = 5;
-            btnGuardarCategoria.Text = "Guardar";
-            btnGuardarCategoria.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnEditarCategoria
-            // 
-            btnEditarCategoria.CornerRadius = 8;
-            btnEditarCategoria.FlatStyle = FlatStyle.Flat;
-            btnEditarCategoria.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnEditarCategoria.Icon = FontAwesome.Sharp.IconChar.Edit;
-            btnEditarCategoria.IconColor = null;
-            btnEditarCategoria.IconSize = 20;
-            btnEditarCategoria.Location = new Point(268, 102);
-            btnEditarCategoria.Name = "btnEditarCategoria";
-            btnEditarCategoria.Size = new Size(118, 34);
-            btnEditarCategoria.TabIndex = 6;
-            btnEditarCategoria.Text = "Editar";
-            btnEditarCategoria.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnCancelarCategoria
-            // 
-            btnCancelarCategoria.CornerRadius = 8;
-            btnCancelarCategoria.FlatStyle = FlatStyle.Flat;
-            btnCancelarCategoria.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnCancelarCategoria.Icon = FontAwesome.Sharp.IconChar.Close;
-            btnCancelarCategoria.IconColor = null;
-            btnCancelarCategoria.IconSize = 20;
-            btnCancelarCategoria.Location = new Point(392, 102);
-            btnCancelarCategoria.Name = "btnCancelarCategoria";
-            btnCancelarCategoria.Size = new Size(119, 34);
-            btnCancelarCategoria.TabIndex = 7;
-            btnCancelarCategoria.Text = "Cancelar";
-            btnCancelarCategoria.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnEliminarCategoria
-            // 
-            btnEliminarCategoria.CornerRadius = 8;
-            btnEliminarCategoria.FlatStyle = FlatStyle.Flat;
-            btnEliminarCategoria.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnEliminarCategoria.Icon = FontAwesome.Sharp.IconChar.Trash;
-            btnEliminarCategoria.IconColor = null;
-            btnEliminarCategoria.IconSize = 20;
-            btnEliminarCategoria.Location = new Point(517, 102);
-            btnEliminarCategoria.Name = "btnEliminarCategoria";
-            btnEliminarCategoria.Size = new Size(121, 34);
-            btnEliminarCategoria.TabIndex = 8;
-            btnEliminarCategoria.Text = "Eliminar";
-            btnEliminarCategoria.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // dgvCategorias
-            // 
-            dgvCategorias.AllowUserToAddRows = false;
-            dgvCategorias.AllowUserToDeleteRows = false;
-            dgvCategorias.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvCategorias.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvCategorias.Location = new Point(11, 169);
-            dgvCategorias.MultiSelect = false;
-            dgvCategorias.Name = "dgvCategorias";
-            dgvCategorias.ReadOnly = true;
-            dgvCategorias.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCategorias.Size = new Size(1199, 669);
-            dgvCategorias.TabIndex = 1;
-            // 
-            // tabMarcas
-            // 
-            tabMarcas.Controls.Add(grpDatosMarca);
-            tabMarcas.Controls.Add(dgvMarcas);
-            tabMarcas.Location = new Point(4, 29);
-            tabMarcas.Name = "tabMarcas";
-            tabMarcas.Padding = new Padding(8);
-            tabMarcas.Size = new Size(1219, 883);
-            tabMarcas.TabIndex = 2;
-            tabMarcas.Text = "  Marcas  ";
-            // 
-            // grpDatosMarca
-            // 
-            grpDatosMarca.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpDatosMarca.Controls.Add(lblNombreMarca);
-            grpDatosMarca.Controls.Add(txtNombreMarca);
-            grpDatosMarca.Controls.Add(lblDescMarca);
-            grpDatosMarca.Controls.Add(txtDescMarca);
-            grpDatosMarca.Controls.Add(btnNuevoMarca);
-            grpDatosMarca.Controls.Add(btnGuardarMarca);
-            grpDatosMarca.Controls.Add(btnEditarMarca);
-            grpDatosMarca.Controls.Add(btnCancelarMarca);
-            grpDatosMarca.Controls.Add(btnEliminarMarca);
-            grpDatosMarca.Location = new Point(8, 8);
-            grpDatosMarca.Name = "grpDatosMarca";
-            grpDatosMarca.Size = new Size(1197, 152);
-            grpDatosMarca.TabIndex = 0;
-            grpDatosMarca.TabStop = false;
-            grpDatosMarca.Text = "Datos de la Marca";
-            // 
-            // lblNombreMarca
-            // 
-            lblNombreMarca.Location = new Point(12, 30);
-            lblNombreMarca.Name = "lblNombreMarca";
-            lblNombreMarca.Size = new Size(71, 23);
-            lblNombreMarca.TabIndex = 0;
-            lblNombreMarca.Text = "Nombre:";
-            // 
-            // txtNombreMarca
-            // 
-            txtNombreMarca.BackColor = Color.White;
-            txtNombreMarca.FloatingLabelText = "";
-            txtNombreMarca.Location = new Point(89, 30);
-            txtNombreMarca.MaxLength = 32767;
-            txtNombreMarca.MinimumSize = new Size(0, 38);
-            txtNombreMarca.Multiline = false;
-            txtNombreMarca.Name = "txtNombreMarca";
-            txtNombreMarca.Padding = new Padding(0, 0, 0, 4);
-            txtNombreMarca.PasswordChar = '\0';
-            txtNombreMarca.PlaceholderText = "";
-            txtNombreMarca.ReadOnly = false;
-            txtNombreMarca.SelectionStart = 0;
-            txtNombreMarca.Size = new Size(200, 38);
-            txtNombreMarca.TabIndex = 1;
-            txtNombreMarca.UseFloatingLabel = false;
-            // 
-            // lblDescMarca
-            // 
-            lblDescMarca.Location = new Point(349, 30);
-            lblDescMarca.Name = "lblDescMarca";
-            lblDescMarca.Size = new Size(114, 23);
-            lblDescMarca.TabIndex = 2;
-            lblDescMarca.Text = "Descripción:";
-            // 
-            // txtDescMarca
-            // 
-            txtDescMarca.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtDescMarca.BackColor = Color.White;
-            txtDescMarca.FloatingLabelText = "";
-            txtDescMarca.Location = new Point(469, 27);
-            txtDescMarca.MaxLength = 32767;
-            txtDescMarca.MinimumSize = new Size(0, 38);
-            txtDescMarca.Multiline = false;
-            txtDescMarca.Name = "txtDescMarca";
-            txtDescMarca.Padding = new Padding(0, 0, 0, 4);
-            txtDescMarca.PasswordChar = '\0';
-            txtDescMarca.PlaceholderText = "";
-            txtDescMarca.ReadOnly = false;
-            txtDescMarca.SelectionStart = 0;
-            txtDescMarca.Size = new Size(687, 79);
-            txtDescMarca.TabIndex = 3;
-            txtDescMarca.UseFloatingLabel = false;
-            // 
-            // btnNuevoMarca
-            // 
-            btnNuevoMarca.CornerRadius = 8;
-            btnNuevoMarca.FlatStyle = FlatStyle.Flat;
-            btnNuevoMarca.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnNuevoMarca.Icon = FontAwesome.Sharp.IconChar.Add;
-            btnNuevoMarca.IconColor = null;
-            btnNuevoMarca.IconSize = 20;
-            btnNuevoMarca.Location = new Point(6, 112);
-            btnNuevoMarca.Name = "btnNuevoMarca";
-            btnNuevoMarca.Size = new Size(106, 34);
-            btnNuevoMarca.TabIndex = 4;
-            btnNuevoMarca.Text = "Nuevo";
-            btnNuevoMarca.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnGuardarMarca
-            // 
-            btnGuardarMarca.CornerRadius = 8;
-            btnGuardarMarca.FlatStyle = FlatStyle.Flat;
-            btnGuardarMarca.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnGuardarMarca.Icon = FontAwesome.Sharp.IconChar.Save;
-            btnGuardarMarca.IconColor = null;
-            btnGuardarMarca.IconSize = 20;
-            btnGuardarMarca.Location = new Point(118, 112);
-            btnGuardarMarca.Name = "btnGuardarMarca";
-            btnGuardarMarca.Size = new Size(118, 34);
-            btnGuardarMarca.TabIndex = 5;
-            btnGuardarMarca.Text = "Guardar";
-            btnGuardarMarca.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnEditarMarca
-            // 
-            btnEditarMarca.CornerRadius = 8;
-            btnEditarMarca.FlatStyle = FlatStyle.Flat;
-            btnEditarMarca.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnEditarMarca.Icon = FontAwesome.Sharp.IconChar.Edit;
-            btnEditarMarca.IconColor = null;
-            btnEditarMarca.IconSize = 20;
-            btnEditarMarca.Location = new Point(242, 112);
-            btnEditarMarca.Name = "btnEditarMarca";
-            btnEditarMarca.Size = new Size(127, 34);
-            btnEditarMarca.TabIndex = 6;
-            btnEditarMarca.Text = "Editar";
-            btnEditarMarca.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnCancelarMarca
-            // 
-            btnCancelarMarca.CornerRadius = 8;
-            btnCancelarMarca.FlatStyle = FlatStyle.Flat;
-            btnCancelarMarca.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnCancelarMarca.Icon = FontAwesome.Sharp.IconChar.Close;
-            btnCancelarMarca.IconColor = null;
-            btnCancelarMarca.IconSize = 20;
-            btnCancelarMarca.Location = new Point(375, 112);
-            btnCancelarMarca.Name = "btnCancelarMarca";
-            btnCancelarMarca.Size = new Size(120, 34);
-            btnCancelarMarca.TabIndex = 7;
-            btnCancelarMarca.Text = "Cancelar";
-            btnCancelarMarca.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnEliminarMarca
-            // 
-            btnEliminarMarca.CornerRadius = 8;
-            btnEliminarMarca.FlatStyle = FlatStyle.Flat;
-            btnEliminarMarca.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnEliminarMarca.Icon = FontAwesome.Sharp.IconChar.Trash;
-            btnEliminarMarca.IconColor = null;
-            btnEliminarMarca.IconSize = 20;
-            btnEliminarMarca.Location = new Point(501, 112);
-            btnEliminarMarca.Name = "btnEliminarMarca";
-            btnEliminarMarca.Size = new Size(129, 34);
-            btnEliminarMarca.TabIndex = 8;
-            btnEliminarMarca.Text = "Eliminar";
-            btnEliminarMarca.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // dgvMarcas
-            // 
-            dgvMarcas.AllowUserToAddRows = false;
-            dgvMarcas.AllowUserToDeleteRows = false;
-            dgvMarcas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvMarcas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvMarcas.Location = new Point(8, 166);
-            dgvMarcas.MultiSelect = false;
-            dgvMarcas.Name = "dgvMarcas";
-            dgvMarcas.ReadOnly = true;
-            dgvMarcas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMarcas.Size = new Size(1199, 672);
-            dgvMarcas.TabIndex = 1;
+            tabHerramientas.Text = "Herramientas";
+            // 
+            // splitHerramientas
+            // 
+            splitHerramientas.Dock = DockStyle.Fill;
+            splitHerramientas.FixedPanel = FixedPanel.Panel1;
+            splitHerramientas.IsSplitterFixed = true;
+            splitHerramientas.Location = new Point(0, 0);
+            splitHerramientas.Name = "splitHerramientas";
+            // 
+            // splitHerramientas.Panel1
+            // 
+            splitHerramientas.Panel1.Controls.Add(tlpLista);
+            // 
+            // splitHerramientas.Panel2
+            // 
+            splitHerramientas.Panel2.Controls.Add(pnlDetalle);
+            splitHerramientas.Panel2.Controls.Add(lblSeleccionaHerramienta);
+            splitHerramientas.Size = new Size(1192, 628);
+            splitHerramientas.SplitterDistance = 340;
+            splitHerramientas.SplitterWidth = 1;
+            splitHerramientas.TabIndex = 0;
+            // 
+            // tlpLista
+            // 
+            tlpLista.ColumnCount = 1;
+            tlpLista.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpLista.Controls.Add(pnlBuscarH, 0, 0);
+            tlpLista.Controls.Add(flpChips, 0, 1);
+            tlpLista.Controls.Add(lstHerramientas, 0, 2);
+            tlpLista.Controls.Add(lblListaVacia, 0, 3);
+            tlpLista.Dock = DockStyle.Fill;
+            tlpLista.Location = new Point(0, 0);
+            tlpLista.Name = "tlpLista";
+            tlpLista.Padding = new Padding(0, 12, 0, 0);
+            tlpLista.RowCount = 4;
+            tlpLista.RowStyles.Add(new RowStyle());
+            tlpLista.RowStyles.Add(new RowStyle());
+            tlpLista.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpLista.RowStyles.Add(new RowStyle());
+            tlpLista.Size = new Size(340, 628);
+            tlpLista.TabIndex = 0;
+            // 
+            // pnlBuscarH
+            // 
+            pnlBuscarH.Controls.Add(txtBuscarH);
+            pnlBuscarH.Controls.Add(icoBuscarH);
+            pnlBuscarH.Dock = DockStyle.Fill;
+            pnlBuscarH.Location = new Point(12, 12);
+            pnlBuscarH.Margin = new Padding(12, 0, 12, 0);
+            pnlBuscarH.Name = "pnlBuscarH";
+            pnlBuscarH.Size = new Size(316, 40);
+            pnlBuscarH.TabIndex = 0;
+            // 
+            // txtBuscarH
+            // 
+            txtBuscarH.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtBuscarH.BackColor = Color.White;
+            txtBuscarH.FloatingLabelText = "";
+            txtBuscarH.Location = new Point(30, 0);
+            txtBuscarH.MaxLength = 32767;
+            txtBuscarH.MinimumSize = new Size(0, 38);
+            txtBuscarH.Multiline = false;
+            txtBuscarH.Name = "txtBuscarH";
+            txtBuscarH.Padding = new Padding(0, 0, 0, 4);
+            txtBuscarH.PasswordChar = '\0';
+            txtBuscarH.PlaceholderText = "Buscar herramienta…";
+            txtBuscarH.ReadOnly = false;
+            txtBuscarH.SelectionStart = 0;
+            txtBuscarH.Size = new Size(286, 38);
+            txtBuscarH.TabIndex = 1;
+            txtBuscarH.UseFloatingLabel = false;
+            // 
+            // icoBuscarH
+            // 
+            icoBuscarH.BackColor = SystemColors.Control;
+            icoBuscarH.ForeColor = SystemColors.ControlText;
+            icoBuscarH.IconChar = FontAwesome.Sharp.IconChar.Search;
+            icoBuscarH.IconColor = SystemColors.ControlText;
+            icoBuscarH.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            icoBuscarH.IconSize = 22;
+            icoBuscarH.Location = new Point(2, 9);
+            icoBuscarH.Name = "icoBuscarH";
+            icoBuscarH.Size = new Size(22, 22);
+            icoBuscarH.TabIndex = 0;
+            icoBuscarH.TabStop = false;
+            // 
+            // flpChips
+            // 
+            flpChips.AutoSize = true;
+            flpChips.Dock = DockStyle.Fill;
+            flpChips.Location = new Point(12, 62);
+            flpChips.Margin = new Padding(12, 10, 12, 6);
+            flpChips.Name = "flpChips";
+            flpChips.Size = new Size(316, 1);
+            flpChips.TabIndex = 1;
+            // 
+            // lstHerramientas
+            // 
+            lstHerramientas.BorderStyle = BorderStyle.None;
+            lstHerramientas.Dock = DockStyle.Fill;
+            lstHerramientas.DrawMode = DrawMode.OwnerDrawFixed;
+            lstHerramientas.IntegralHeight = false;
+            lstHerramientas.ItemHeight = 64;
+            lstHerramientas.Location = new Point(0, 68);
+            lstHerramientas.Margin = new Padding(0);
+            lstHerramientas.Name = "lstHerramientas";
+            lstHerramientas.Size = new Size(340, 500);
+            lstHerramientas.TabIndex = 2;
+            // 
+            // lblListaVacia
+            // 
+            lblListaVacia.Dock = DockStyle.Fill;
+            lblListaVacia.Font = new Font("Segoe UI", 9.5F);
+            lblListaVacia.Location = new Point(3, 568);
+            lblListaVacia.Name = "lblListaVacia";
+            lblListaVacia.Size = new Size(334, 60);
+            lblListaVacia.TabIndex = 3;
+            lblListaVacia.Text = "No hay herramientas que coincidan.";
+            lblListaVacia.TextAlign = ContentAlignment.TopCenter;
+            lblListaVacia.Visible = false;
+            // 
+            // pnlDetalle
+            // 
+            pnlDetalle.Controls.Add(pnlDetalleScroll);
+            pnlDetalle.Controls.Add(pnlDetalleFooter);
+            pnlDetalle.Dock = DockStyle.Fill;
+            pnlDetalle.Location = new Point(0, 0);
+            pnlDetalle.Name = "pnlDetalle";
+            pnlDetalle.Size = new Size(851, 628);
+            pnlDetalle.TabIndex = 1;
+            pnlDetalle.Visible = false;
+            // 
+            // pnlDetalleScroll
+            // 
+            pnlDetalleScroll.AutoScroll = true;
+            pnlDetalleScroll.Controls.Add(tlpDetalle);
+            pnlDetalleScroll.Dock = DockStyle.Fill;
+            pnlDetalleScroll.Location = new Point(0, 0);
+            pnlDetalleScroll.Name = "pnlDetalleScroll";
+            pnlDetalleScroll.Padding = new Padding(24, 16, 24, 8);
+            pnlDetalleScroll.Size = new Size(851, 564);
+            pnlDetalleScroll.TabIndex = 0;
+            // 
+            // tlpDetalle
+            // 
+            tlpDetalle.AutoSize = true;
+            tlpDetalle.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tlpDetalle.ColumnCount = 1;
+            tlpDetalle.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpDetalle.Controls.Add(pnlDetHeader, 0, 0);
+            tlpDetalle.Controls.Add(tlpTiles, 0, 1);
+            tlpDetalle.Controls.Add(tlpForm, 0, 2);
+            tlpDetalle.Controls.Add(pnlUnidadesHeader, 0, 3);
+            tlpDetalle.Controls.Add(dgvUnidadesMini, 0, 4);
+            tlpDetalle.Dock = DockStyle.Top;
+            tlpDetalle.Location = new Point(24, 16);
+            tlpDetalle.Name = "tlpDetalle";
+            tlpDetalle.RowCount = 5;
+            tlpDetalle.RowStyles.Add(new RowStyle());
+            tlpDetalle.RowStyles.Add(new RowStyle());
+            tlpDetalle.RowStyles.Add(new RowStyle());
+            tlpDetalle.RowStyles.Add(new RowStyle());
+            tlpDetalle.RowStyles.Add(new RowStyle());
+            tlpDetalle.Size = new Size(786, 786);
+            tlpDetalle.TabIndex = 0;
+            // 
+            // pnlDetHeader
+            // 
+            pnlDetHeader.Controls.Add(lblNombreDet);
+            pnlDetHeader.Controls.Add(lblCodigoDet);
+            pnlDetHeader.Controls.Add(btnUnidades);
+            pnlDetHeader.Dock = DockStyle.Fill;
+            pnlDetHeader.Location = new Point(0, 0);
+            pnlDetHeader.Margin = new Padding(0, 0, 0, 12);
+            pnlDetHeader.Name = "pnlDetHeader";
+            pnlDetHeader.Size = new Size(786, 62);
+            pnlDetHeader.TabIndex = 0;
+            // 
+            // lblNombreDet
+            // 
+            lblNombreDet.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblNombreDet.AutoEllipsis = true;
+            lblNombreDet.Font = new Font("Segoe UI", 13.5F, FontStyle.Bold);
+            lblNombreDet.Location = new Point(0, 0);
+            lblNombreDet.Name = "lblNombreDet";
+            lblNombreDet.Size = new Size(593, 32);
+            lblNombreDet.TabIndex = 0;
+            lblNombreDet.Text = "Herramienta";
+            // 
+            // lblCodigoDet
+            // 
+            lblCodigoDet.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblCodigoDet.AutoEllipsis = true;
+            lblCodigoDet.Font = new Font("Segoe UI", 9.5F);
+            lblCodigoDet.Location = new Point(0, 34);
+            lblCodigoDet.Name = "lblCodigoDet";
+            lblCodigoDet.Size = new Size(593, 22);
+            lblCodigoDet.TabIndex = 1;
+            lblCodigoDet.Text = "HER-0000";
+            // 
+            // btnUnidades
+            // 
+            btnUnidades.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnUnidades.CornerRadius = 8;
+            btnUnidades.FlatStyle = FlatStyle.Flat;
+            btnUnidades.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnUnidades.Icon = FontAwesome.Sharp.IconChar.BoxesStacked;
+            btnUnidades.IconColor = null;
+            btnUnidades.IconSize = 16;
+            btnUnidades.Location = new Point(603, 7);
+            btnUnidades.Name = "btnUnidades";
+            btnUnidades.Size = new Size(180, 40);
+            btnUnidades.TabIndex = 2;
+            btnUnidades.Text = "Unidades / Stock";
+            btnUnidades.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            // 
+            // tlpTiles
+            // 
+            tlpTiles.ColumnCount = 5;
+            tlpTiles.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTiles.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTiles.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTiles.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTiles.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpTiles.Controls.Add(tileTotal, 0, 0);
+            tlpTiles.Controls.Add(tileDisponibles, 1, 0);
+            tlpTiles.Controls.Add(tilePrestadas, 2, 0);
+            tlpTiles.Controls.Add(tileMantenimiento, 3, 0);
+            tlpTiles.Controls.Add(tileDañadas, 4, 0);
+            tlpTiles.Dock = DockStyle.Fill;
+            tlpTiles.Location = new Point(0, 74);
+            tlpTiles.Margin = new Padding(0, 0, 0, 18);
+            tlpTiles.Name = "tlpTiles";
+            tlpTiles.RowCount = 1;
+            tlpTiles.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpTiles.Size = new Size(786, 70);
+            tlpTiles.TabIndex = 1;
+            // 
+            // tileTotal
+            // 
+            tileTotal.ColorValor = Color.FromArgb(25, 30, 50);
+            tileTotal.Dock = DockStyle.Fill;
+            tileTotal.Etiqueta = "Total";
+            tileTotal.Location = new Point(0, 0);
+            tileTotal.Margin = new Padding(0, 0, 10, 0);
+            tileTotal.Name = "tileTotal";
+            tileTotal.Size = new Size(147, 70);
+            tileTotal.TabIndex = 0;
+            tileTotal.Valor = 0;
+            // 
+            // tileDisponibles
+            // 
+            tileDisponibles.ColorValor = Color.FromArgb(25, 30, 50);
+            tileDisponibles.Dock = DockStyle.Fill;
+            tileDisponibles.Etiqueta = "Disponibles";
+            tileDisponibles.Location = new Point(157, 0);
+            tileDisponibles.Margin = new Padding(0, 0, 10, 0);
+            tileDisponibles.Name = "tileDisponibles";
+            tileDisponibles.Size = new Size(147, 70);
+            tileDisponibles.TabIndex = 1;
+            tileDisponibles.Valor = 0;
+            // 
+            // tilePrestadas
+            // 
+            tilePrestadas.ColorValor = Color.FromArgb(25, 30, 50);
+            tilePrestadas.Dock = DockStyle.Fill;
+            tilePrestadas.Etiqueta = "Prestadas";
+            tilePrestadas.Location = new Point(314, 0);
+            tilePrestadas.Margin = new Padding(0, 0, 10, 0);
+            tilePrestadas.Name = "tilePrestadas";
+            tilePrestadas.Size = new Size(147, 70);
+            tilePrestadas.TabIndex = 2;
+            tilePrestadas.Valor = 0;
+            // 
+            // tileMantenimiento
+            // 
+            tileMantenimiento.ColorValor = Color.FromArgb(25, 30, 50);
+            tileMantenimiento.Dock = DockStyle.Fill;
+            tileMantenimiento.Etiqueta = "En mant.";
+            tileMantenimiento.Location = new Point(471, 0);
+            tileMantenimiento.Margin = new Padding(0, 0, 10, 0);
+            tileMantenimiento.Name = "tileMantenimiento";
+            tileMantenimiento.Size = new Size(147, 70);
+            tileMantenimiento.TabIndex = 3;
+            tileMantenimiento.Valor = 0;
+            // 
+            // tileDañadas
+            // 
+            tileDañadas.ColorValor = Color.FromArgb(25, 30, 50);
+            tileDañadas.Dock = DockStyle.Fill;
+            tileDañadas.Etiqueta = "Dañadas";
+            tileDañadas.Location = new Point(628, 0);
+            tileDañadas.Margin = new Padding(0);
+            tileDañadas.Name = "tileDañadas";
+            tileDañadas.Size = new Size(158, 70);
+            tileDañadas.TabIndex = 4;
+            tileDañadas.Valor = 0;
+            // 
+            // tlpForm
+            // 
+            tlpForm.AutoSize = true;
+            tlpForm.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tlpForm.ColumnCount = 2;
+            tlpForm.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpForm.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tlpForm.Controls.Add(lblCodigoF, 0, 0);
+            tlpForm.Controls.Add(lblUbicacionF, 1, 0);
+            tlpForm.Controls.Add(txtCodigoF, 0, 1);
+            tlpForm.Controls.Add(cboUbicacionF, 1, 1);
+            tlpForm.Controls.Add(lblNombreF, 0, 2);
+            tlpForm.Controls.Add(txtNombreF, 0, 3);
+            tlpForm.Controls.Add(lblCategoriaF, 0, 4);
+            tlpForm.Controls.Add(lblMarcaF, 1, 4);
+            tlpForm.Controls.Add(cboCategoriaF, 0, 5);
+            tlpForm.Controls.Add(cboMarcaF, 1, 5);
+            tlpForm.Controls.Add(lblStockInicialF, 0, 6);
+            tlpForm.Controls.Add(nudStockInicial, 0, 7);
+            tlpForm.Controls.Add(lblCaracteristicasF, 0, 8);
+            tlpForm.Controls.Add(txtCaracteristicasF, 0, 9);
+            tlpForm.Dock = DockStyle.Fill;
+            tlpForm.Location = new Point(0, 162);
+            tlpForm.Margin = new Padding(0, 0, 0, 16);
+            tlpForm.Name = "tlpForm";
+            tlpForm.RowCount = 10;
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.RowStyles.Add(new RowStyle());
+            tlpForm.Size = new Size(786, 346);
+            tlpForm.TabIndex = 2;
+            // 
+            // lblCodigoF
+            // 
+            lblCodigoF.AutoSize = true;
+            lblCodigoF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblCodigoF.Location = new Point(0, 0);
+            lblCodigoF.Margin = new Padding(0, 0, 12, 2);
+            lblCodigoF.Name = "lblCodigoF";
+            lblCodigoF.Size = new Size(45, 15);
+            lblCodigoF.TabIndex = 0;
+            lblCodigoF.Text = "Código";
+            // 
+            // lblUbicacionF
+            // 
+            lblUbicacionF.AutoSize = true;
+            lblUbicacionF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblUbicacionF.Location = new Point(393, 0);
+            lblUbicacionF.Margin = new Padding(0, 0, 0, 2);
+            lblUbicacionF.Name = "lblUbicacionF";
+            lblUbicacionF.Size = new Size(61, 15);
+            lblUbicacionF.TabIndex = 2;
+            lblUbicacionF.Text = "Ubicación";
+            // 
+            // txtCodigoF
+            // 
+            txtCodigoF.BackColor = Color.White;
+            txtCodigoF.Dock = DockStyle.Fill;
+            txtCodigoF.FloatingLabelText = "";
+            txtCodigoF.Location = new Point(0, 17);
+            txtCodigoF.Margin = new Padding(0, 0, 12, 12);
+            txtCodigoF.MaxLength = 32767;
+            txtCodigoF.MinimumSize = new Size(0, 38);
+            txtCodigoF.Multiline = false;
+            txtCodigoF.Name = "txtCodigoF";
+            txtCodigoF.Padding = new Padding(0, 0, 0, 4);
+            txtCodigoF.PasswordChar = '\0';
+            txtCodigoF.PlaceholderText = "";
+            txtCodigoF.ReadOnly = true;
+            txtCodigoF.SelectionStart = 0;
+            txtCodigoF.Size = new Size(381, 38);
+            txtCodigoF.TabIndex = 1;
+            txtCodigoF.UseFloatingLabel = false;
+            // 
+            // cboUbicacionF
+            // 
+            cboUbicacionF.BackColor = Color.White;
+            cboUbicacionF.DataSource = null;
+            cboUbicacionF.DisplayMember = "";
+            cboUbicacionF.Dock = DockStyle.Fill;
+            cboUbicacionF.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboUbicacionF.Location = new Point(393, 17);
+            cboUbicacionF.Margin = new Padding(0, 0, 0, 12);
+            cboUbicacionF.MinimumSize = new Size(0, 38);
+            cboUbicacionF.Name = "cboUbicacionF";
+            cboUbicacionF.Padding = new Padding(0, 0, 0, 4);
+            cboUbicacionF.SelectedIndex = -1;
+            cboUbicacionF.SelectedItem = null;
+            cboUbicacionF.SelectedValue = null;
+            cboUbicacionF.Size = new Size(393, 38);
+            cboUbicacionF.TabIndex = 3;
+            cboUbicacionF.ValueMember = "";
+            // 
+            // lblNombreF
+            // 
+            lblNombreF.AutoSize = true;
+            tlpForm.SetColumnSpan(lblNombreF, 2);
+            lblNombreF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblNombreF.Location = new Point(0, 67);
+            lblNombreF.Margin = new Padding(0, 0, 0, 2);
+            lblNombreF.Name = "lblNombreF";
+            lblNombreF.Size = new Size(53, 15);
+            lblNombreF.TabIndex = 4;
+            lblNombreF.Text = "Nombre";
+            // 
+            // txtNombreF
+            // 
+            txtNombreF.BackColor = Color.White;
+            tlpForm.SetColumnSpan(txtNombreF, 2);
+            txtNombreF.Dock = DockStyle.Fill;
+            txtNombreF.FloatingLabelText = "";
+            txtNombreF.Location = new Point(0, 84);
+            txtNombreF.Margin = new Padding(0, 0, 0, 12);
+            txtNombreF.MaxLength = 32767;
+            txtNombreF.MinimumSize = new Size(0, 38);
+            txtNombreF.Multiline = false;
+            txtNombreF.Name = "txtNombreF";
+            txtNombreF.Padding = new Padding(0, 0, 0, 4);
+            txtNombreF.PasswordChar = '\0';
+            txtNombreF.PlaceholderText = "";
+            txtNombreF.ReadOnly = false;
+            txtNombreF.SelectionStart = 0;
+            txtNombreF.Size = new Size(786, 38);
+            txtNombreF.TabIndex = 5;
+            txtNombreF.UseFloatingLabel = false;
+            // 
+            // lblCategoriaF
+            // 
+            lblCategoriaF.AutoSize = true;
+            lblCategoriaF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblCategoriaF.Location = new Point(0, 134);
+            lblCategoriaF.Margin = new Padding(0, 0, 12, 2);
+            lblCategoriaF.Name = "lblCategoriaF";
+            lblCategoriaF.Size = new Size(60, 15);
+            lblCategoriaF.TabIndex = 6;
+            lblCategoriaF.Text = "Categoría";
+            // 
+            // lblMarcaF
+            // 
+            lblMarcaF.AutoSize = true;
+            lblMarcaF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblMarcaF.Location = new Point(393, 134);
+            lblMarcaF.Margin = new Padding(0, 0, 0, 2);
+            lblMarcaF.Name = "lblMarcaF";
+            lblMarcaF.Size = new Size(41, 15);
+            lblMarcaF.TabIndex = 8;
+            lblMarcaF.Text = "Marca";
+            // 
+            // cboCategoriaF
+            // 
+            cboCategoriaF.BackColor = Color.White;
+            cboCategoriaF.DataSource = null;
+            cboCategoriaF.DisplayMember = "";
+            cboCategoriaF.Dock = DockStyle.Fill;
+            cboCategoriaF.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboCategoriaF.Location = new Point(0, 151);
+            cboCategoriaF.Margin = new Padding(0, 0, 12, 12);
+            cboCategoriaF.MinimumSize = new Size(0, 38);
+            cboCategoriaF.Name = "cboCategoriaF";
+            cboCategoriaF.Padding = new Padding(0, 0, 0, 4);
+            cboCategoriaF.SelectedIndex = -1;
+            cboCategoriaF.SelectedItem = null;
+            cboCategoriaF.SelectedValue = null;
+            cboCategoriaF.Size = new Size(381, 38);
+            cboCategoriaF.TabIndex = 7;
+            cboCategoriaF.ValueMember = "";
+            // 
+            // cboMarcaF
+            // 
+            cboMarcaF.BackColor = Color.White;
+            cboMarcaF.DataSource = null;
+            cboMarcaF.DisplayMember = "";
+            cboMarcaF.Dock = DockStyle.Fill;
+            cboMarcaF.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboMarcaF.Location = new Point(393, 151);
+            cboMarcaF.Margin = new Padding(0, 0, 0, 12);
+            cboMarcaF.MinimumSize = new Size(0, 38);
+            cboMarcaF.Name = "cboMarcaF";
+            cboMarcaF.Padding = new Padding(0, 0, 0, 4);
+            cboMarcaF.SelectedIndex = -1;
+            cboMarcaF.SelectedItem = null;
+            cboMarcaF.SelectedValue = null;
+            cboMarcaF.Size = new Size(393, 38);
+            cboMarcaF.TabIndex = 9;
+            cboMarcaF.ValueMember = "";
+            // 
+            // lblStockInicialF
+            // 
+            lblStockInicialF.AutoSize = true;
+            lblStockInicialF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblStockInicialF.Location = new Point(0, 201);
+            lblStockInicialF.Margin = new Padding(0, 0, 12, 2);
+            lblStockInicialF.Name = "lblStockInicialF";
+            lblStockInicialF.Size = new Size(104, 15);
+            lblStockInicialF.TabIndex = 10;
+            lblStockInicialF.Text = "Unidades iniciales";
+            // 
+            // nudStockInicial
+            // 
+            nudStockInicial.Location = new Point(0, 218);
+            nudStockInicial.Margin = new Padding(0, 0, 12, 12);
+            nudStockInicial.Maximum = new decimal(new int[] { 999, 0, 0, 0 });
+            nudStockInicial.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudStockInicial.Name = "nudStockInicial";
+            nudStockInicial.Size = new Size(120, 23);
+            nudStockInicial.TabIndex = 11;
+            nudStockInicial.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // lblCaracteristicasF
+            // 
+            lblCaracteristicasF.AutoSize = true;
+            tlpForm.SetColumnSpan(lblCaracteristicasF, 2);
+            lblCaracteristicasF.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblCaracteristicasF.Location = new Point(0, 253);
+            lblCaracteristicasF.Margin = new Padding(0, 0, 0, 2);
+            lblCaracteristicasF.Name = "lblCaracteristicasF";
+            lblCaracteristicasF.Size = new Size(87, 15);
+            lblCaracteristicasF.TabIndex = 12;
+            lblCaracteristicasF.Text = "Características";
+            // 
+            // txtCaracteristicasF
+            // 
+            tlpForm.SetColumnSpan(txtCaracteristicasF, 2);
+            txtCaracteristicasF.Dock = DockStyle.Fill;
+            txtCaracteristicasF.Location = new Point(0, 270);
+            txtCaracteristicasF.Margin = new Padding(0);
+            txtCaracteristicasF.Multiline = true;
+            txtCaracteristicasF.Name = "txtCaracteristicasF";
+            txtCaracteristicasF.ScrollBars = ScrollBars.Vertical;
+            txtCaracteristicasF.Size = new Size(786, 76);
+            txtCaracteristicasF.TabIndex = 13;
+            // 
+            // pnlUnidadesHeader
+            // 
+            pnlUnidadesHeader.Controls.Add(lblUnidadesTitulo);
+            pnlUnidadesHeader.Controls.Add(lnkVerTodas);
+            pnlUnidadesHeader.Dock = DockStyle.Fill;
+            pnlUnidadesHeader.Location = new Point(0, 524);
+            pnlUnidadesHeader.Margin = new Padding(0, 0, 0, 6);
+            pnlUnidadesHeader.Name = "pnlUnidadesHeader";
+            pnlUnidadesHeader.Size = new Size(786, 30);
+            pnlUnidadesHeader.TabIndex = 3;
+            // 
+            // lblUnidadesTitulo
+            // 
+            lblUnidadesTitulo.AutoSize = true;
+            lblUnidadesTitulo.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            lblUnidadesTitulo.Location = new Point(0, 4);
+            lblUnidadesTitulo.Name = "lblUnidadesTitulo";
+            lblUnidadesTitulo.Size = new Size(123, 19);
+            lblUnidadesTitulo.TabIndex = 0;
+            lblUnidadesTitulo.Text = "Últimas unidades";
+            // 
+            // lnkVerTodas
+            // 
+            lnkVerTodas.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lnkVerTodas.Font = new Font("Segoe UI", 9.5F);
+            lnkVerTodas.LinkBehavior = LinkBehavior.HoverUnderline;
+            lnkVerTodas.Location = new Point(586, 4);
+            lnkVerTodas.Name = "lnkVerTodas";
+            lnkVerTodas.Size = new Size(200, 22);
+            lnkVerTodas.TabIndex = 1;
+            lnkVerTodas.TabStop = true;
+            lnkVerTodas.Text = "Ver todas →";
+            lnkVerTodas.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // dgvUnidadesMini
+            // 
+            dgvUnidadesMini.AllowUserToAddRows = false;
+            dgvUnidadesMini.AllowUserToDeleteRows = false;
+            dgvUnidadesMini.Dock = DockStyle.Fill;
+            dgvUnidadesMini.Location = new Point(0, 560);
+            dgvUnidadesMini.Margin = new Padding(0);
+            dgvUnidadesMini.Name = "dgvUnidadesMini";
+            dgvUnidadesMini.ReadOnly = true;
+            dgvUnidadesMini.ScrollBars = ScrollBars.None;
+            dgvUnidadesMini.Size = new Size(786, 226);
+            dgvUnidadesMini.TabIndex = 4;
+            // 
+            // pnlDetalleFooter
+            // 
+            pnlDetalleFooter.Controls.Add(btnCancelarH);
+            pnlDetalleFooter.Controls.Add(btnGuardarH);
+            pnlDetalleFooter.Dock = DockStyle.Bottom;
+            pnlDetalleFooter.Location = new Point(0, 564);
+            pnlDetalleFooter.Name = "pnlDetalleFooter";
+            pnlDetalleFooter.Size = new Size(851, 64);
+            pnlDetalleFooter.TabIndex = 1;
+            // 
+            // btnCancelarH
+            // 
+            btnCancelarH.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnCancelarH.CornerRadius = 8;
+            btnCancelarH.FlatStyle = FlatStyle.Flat;
+            btnCancelarH.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnCancelarH.Icon = null;
+            btnCancelarH.IconColor = null;
+            btnCancelarH.IconSize = 16;
+            btnCancelarH.Location = new Point(517, 12);
+            btnCancelarH.Name = "btnCancelarH";
+            btnCancelarH.Size = new Size(130, 40);
+            btnCancelarH.TabIndex = 0;
+            btnCancelarH.Text = "Cancelar";
+            btnCancelarH.Variant = PromacoHerra.Controls.MaterialButtonVariant.Secondary;
+            // 
+            // btnGuardarH
+            // 
+            btnGuardarH.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnGuardarH.CornerRadius = 8;
+            btnGuardarH.FlatStyle = FlatStyle.Flat;
+            btnGuardarH.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnGuardarH.Icon = FontAwesome.Sharp.IconChar.Save;
+            btnGuardarH.IconColor = null;
+            btnGuardarH.IconSize = 16;
+            btnGuardarH.Location = new Point(657, 12);
+            btnGuardarH.Name = "btnGuardarH";
+            btnGuardarH.Size = new Size(170, 40);
+            btnGuardarH.TabIndex = 1;
+            btnGuardarH.Text = "Guardar cambios";
+            btnGuardarH.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            // 
+            // lblSeleccionaHerramienta
+            // 
+            lblSeleccionaHerramienta.Dock = DockStyle.Fill;
+            lblSeleccionaHerramienta.Font = new Font("Segoe UI", 11F);
+            lblSeleccionaHerramienta.Location = new Point(0, 0);
+            lblSeleccionaHerramienta.Name = "lblSeleccionaHerramienta";
+            lblSeleccionaHerramienta.Size = new Size(851, 628);
+            lblSeleccionaHerramienta.TabIndex = 0;
+            lblSeleccionaHerramienta.Text = "Selecciona una herramienta";
+            lblSeleccionaHerramienta.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // tabCatalogos
+            // 
+            tabCatalogos.Controls.Add(tlpCatalogos);
+            tabCatalogos.Location = new Point(4, 24);
+            tabCatalogos.Name = "tabCatalogos";
+            tabCatalogos.Padding = new Padding(20, 16, 20, 16);
+            tabCatalogos.Size = new Size(1192, 628);
+            tabCatalogos.TabIndex = 1;
+            tabCatalogos.Text = "Catálogos";
+            // 
+            // tlpCatalogos
+            // 
+            tlpCatalogos.ColumnCount = 1;
+            tlpCatalogos.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpCatalogos.Controls.Add(segCatalogo, 0, 0);
+            tlpCatalogos.Controls.Add(flpCatForm, 0, 1);
+            tlpCatalogos.Controls.Add(dgvCatalogo, 0, 2);
+            tlpCatalogos.Dock = DockStyle.Fill;
+            tlpCatalogos.Location = new Point(20, 16);
+            tlpCatalogos.Name = "tlpCatalogos";
+            tlpCatalogos.RowCount = 3;
+            tlpCatalogos.RowStyles.Add(new RowStyle());
+            tlpCatalogos.RowStyles.Add(new RowStyle());
+            tlpCatalogos.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpCatalogos.Size = new Size(1152, 596);
+            tlpCatalogos.TabIndex = 0;
+            // 
+            // segCatalogo
+            // 
+            segCatalogo.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            segCatalogo.Location = new Point(0, 0);
+            segCatalogo.Margin = new Padding(0, 0, 0, 12);
+            segCatalogo.Name = "segCatalogo";
+            segCatalogo.Size = new Size(152, 38);
+            segCatalogo.TabIndex = 0;
+            // 
+            // flpCatForm
+            // 
+            flpCatForm.AutoSize = true;
+            flpCatForm.Controls.Add(txtCatNombre);
+            flpCatForm.Controls.Add(txtCatDescripcion);
+            flpCatForm.Controls.Add(btnCatAgregar);
+            flpCatForm.Controls.Add(btnCatGuardar);
+            flpCatForm.Controls.Add(btnCatEliminar);
+            flpCatForm.Controls.Add(lnkCatCancelar);
+            flpCatForm.Dock = DockStyle.Fill;
+            flpCatForm.Location = new Point(0, 50);
+            flpCatForm.Margin = new Padding(0, 0, 0, 12);
+            flpCatForm.Name = "flpCatForm";
+            flpCatForm.Size = new Size(1152, 38);
+            flpCatForm.TabIndex = 1;
+            flpCatForm.WrapContents = false;
+            // 
+            // txtCatNombre
+            // 
+            txtCatNombre.BackColor = Color.White;
+            txtCatNombre.FloatingLabelText = "";
+            txtCatNombre.Location = new Point(0, 0);
+            txtCatNombre.Margin = new Padding(0, 0, 10, 0);
+            txtCatNombre.MaxLength = 32767;
+            txtCatNombre.MinimumSize = new Size(0, 38);
+            txtCatNombre.Multiline = false;
+            txtCatNombre.Name = "txtCatNombre";
+            txtCatNombre.Padding = new Padding(0, 0, 0, 4);
+            txtCatNombre.PasswordChar = '\0';
+            txtCatNombre.PlaceholderText = "Nombre";
+            txtCatNombre.ReadOnly = false;
+            txtCatNombre.SelectionStart = 0;
+            txtCatNombre.Size = new Size(160, 38);
+            txtCatNombre.TabIndex = 0;
+            txtCatNombre.UseFloatingLabel = false;
+            // 
+            // txtCatDescripcion
+            // 
+            txtCatDescripcion.BackColor = Color.White;
+            txtCatDescripcion.FloatingLabelText = "";
+            txtCatDescripcion.Location = new Point(170, 0);
+            txtCatDescripcion.Margin = new Padding(0, 0, 10, 0);
+            txtCatDescripcion.MaxLength = 32767;
+            txtCatDescripcion.MinimumSize = new Size(0, 38);
+            txtCatDescripcion.Multiline = false;
+            txtCatDescripcion.Name = "txtCatDescripcion";
+            txtCatDescripcion.Padding = new Padding(0, 0, 0, 4);
+            txtCatDescripcion.PasswordChar = '\0';
+            txtCatDescripcion.PlaceholderText = "Descripción";
+            txtCatDescripcion.ReadOnly = false;
+            txtCatDescripcion.SelectionStart = 0;
+            txtCatDescripcion.Size = new Size(220, 38);
+            txtCatDescripcion.TabIndex = 1;
+            txtCatDescripcion.UseFloatingLabel = false;
+            // 
+            // btnCatAgregar
+            // 
+            btnCatAgregar.CornerRadius = 8;
+            btnCatAgregar.FlatStyle = FlatStyle.Flat;
+            btnCatAgregar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnCatAgregar.Icon = FontAwesome.Sharp.IconChar.Add;
+            btnCatAgregar.IconColor = null;
+            btnCatAgregar.IconSize = 14;
+            btnCatAgregar.Location = new Point(400, 0);
+            btnCatAgregar.Margin = new Padding(0, 0, 8, 0);
+            btnCatAgregar.Name = "btnCatAgregar";
+            btnCatAgregar.Size = new Size(120, 38);
+            btnCatAgregar.TabIndex = 2;
+            btnCatAgregar.Text = "Agregar";
+            btnCatAgregar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            // 
+            // btnCatGuardar
+            // 
+            btnCatGuardar.CornerRadius = 8;
+            btnCatGuardar.FlatStyle = FlatStyle.Flat;
+            btnCatGuardar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnCatGuardar.Icon = null;
+            btnCatGuardar.IconColor = null;
+            btnCatGuardar.IconSize = 16;
+            btnCatGuardar.Location = new Point(528, 0);
+            btnCatGuardar.Margin = new Padding(0, 0, 8, 0);
+            btnCatGuardar.Name = "btnCatGuardar";
+            btnCatGuardar.Size = new Size(110, 38);
+            btnCatGuardar.TabIndex = 3;
+            btnCatGuardar.Text = "Guardar";
+            btnCatGuardar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            btnCatGuardar.Visible = false;
+            // 
+            // btnCatEliminar
+            // 
+            btnCatEliminar.CornerRadius = 8;
+            btnCatEliminar.FlatStyle = FlatStyle.Flat;
+            btnCatEliminar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnCatEliminar.Icon = null;
+            btnCatEliminar.IconColor = null;
+            btnCatEliminar.IconSize = 16;
+            btnCatEliminar.Location = new Point(646, 0);
+            btnCatEliminar.Margin = new Padding(0, 0, 8, 0);
+            btnCatEliminar.Name = "btnCatEliminar";
+            btnCatEliminar.Size = new Size(110, 38);
+            btnCatEliminar.TabIndex = 4;
+            btnCatEliminar.Text = "Eliminar";
+            btnCatEliminar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Danger;
+            btnCatEliminar.Visible = false;
+            // 
+            // lnkCatCancelar
+            // 
+            lnkCatCancelar.AutoSize = true;
+            lnkCatCancelar.Font = new Font("Segoe UI", 9.5F);
+            lnkCatCancelar.LinkBehavior = LinkBehavior.HoverUnderline;
+            lnkCatCancelar.Location = new Point(768, 10);
+            lnkCatCancelar.Margin = new Padding(4, 10, 0, 0);
+            lnkCatCancelar.Name = "lnkCatCancelar";
+            lnkCatCancelar.Size = new Size(104, 17);
+            lnkCatCancelar.TabIndex = 5;
+            lnkCatCancelar.TabStop = true;
+            lnkCatCancelar.Text = "Cancelar edición";
+            lnkCatCancelar.Visible = false;
+            // 
+            // dgvCatalogo
+            // 
+            dgvCatalogo.AllowUserToAddRows = false;
+            dgvCatalogo.AllowUserToDeleteRows = false;
+            dgvCatalogo.Dock = DockStyle.Fill;
+            dgvCatalogo.Location = new Point(0, 100);
+            dgvCatalogo.Margin = new Padding(0);
+            dgvCatalogo.Name = "dgvCatalogo";
+            dgvCatalogo.ReadOnly = true;
+            dgvCatalogo.Size = new Size(1152, 496);
+            dgvCatalogo.TabIndex = 2;
             // 
             // tabMantenimiento
             // 
-            tabMantenimiento.Controls.Add(grpMantenimientosActivos);
-            tabMantenimiento.Controls.Add(grpAccionMantenimiento);
-            tabMantenimiento.Location = new Point(4, 29);
+            tabMantenimiento.Controls.Add(tlpMant);
+            tabMantenimiento.Location = new Point(4, 24);
             tabMantenimiento.Name = "tabMantenimiento";
-            tabMantenimiento.Padding = new Padding(8);
-            tabMantenimiento.Size = new Size(1219, 883);
-            tabMantenimiento.TabIndex = 3;
-            tabMantenimiento.Text = "  Mantenimiento  ";
+            tabMantenimiento.Padding = new Padding(20, 16, 20, 16);
+            tabMantenimiento.Size = new Size(1192, 628);
+            tabMantenimiento.TabIndex = 2;
+            tabMantenimiento.Text = "Mantenimiento";
             // 
-            // grpMantenimientosActivos
+            // tlpMant
             // 
-            grpMantenimientosActivos.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpMantenimientosActivos.Controls.Add(dgvMantenimientos);
-            grpMantenimientosActivos.Location = new Point(8, 8);
-            grpMantenimientosActivos.Name = "grpMantenimientosActivos";
-            grpMantenimientosActivos.Size = new Size(1199, 270);
-            grpMantenimientosActivos.TabIndex = 0;
-            grpMantenimientosActivos.TabStop = false;
-            grpMantenimientosActivos.Text = "Mantenimientos en curso — selecciona uno para cerrarlo";
+            tlpMant.ColumnCount = 1;
+            tlpMant.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpMant.Controls.Add(flpMantTop, 0, 0);
+            tlpMant.Controls.Add(dgvMant, 0, 1);
+            tlpMant.Controls.Add(pnlAccionesMant, 0, 2);
+            tlpMant.Dock = DockStyle.Fill;
+            tlpMant.Location = new Point(20, 16);
+            tlpMant.Name = "tlpMant";
+            tlpMant.RowCount = 3;
+            tlpMant.RowStyles.Add(new RowStyle());
+            tlpMant.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpMant.RowStyles.Add(new RowStyle(SizeType.Absolute, 200F));
+            tlpMant.Size = new Size(1152, 596);
+            tlpMant.TabIndex = 0;
             // 
-            // dgvMantenimientos
+            // flpMantTop
             // 
-            dgvMantenimientos.AllowUserToAddRows = false;
-            dgvMantenimientos.AllowUserToDeleteRows = false;
-            dgvMantenimientos.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvMantenimientos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvMantenimientos.Location = new Point(10, 22);
-            dgvMantenimientos.MultiSelect = false;
-            dgvMantenimientos.Name = "dgvMantenimientos";
-            dgvMantenimientos.ReadOnly = true;
-            dgvMantenimientos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvMantenimientos.Size = new Size(1179, 238);
-            dgvMantenimientos.TabIndex = 0;
+            flpMantTop.AutoSize = true;
+            flpMantTop.Controls.Add(txtBuscarMant);
+            flpMantTop.Controls.Add(chipMantActivos);
+            flpMantTop.Dock = DockStyle.Fill;
+            flpMantTop.Location = new Point(0, 0);
+            flpMantTop.Margin = new Padding(0, 0, 0, 12);
+            flpMantTop.Name = "flpMantTop";
+            flpMantTop.Size = new Size(1152, 38);
+            flpMantTop.TabIndex = 0;
+            flpMantTop.WrapContents = false;
             // 
-            // grpAccionMantenimiento
+            // txtBuscarMant
             // 
-            grpAccionMantenimiento.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpAccionMantenimiento.Controls.Add(lblHerramientaMant);
-            grpAccionMantenimiento.Controls.Add(cboHerramientaMant);
-            grpAccionMantenimiento.Controls.Add(lblTipoMant);
-            grpAccionMantenimiento.Controls.Add(cboTipoMant);
-            grpAccionMantenimiento.Controls.Add(lblRealizadoPor);
-            grpAccionMantenimiento.Controls.Add(txtRealizadoPor);
-            grpAccionMantenimiento.Controls.Add(lblDescMant);
-            grpAccionMantenimiento.Controls.Add(txtDescMant);
-            grpAccionMantenimiento.Controls.Add(btnAbrirMantenimiento);
-            grpAccionMantenimiento.Controls.Add(lblCosto);
-            grpAccionMantenimiento.Controls.Add(txtCosto);
-            grpAccionMantenimiento.Controls.Add(lblDescCierre);
-            grpAccionMantenimiento.Controls.Add(txtDescCierre);
-            grpAccionMantenimiento.Controls.Add(btnCerrarMantenimiento);
-            grpAccionMantenimiento.Controls.Add(btnVerHistorial);
-            grpAccionMantenimiento.Controls.Add(lblSecAbrir);
-            grpAccionMantenimiento.Controls.Add(divisor);
-            grpAccionMantenimiento.Controls.Add(lblSecCerrar);
-            grpAccionMantenimiento.Location = new Point(8, 290);
-            grpAccionMantenimiento.Name = "grpAccionMantenimiento";
-            grpAccionMantenimiento.Size = new Size(1199, 334);
-            grpAccionMantenimiento.TabIndex = 1;
-            grpAccionMantenimiento.TabStop = false;
-            grpAccionMantenimiento.Text = "Acciones";
+            txtBuscarMant.BackColor = Color.White;
+            txtBuscarMant.FloatingLabelText = "";
+            txtBuscarMant.Location = new Point(0, 0);
+            txtBuscarMant.Margin = new Padding(0, 0, 12, 0);
+            txtBuscarMant.MaxLength = 32767;
+            txtBuscarMant.MinimumSize = new Size(0, 38);
+            txtBuscarMant.Multiline = false;
+            txtBuscarMant.Name = "txtBuscarMant";
+            txtBuscarMant.Padding = new Padding(0, 0, 0, 4);
+            txtBuscarMant.PasswordChar = '\0';
+            txtBuscarMant.PlaceholderText = "Buscar por herramienta, código, técnico…";
+            txtBuscarMant.ReadOnly = false;
+            txtBuscarMant.SelectionStart = 0;
+            txtBuscarMant.Size = new Size(340, 38);
+            txtBuscarMant.TabIndex = 0;
+            txtBuscarMant.UseFloatingLabel = false;
             // 
-            // lblHerramientaMant
+            // chipMantActivos
             // 
-            lblHerramientaMant.Location = new Point(10, 65);
-            lblHerramientaMant.Name = "lblHerramientaMant";
-            lblHerramientaMant.Size = new Size(106, 23);
-            lblHerramientaMant.TabIndex = 0;
-            lblHerramientaMant.Text = "Herramienta:";
+            chipMantActivos.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            chipMantActivos.Location = new Point(352, 7);
+            chipMantActivos.Margin = new Padding(0, 7, 0, 0);
+            chipMantActivos.Name = "chipMantActivos";
+            chipMantActivos.Size = new Size(69, 24);
+            chipMantActivos.TabIndex = 1;
+            chipMantActivos.Text = "0 activos";
             // 
-            // cboHerramientaMant
+            // dgvMant
             // 
-            cboHerramientaMant.BackColor = Color.White;
-            cboHerramientaMant.DataSource = null;
-            cboHerramientaMant.DisplayMember = "";
-            cboHerramientaMant.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboHerramientaMant.Location = new Point(131, 65);
-            cboHerramientaMant.MinimumSize = new Size(0, 38);
-            cboHerramientaMant.Name = "cboHerramientaMant";
-            cboHerramientaMant.Padding = new Padding(0, 0, 0, 4);
-            cboHerramientaMant.SelectedIndex = -1;
-            cboHerramientaMant.SelectedItem = null;
-            cboHerramientaMant.SelectedValue = null;
-            cboHerramientaMant.Size = new Size(230, 38);
-            cboHerramientaMant.TabIndex = 1;
-            cboHerramientaMant.ValueMember = "";
-            cboHerramientaMant.Load += cboHerramientaMant_Load;
+            dgvMant.AllowUserToAddRows = false;
+            dgvMant.AllowUserToDeleteRows = false;
+            dgvMant.Dock = DockStyle.Fill;
+            dgvMant.Location = new Point(0, 50);
+            dgvMant.Margin = new Padding(0, 0, 0, 12);
+            dgvMant.Name = "dgvMant";
+            dgvMant.ReadOnly = true;
+            dgvMant.Size = new Size(1152, 334);
+            dgvMant.TabIndex = 1;
+            // 
+            // pnlAccionesMant
+            // 
+            pnlAccionesMant.BackColor = Color.White;
+            pnlAccionesMant.Controls.Add(btnNuevoMant);
+            pnlAccionesMant.Controls.Add(pnlAbrirMant);
+            pnlAccionesMant.Controls.Add(pnlCerrarMant);
+            pnlAccionesMant.Dock = DockStyle.Fill;
+            pnlAccionesMant.Location = new Point(0, 396);
+            pnlAccionesMant.Margin = new Padding(0);
+            pnlAccionesMant.Name = "pnlAccionesMant";
+            pnlAccionesMant.Padding = new Padding(18, 10, 24, 16);
+            pnlAccionesMant.Size = new Size(1152, 200);
+            pnlAccionesMant.TabIndex = 2;
+            // 
+            // btnNuevoMant
+            // 
+            btnNuevoMant.CornerRadius = 8;
+            btnNuevoMant.FlatStyle = FlatStyle.Flat;
+            btnNuevoMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnNuevoMant.Icon = FontAwesome.Sharp.IconChar.Add;
+            btnNuevoMant.IconColor = null;
+            btnNuevoMant.IconSize = 14;
+            btnNuevoMant.Location = new Point(1020, 10);
+            btnNuevoMant.Name = "btnNuevoMant";
+            btnNuevoMant.Size = new Size(110, 34);
+            btnNuevoMant.TabIndex = 0;
+            btnNuevoMant.Text = "Nuevo";
+            btnNuevoMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            // 
+            // pnlAbrirMant
+            // 
+            pnlAbrirMant.BackColor = Color.White;
+            pnlAbrirMant.Controls.Add(tlpAbrir);
+            pnlAbrirMant.Controls.Add(lblAbrirTitulo);
+            pnlAbrirMant.Dock = DockStyle.Fill;
+            pnlAbrirMant.Location = new Point(18, 10);
+            pnlAbrirMant.Name = "pnlAbrirMant";
+            pnlAbrirMant.Size = new Size(1110, 174);
+            pnlAbrirMant.TabIndex = 1;
+            // 
+            // tlpAbrir
+            // 
+            tlpAbrir.ColumnCount = 5;
+            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34F));
+            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16F));
+            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
+            tlpAbrir.Controls.Add(lblUnidadMant, 0, 0);
+            tlpAbrir.Controls.Add(lblTipoMant, 1, 0);
+            tlpAbrir.Controls.Add(lblRealizadoPor, 2, 0);
+            tlpAbrir.Controls.Add(lblDescMant, 3, 0);
+            tlpAbrir.Controls.Add(cboUnidadMant, 0, 1);
+            tlpAbrir.Controls.Add(cboTipoMant, 1, 1);
+            tlpAbrir.Controls.Add(txtRealizadoPor, 2, 1);
+            tlpAbrir.Controls.Add(txtDescMant, 3, 1);
+            tlpAbrir.Controls.Add(btnAbrirMant, 4, 1);
+            tlpAbrir.Dock = DockStyle.Top;
+            tlpAbrir.Location = new Point(0, 44);
+            tlpAbrir.Name = "tlpAbrir";
+            tlpAbrir.RowCount = 2;
+            tlpAbrir.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
+            tlpAbrir.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            tlpAbrir.Size = new Size(1110, 68);
+            tlpAbrir.TabIndex = 1;
+            // 
+            // lblUnidadMant
+            // 
+            lblUnidadMant.AutoSize = true;
+            lblUnidadMant.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblUnidadMant.Location = new Point(3, 0);
+            lblUnidadMant.Name = "lblUnidadMant";
+            lblUnidadMant.Size = new Size(126, 15);
+            lblUnidadMant.TabIndex = 0;
+            lblUnidadMant.Text = "Herramienta (unidad)";
             // 
             // lblTipoMant
             // 
-            lblTipoMant.Location = new Point(10, 120);
+            lblTipoMant.AutoSize = true;
+            lblTipoMant.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblTipoMant.Location = new Point(339, 0);
             lblTipoMant.Name = "lblTipoMant";
-            lblTipoMant.Size = new Size(80, 23);
-            lblTipoMant.TabIndex = 2;
-            lblTipoMant.Text = "Tipo:";
+            lblTipoMant.Size = new Size(31, 15);
+            lblTipoMant.TabIndex = 1;
+            lblTipoMant.Text = "Tipo";
+            // 
+            // lblRealizadoPor
+            // 
+            lblRealizadoPor.AutoSize = true;
+            lblRealizadoPor.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblRealizadoPor.Location = new Point(497, 0);
+            lblRealizadoPor.Name = "lblRealizadoPor";
+            lblRealizadoPor.Size = new Size(82, 15);
+            lblRealizadoPor.TabIndex = 2;
+            lblRealizadoPor.Text = "Realizado por";
+            // 
+            // lblDescMant
+            // 
+            lblDescMant.AutoSize = true;
+            lblDescMant.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblDescMant.Location = new Point(695, 0);
+            lblDescMant.Name = "lblDescMant";
+            lblDescMant.Size = new Size(72, 15);
+            lblDescMant.TabIndex = 3;
+            lblDescMant.Text = "Descripción";
+            // 
+            // cboUnidadMant
+            // 
+            cboUnidadMant.BackColor = Color.White;
+            cboUnidadMant.DataSource = null;
+            cboUnidadMant.DisplayMember = "";
+            cboUnidadMant.Dock = DockStyle.Fill;
+            cboUnidadMant.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboUnidadMant.Location = new Point(0, 24);
+            cboUnidadMant.Margin = new Padding(0, 0, 10, 0);
+            cboUnidadMant.MinimumSize = new Size(0, 38);
+            cboUnidadMant.Name = "cboUnidadMant";
+            cboUnidadMant.Padding = new Padding(0, 0, 0, 4);
+            cboUnidadMant.SelectedIndex = -1;
+            cboUnidadMant.SelectedItem = null;
+            cboUnidadMant.SelectedValue = null;
+            cboUnidadMant.Size = new Size(326, 44);
+            cboUnidadMant.TabIndex = 4;
+            cboUnidadMant.ValueMember = "";
             // 
             // cboTipoMant
             // 
             cboTipoMant.BackColor = Color.White;
             cboTipoMant.DataSource = null;
             cboTipoMant.DisplayMember = "";
+            cboTipoMant.Dock = DockStyle.Fill;
             cboTipoMant.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboTipoMant.Location = new Point(131, 120);
+            cboTipoMant.Location = new Point(336, 24);
+            cboTipoMant.Margin = new Padding(0, 0, 10, 0);
             cboTipoMant.MinimumSize = new Size(0, 38);
             cboTipoMant.Name = "cboTipoMant";
             cboTipoMant.Padding = new Padding(0, 0, 0, 4);
             cboTipoMant.SelectedIndex = -1;
             cboTipoMant.SelectedItem = null;
             cboTipoMant.SelectedValue = null;
-            cboTipoMant.Size = new Size(150, 38);
-            cboTipoMant.TabIndex = 3;
+            cboTipoMant.Size = new Size(148, 44);
+            cboTipoMant.TabIndex = 5;
             cboTipoMant.ValueMember = "";
-            // 
-            // lblRealizadoPor
-            // 
-            lblRealizadoPor.Location = new Point(10, 164);
-            lblRealizadoPor.Name = "lblRealizadoPor";
-            lblRealizadoPor.Size = new Size(115, 23);
-            lblRealizadoPor.TabIndex = 4;
-            lblRealizadoPor.Text = "Realizado por:";
             // 
             // txtRealizadoPor
             // 
             txtRealizadoPor.BackColor = Color.White;
+            txtRealizadoPor.Dock = DockStyle.Fill;
             txtRealizadoPor.FloatingLabelText = "";
-            txtRealizadoPor.Location = new Point(131, 164);
+            txtRealizadoPor.Location = new Point(494, 24);
+            txtRealizadoPor.Margin = new Padding(0, 0, 10, 0);
             txtRealizadoPor.MaxLength = 32767;
             txtRealizadoPor.MinimumSize = new Size(0, 38);
             txtRealizadoPor.Multiline = false;
@@ -1020,23 +1376,17 @@
             txtRealizadoPor.PlaceholderText = "";
             txtRealizadoPor.ReadOnly = false;
             txtRealizadoPor.SelectionStart = 0;
-            txtRealizadoPor.Size = new Size(230, 38);
-            txtRealizadoPor.TabIndex = 5;
+            txtRealizadoPor.Size = new Size(188, 44);
+            txtRealizadoPor.TabIndex = 6;
             txtRealizadoPor.UseFloatingLabel = false;
-            // 
-            // lblDescMant
-            // 
-            lblDescMant.Location = new Point(10, 220);
-            lblDescMant.Name = "lblDescMant";
-            lblDescMant.Size = new Size(98, 23);
-            lblDescMant.TabIndex = 6;
-            lblDescMant.Text = "Descripción:";
             // 
             // txtDescMant
             // 
             txtDescMant.BackColor = Color.White;
+            txtDescMant.Dock = DockStyle.Fill;
             txtDescMant.FloatingLabelText = "";
-            txtDescMant.Location = new Point(131, 220);
+            txtDescMant.Location = new Point(692, 24);
+            txtDescMant.Margin = new Padding(0, 0, 10, 0);
             txtDescMant.MaxLength = 32767;
             txtDescMant.MinimumSize = new Size(0, 38);
             txtDescMant.Multiline = false;
@@ -1046,172 +1396,234 @@
             txtDescMant.PlaceholderText = "";
             txtDescMant.ReadOnly = false;
             txtDescMant.SelectionStart = 0;
-            txtDescMant.Size = new Size(230, 38);
+            txtDescMant.Size = new Size(287, 44);
             txtDescMant.TabIndex = 7;
             txtDescMant.UseFloatingLabel = false;
             // 
-            // btnAbrirMantenimiento
+            // btnAbrirMant
             // 
-            btnAbrirMantenimiento.CornerRadius = 8;
-            btnAbrirMantenimiento.FlatStyle = FlatStyle.Flat;
-            btnAbrirMantenimiento.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnAbrirMantenimiento.Icon = FontAwesome.Sharp.IconChar.Wrench;
-            btnAbrirMantenimiento.IconColor = null;
-            btnAbrirMantenimiento.IconSize = 20;
-            btnAbrirMantenimiento.Location = new Point(10, 267);
-            btnAbrirMantenimiento.Name = "btnAbrirMantenimiento";
-            btnAbrirMantenimiento.Size = new Size(200, 38);
-            btnAbrirMantenimiento.TabIndex = 8;
-            btnAbrirMantenimiento.Text = "Abrir mantenimiento";
-            btnAbrirMantenimiento.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            btnAbrirMant.CornerRadius = 8;
+            btnAbrirMant.Dock = DockStyle.Fill;
+            btnAbrirMant.FlatStyle = FlatStyle.Flat;
+            btnAbrirMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnAbrirMant.Icon = FontAwesome.Sharp.IconChar.Wrench;
+            btnAbrirMant.IconColor = null;
+            btnAbrirMant.IconSize = 14;
+            btnAbrirMant.Location = new Point(989, 24);
+            btnAbrirMant.Margin = new Padding(0, 0, 0, 4);
+            btnAbrirMant.Name = "btnAbrirMant";
+            btnAbrirMant.Size = new Size(121, 40);
+            btnAbrirMant.TabIndex = 8;
+            btnAbrirMant.Text = "Abrir";
+            btnAbrirMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            // 
+            // lblAbrirTitulo
+            // 
+            lblAbrirTitulo.Dock = DockStyle.Top;
+            lblAbrirTitulo.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblAbrirTitulo.Location = new Point(0, 0);
+            lblAbrirTitulo.Name = "lblAbrirTitulo";
+            lblAbrirTitulo.Size = new Size(1110, 44);
+            lblAbrirTitulo.TabIndex = 0;
+            lblAbrirTitulo.Text = "Abrir nuevo mantenimiento";
+            lblAbrirTitulo.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // pnlCerrarMant
+            // 
+            pnlCerrarMant.BackColor = Color.White;
+            pnlCerrarMant.Controls.Add(tlpCerrar);
+            pnlCerrarMant.Controls.Add(lblCerrarInfo);
+            pnlCerrarMant.Controls.Add(lblCerrarTitulo);
+            pnlCerrarMant.Dock = DockStyle.Fill;
+            pnlCerrarMant.Location = new Point(18, 10);
+            pnlCerrarMant.Name = "pnlCerrarMant";
+            pnlCerrarMant.Size = new Size(1110, 174);
+            pnlCerrarMant.TabIndex = 2;
+            pnlCerrarMant.Visible = false;
+            // 
+            // tlpCerrar
+            // 
+            tlpCerrar.ColumnCount = 4;
+            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
+            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210F));
+            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
+            tlpCerrar.Controls.Add(lblCosto, 0, 0);
+            tlpCerrar.Controls.Add(lblNotasCierre, 1, 0);
+            tlpCerrar.Controls.Add(nudCosto, 0, 1);
+            tlpCerrar.Controls.Add(txtNotasCierre, 1, 1);
+            tlpCerrar.Controls.Add(btnCerrarMant, 2, 1);
+            tlpCerrar.Controls.Add(lnkHistorial, 3, 1);
+            tlpCerrar.Dock = DockStyle.Top;
+            tlpCerrar.Location = new Point(0, 64);
+            tlpCerrar.Name = "tlpCerrar";
+            tlpCerrar.RowCount = 2;
+            tlpCerrar.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
+            tlpCerrar.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            tlpCerrar.Size = new Size(1110, 68);
+            tlpCerrar.TabIndex = 2;
             // 
             // lblCosto
             // 
-            lblCosto.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblCosto.Location = new Point(767, 65);
+            lblCosto.AutoSize = true;
+            lblCosto.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblCosto.Location = new Point(3, 0);
             lblCosto.Name = "lblCosto";
-            lblCosto.Size = new Size(80, 23);
-            lblCosto.TabIndex = 9;
-            lblCosto.Text = "Costo (L):";
+            lblCosto.Size = new Size(56, 15);
+            lblCosto.TabIndex = 0;
+            lblCosto.Text = "Costo ($)";
             // 
-            // txtCosto
+            // lblNotasCierre
             // 
-            txtCosto.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            txtCosto.BackColor = Color.White;
-            txtCosto.FloatingLabelText = "";
-            txtCosto.Location = new Point(884, 65);
-            txtCosto.MaxLength = 32767;
-            txtCosto.MinimumSize = new Size(0, 38);
-            txtCosto.Multiline = false;
-            txtCosto.Name = "txtCosto";
-            txtCosto.Padding = new Padding(0, 0, 0, 4);
-            txtCosto.PasswordChar = '\0';
-            txtCosto.PlaceholderText = "";
-            txtCosto.ReadOnly = false;
-            txtCosto.SelectionStart = 0;
-            txtCosto.Size = new Size(130, 38);
-            txtCosto.TabIndex = 10;
-            txtCosto.UseFloatingLabel = false;
+            lblNotasCierre.AutoSize = true;
+            lblNotasCierre.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblNotasCierre.Location = new Point(163, 0);
+            lblNotasCierre.Name = "lblNotasCierre";
+            lblNotasCierre.Size = new Size(92, 15);
+            lblNotasCierre.TabIndex = 1;
+            lblNotasCierre.Text = "Notas de cierre";
             // 
-            // lblDescCierre
+            // nudCosto
             // 
-            lblDescCierre.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblDescCierre.Location = new Point(762, 125);
-            lblDescCierre.Name = "lblDescCierre";
-            lblDescCierre.Size = new Size(116, 23);
-            lblDescCierre.TabIndex = 11;
-            lblDescCierre.Text = "Notas cierre:";
+            nudCosto.DecimalPlaces = 2;
+            nudCosto.Dock = DockStyle.Fill;
+            nudCosto.Location = new Point(0, 28);
+            nudCosto.Margin = new Padding(0, 4, 10, 0);
+            nudCosto.Maximum = new decimal(new int[] { 9999999, 0, 0, 0 });
+            nudCosto.Name = "nudCosto";
+            nudCosto.Size = new Size(150, 23);
+            nudCosto.TabIndex = 2;
+            nudCosto.ThousandsSeparator = true;
             // 
-            // txtDescCierre
+            // txtNotasCierre
             // 
-            txtDescCierre.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            txtDescCierre.BackColor = Color.White;
-            txtDescCierre.FloatingLabelText = "";
-            txtDescCierre.Location = new Point(884, 125);
-            txtDescCierre.MaxLength = 32767;
-            txtDescCierre.MinimumSize = new Size(0, 38);
-            txtDescCierre.Multiline = false;
-            txtDescCierre.Name = "txtDescCierre";
-            txtDescCierre.Padding = new Padding(0, 0, 0, 4);
-            txtDescCierre.PasswordChar = '\0';
-            txtDescCierre.PlaceholderText = "";
-            txtDescCierre.ReadOnly = false;
-            txtDescCierre.SelectionStart = 0;
-            txtDescCierre.Size = new Size(301, 38);
-            txtDescCierre.TabIndex = 12;
-            txtDescCierre.UseFloatingLabel = false;
+            txtNotasCierre.BackColor = Color.White;
+            txtNotasCierre.Dock = DockStyle.Fill;
+            txtNotasCierre.FloatingLabelText = "";
+            txtNotasCierre.Location = new Point(160, 24);
+            txtNotasCierre.Margin = new Padding(0, 0, 10, 0);
+            txtNotasCierre.MaxLength = 32767;
+            txtNotasCierre.MinimumSize = new Size(0, 38);
+            txtNotasCierre.Multiline = false;
+            txtNotasCierre.Name = "txtNotasCierre";
+            txtNotasCierre.Padding = new Padding(0, 0, 0, 4);
+            txtNotasCierre.PasswordChar = '\0';
+            txtNotasCierre.PlaceholderText = "Qué se hizo, piezas cambiadas…";
+            txtNotasCierre.ReadOnly = false;
+            txtNotasCierre.SelectionStart = 0;
+            txtNotasCierre.Size = new Size(620, 44);
+            txtNotasCierre.TabIndex = 3;
+            txtNotasCierre.UseFloatingLabel = false;
             // 
-            // btnCerrarMantenimiento
+            // btnCerrarMant
             // 
-            btnCerrarMantenimiento.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnCerrarMantenimiento.CornerRadius = 8;
-            btnCerrarMantenimiento.FlatStyle = FlatStyle.Flat;
-            btnCerrarMantenimiento.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnCerrarMantenimiento.Icon = FontAwesome.Sharp.IconChar.CheckCircle;
-            btnCerrarMantenimiento.IconColor = null;
-            btnCerrarMantenimiento.IconSize = 20;
-            btnCerrarMantenimiento.Location = new Point(755, 190);
-            btnCerrarMantenimiento.Name = "btnCerrarMantenimiento";
-            btnCerrarMantenimiento.Size = new Size(254, 38);
-            btnCerrarMantenimiento.TabIndex = 13;
-            btnCerrarMantenimiento.Text = "Cerrar mantenimiento";
-            btnCerrarMantenimiento.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            btnCerrarMant.CornerRadius = 8;
+            btnCerrarMant.Dock = DockStyle.Fill;
+            btnCerrarMant.FlatStyle = FlatStyle.Flat;
+            btnCerrarMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnCerrarMant.Icon = FontAwesome.Sharp.IconChar.CheckCircle;
+            btnCerrarMant.IconColor = null;
+            btnCerrarMant.IconSize = 16;
+            btnCerrarMant.Location = new Point(790, 24);
+            btnCerrarMant.Margin = new Padding(0, 0, 10, 4);
+            btnCerrarMant.Name = "btnCerrarMant";
+            btnCerrarMant.Size = new Size(200, 40);
+            btnCerrarMant.TabIndex = 4;
+            btnCerrarMant.Text = "Cerrar mantenimiento";
+            btnCerrarMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
             // 
-            // btnVerHistorial
+            // lnkHistorial
             // 
-            btnVerHistorial.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnVerHistorial.CornerRadius = 8;
-            btnVerHistorial.FlatStyle = FlatStyle.Flat;
-            btnVerHistorial.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnVerHistorial.Icon = FontAwesome.Sharp.IconChar.ClockRotateLeft;
-            btnVerHistorial.IconColor = null;
-            btnVerHistorial.IconSize = 20;
-            btnVerHistorial.Location = new Point(755, 245);
-            btnVerHistorial.Name = "btnVerHistorial";
-            btnVerHistorial.Size = new Size(254, 38);
-            btnVerHistorial.TabIndex = 14;
-            btnVerHistorial.Text = "Ver historial de herramienta";
-            btnVerHistorial.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            lnkHistorial.Dock = DockStyle.Fill;
+            lnkHistorial.Font = new Font("Segoe UI", 9.5F);
+            lnkHistorial.LinkBehavior = LinkBehavior.HoverUnderline;
+            lnkHistorial.Location = new Point(1003, 24);
+            lnkHistorial.Name = "lnkHistorial";
+            lnkHistorial.Size = new Size(104, 44);
+            lnkHistorial.TabIndex = 5;
+            lnkHistorial.TabStop = true;
+            lnkHistorial.Text = "Ver historial";
+            lnkHistorial.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // lblSecAbrir
+            // lblCerrarInfo
             // 
-            lblSecAbrir.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            lblSecAbrir.Location = new Point(10, 22);
-            lblSecAbrir.Name = "lblSecAbrir";
-            lblSecAbrir.Size = new Size(380, 20);
-            lblSecAbrir.TabIndex = 15;
-            lblSecAbrir.Text = "▶  Abrir nuevo mantenimiento";
+            lblCerrarInfo.AutoEllipsis = true;
+            lblCerrarInfo.Dock = DockStyle.Top;
+            lblCerrarInfo.Font = new Font("Segoe UI", 9.5F);
+            lblCerrarInfo.Location = new Point(0, 36);
+            lblCerrarInfo.Name = "lblCerrarInfo";
+            lblCerrarInfo.Size = new Size(1110, 28);
+            lblCerrarInfo.TabIndex = 1;
+            lblCerrarInfo.Text = "Herramienta · Código · Tipo · N días";
             // 
-            // divisor
+            // lblCerrarTitulo
             // 
-            divisor.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            divisor.BorderStyle = BorderStyle.Fixed3D;
-            divisor.Location = new Point(747, 22);
-            divisor.Name = "divisor";
-            divisor.Size = new Size(2, 299);
-            divisor.TabIndex = 16;
-            // 
-            // lblSecCerrar
-            // 
-            lblSecCerrar.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblSecCerrar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            lblSecCerrar.Location = new Point(762, 22);
-            lblSecCerrar.Name = "lblSecCerrar";
-            lblSecCerrar.Size = new Size(380, 20);
-            lblSecCerrar.TabIndex = 17;
-            lblSecCerrar.Text = "▶  Cerrar mantenimiento seleccionado";
+            lblCerrarTitulo.Dock = DockStyle.Top;
+            lblCerrarTitulo.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblCerrarTitulo.Location = new Point(0, 0);
+            lblCerrarTitulo.Name = "lblCerrarTitulo";
+            lblCerrarTitulo.Size = new Size(1110, 36);
+            lblCerrarTitulo.TabIndex = 0;
+            lblCerrarTitulo.Text = "Cerrar mantenimiento";
+            lblCerrarTitulo.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // FrmHerramientas
             // 
-            ClientSize = new Size(1269, 978);
-            Controls.Add(lblTitulo);
-            Controls.Add(tabControl);
+            ClientSize = new Size(1200, 720);
+            Controls.Add(tabMain);
+            Controls.Add(pnlHeader);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "FrmHerramientas";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Herramientas";
-            tabControl.ResumeLayout(false);
+            pnlHeader.ResumeLayout(false);
+            pnlHeader.PerformLayout();
+            flpHeaderAcciones.ResumeLayout(false);
+            tabMain.ResumeLayout(false);
             tabHerramientas.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvHerramientas).EndInit();
-            grpDatos.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)nudStockTotal).EndInit();
-            tabCategorias.ResumeLayout(false);
-            grpDatosCategoria.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvCategorias).EndInit();
-            tabMarcas.ResumeLayout(false);
-            grpDatosMarca.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvMarcas).EndInit();
+            splitHerramientas.Panel1.ResumeLayout(false);
+            splitHerramientas.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitHerramientas).EndInit();
+            splitHerramientas.ResumeLayout(false);
+            tlpLista.ResumeLayout(false);
+            tlpLista.PerformLayout();
+            pnlBuscarH.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)icoBuscarH).EndInit();
+            pnlDetalle.ResumeLayout(false);
+            pnlDetalleScroll.ResumeLayout(false);
+            pnlDetalleScroll.PerformLayout();
+            tlpDetalle.ResumeLayout(false);
+            tlpDetalle.PerformLayout();
+            pnlDetHeader.ResumeLayout(false);
+            tlpTiles.ResumeLayout(false);
+            tlpForm.ResumeLayout(false);
+            tlpForm.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudStockInicial).EndInit();
+            pnlUnidadesHeader.ResumeLayout(false);
+            pnlUnidadesHeader.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvUnidadesMini).EndInit();
+            pnlDetalleFooter.ResumeLayout(false);
+            tabCatalogos.ResumeLayout(false);
+            tlpCatalogos.ResumeLayout(false);
+            tlpCatalogos.PerformLayout();
+            flpCatForm.ResumeLayout(false);
+            flpCatForm.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvCatalogo).EndInit();
             tabMantenimiento.ResumeLayout(false);
-            grpMantenimientosActivos.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvMantenimientos).EndInit();
-            grpAccionMantenimiento.ResumeLayout(false);
+            tlpMant.ResumeLayout(false);
+            tlpMant.PerformLayout();
+            flpMantTop.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvMant).EndInit();
+            pnlAccionesMant.ResumeLayout(false);
+            pnlAbrirMant.ResumeLayout(false);
+            tlpAbrir.ResumeLayout(false);
+            tlpAbrir.PerformLayout();
+            pnlCerrarMant.ResumeLayout(false);
+            tlpCerrar.ResumeLayout(false);
+            tlpCerrar.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudCosto).EndInit();
             ResumeLayout(false);
         }
-
-        private Label lblSecAbrir;
-        private Label divisor;
-        private Label lblSecCerrar;
-        private DataGridView dgvHerramientas;
     }
 }

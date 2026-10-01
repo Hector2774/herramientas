@@ -1,4 +1,4 @@
-﻿using PromacoHerra.Data;
+﻿using PromacoHerra.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,23 +35,7 @@ namespace PromacoHerra
                 return;
             }
 
-            using var cn = Db.GetConnection();
-            cn.Open();
-
-            var cmd = new Microsoft.Data.SqlClient.SqlCommand(@"
-        SELECT COUNT(*) 
-        FROM Usuario 
-        WHERE Username = @user 
-        AND Password = @pass 
-        AND Activo = 1
-    ", cn);
-
-            cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@pass", pass);
-
-            int existe = Convert.ToInt32(cmd.ExecuteScalar());
-
-            if (existe > 0)
+            if (UsuarioService.Login(user, pass))
             {
                 // abrir sistema
                 FrmPrincipal frm = new FrmPrincipal();

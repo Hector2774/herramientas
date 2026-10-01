@@ -5,26 +5,42 @@
         private System.ComponentModel.IContainer components = null;
 
         private System.Windows.Forms.Label lblTitulo;
-        private System.Windows.Forms.GroupBox grpPrestamo;
-        private System.Windows.Forms.Label lblEmpleado;
+        private System.Windows.Forms.TableLayoutPanel tlpMain;
+
+        // ── Panel izquierdo: datos del préstamo ──
+        private System.Windows.Forms.Panel pnlIzquierdo;
+        private System.Windows.Forms.TableLayoutPanel tlpIzquierdo;
+        private System.Windows.Forms.Label lblSecEmpleado;
         private PromacoHerra.Controls.EmpleadoPickerControl pickerEmpleado;
+        private System.Windows.Forms.Label sepEmpleado;
+        private System.Windows.Forms.Label lblSecAprobacion;
+        private System.Windows.Forms.Label lblAprobadoPorTitulo;
         private System.Windows.Forms.Label lblAprobadoPor;
-        private PromacoHerra.Controls.EmpleadoPickerControl pickerAprobador;
         private System.Windows.Forms.Label lblFechaPrestamo;
         private System.Windows.Forms.DateTimePicker dtpFecha;
         private System.Windows.Forms.Label lblFechaDevolucion;
         private System.Windows.Forms.DateTimePicker dtpFechaDevolucion;
         private System.Windows.Forms.Label lblObservaciones;
         private PromacoHerra.Controls.MaterialTextBox txtObservaciones;
-        private System.Windows.Forms.GroupBox grpHerramientas;
-        private System.Windows.Forms.TableLayoutPanel tlpHerramientas;
-        private System.Windows.Forms.DataGridView dgvDisponibles;
-        private System.Windows.Forms.Panel pnlBotonesTransferencia;
-        private System.Windows.Forms.DataGridView dgvSeleccionadas;
-        private PromacoHerra.Controls.MaterialButton btnAgregar;
-        private PromacoHerra.Controls.MaterialButton btnQuitar;
+        private System.Windows.Forms.Label sepAprobacion;
+        private System.Windows.Forms.Label lblSecSeleccion;
+        private System.Windows.Forms.Panel pnlSeleccion;
+        private System.Windows.Forms.ListView lvSeleccion;
+        private System.Windows.Forms.ColumnHeader colSelHerramienta;
+        private System.Windows.Forms.ColumnHeader colSelUnidades;
+        private System.Windows.Forms.ColumnHeader colSelCodigos;
+        private System.Windows.Forms.Label lblSeleccionVacia;
+        private System.Windows.Forms.Label lblTotal;
         private PromacoHerra.Controls.MaterialButton btnGuardar;
         private PromacoHerra.Controls.MaterialButton btnCancelar;
+
+        // ── Panel derecho: catálogo ──
+        private System.Windows.Forms.Panel pnlDerecho;
+        private System.Windows.Forms.TableLayoutPanel tlpToolbar;
+        private PromacoHerra.Controls.MaterialTextBox txtBuscar;
+        private System.Windows.Forms.FlowLayoutPanel flpCategorias;
+        private System.Windows.Forms.FlowLayoutPanel flpCatalogo;
+        private System.Windows.Forms.Label lblCatalogoVacio;
 
         protected override void Dispose(bool disposing)
         {
@@ -35,310 +51,437 @@
         private void InitializeComponent()
         {
             lblTitulo = new Label();
-            grpPrestamo = new GroupBox();
-            lblEmpleado = new Label();
+            tlpMain = new TableLayoutPanel();
+            pnlIzquierdo = new Panel();
+            tlpIzquierdo = new TableLayoutPanel();
+            lblSecEmpleado = new Label();
             pickerEmpleado = new PromacoHerra.Controls.EmpleadoPickerControl();
+            sepEmpleado = new Label();
+            lblSecAprobacion = new Label();
+            lblAprobadoPorTitulo = new Label();
             lblAprobadoPor = new Label();
-            pickerAprobador = new PromacoHerra.Controls.EmpleadoPickerControl();
             lblFechaPrestamo = new Label();
             dtpFecha = new DateTimePicker();
             lblFechaDevolucion = new Label();
             dtpFechaDevolucion = new DateTimePicker();
             lblObservaciones = new Label();
             txtObservaciones = new PromacoHerra.Controls.MaterialTextBox();
-            grpHerramientas = new GroupBox();
-            tlpHerramientas = new TableLayoutPanel();
-            dgvDisponibles = new DataGridView();
-            pnlBotonesTransferencia = new Panel();
-            btnAgregar = new PromacoHerra.Controls.MaterialButton();
-            btnQuitar = new PromacoHerra.Controls.MaterialButton();
-            dgvSeleccionadas = new DataGridView();
+            sepAprobacion = new Label();
+            lblSecSeleccion = new Label();
+            pnlSeleccion = new Panel();
+            lvSeleccion = new ListView();
+            colSelHerramienta = new ColumnHeader();
+            colSelUnidades = new ColumnHeader();
+            colSelCodigos = new ColumnHeader();
+            lblSeleccionVacia = new Label();
+            lblTotal = new Label();
             btnGuardar = new PromacoHerra.Controls.MaterialButton();
             btnCancelar = new PromacoHerra.Controls.MaterialButton();
-            grpPrestamo.SuspendLayout();
-            grpHerramientas.SuspendLayout();
-            tlpHerramientas.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvDisponibles).BeginInit();
-            pnlBotonesTransferencia.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvSeleccionadas).BeginInit();
+            pnlDerecho = new Panel();
+            tlpToolbar = new TableLayoutPanel();
+            txtBuscar = new PromacoHerra.Controls.MaterialTextBox();
+            flpCategorias = new FlowLayoutPanel();
+            flpCatalogo = new FlowLayoutPanel();
+            lblCatalogoVacio = new Label();
+            tlpMain.SuspendLayout();
+            pnlIzquierdo.SuspendLayout();
+            tlpIzquierdo.SuspendLayout();
+            pnlSeleccion.SuspendLayout();
+            pnlDerecho.SuspendLayout();
+            tlpToolbar.SuspendLayout();
             SuspendLayout();
-            // 
+            //
             // lblTitulo
-            // 
+            //
             lblTitulo.Dock = DockStyle.Top;
             lblTitulo.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            lblTitulo.Location = new Point(0, 0);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(925, 60);
+            lblTitulo.Size = new Size(1200, 60);
             lblTitulo.TabIndex = 0;
             lblTitulo.Text = "Registro de Préstamos";
             lblTitulo.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // grpPrestamo
-            // 
-            grpPrestamo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            grpPrestamo.Controls.Add(lblEmpleado);
-            grpPrestamo.Controls.Add(pickerEmpleado);
-            grpPrestamo.Controls.Add(lblAprobadoPor);
-            grpPrestamo.Controls.Add(pickerAprobador);
-            grpPrestamo.Controls.Add(lblFechaPrestamo);
-            grpPrestamo.Controls.Add(dtpFecha);
-            grpPrestamo.Controls.Add(lblFechaDevolucion);
-            grpPrestamo.Controls.Add(dtpFechaDevolucion);
-            grpPrestamo.Controls.Add(lblObservaciones);
-            grpPrestamo.Controls.Add(txtObservaciones);
-            grpPrestamo.Location = new Point(20, 70);
-            grpPrestamo.Name = "grpPrestamo";
-            grpPrestamo.Size = new Size(880, 155);
-            grpPrestamo.TabIndex = 1;
-            grpPrestamo.TabStop = false;
-            grpPrestamo.Text = "Datos del Préstamo";
-            grpPrestamo.Enter += grpPrestamo_Enter;
-            // 
-            // lblEmpleado
-            // 
-            lblEmpleado.Location = new Point(15, 30);
-            lblEmpleado.Name = "lblEmpleado";
-            lblEmpleado.Size = new Size(110, 23);
-            lblEmpleado.TabIndex = 0;
-            lblEmpleado.Text = "Empleado:";
-            // 
+            //
+            // tlpMain
+            //
+            // Dos columnas: datos del préstamo (300px fijos) | catálogo (resto).
+            // No se usa Dock=Left en el panel izquierdo porque ThemeManager
+            // pinta los paneles acoplados a la izquierda como sidebar.
+            tlpMain.ColumnCount = 2;
+            tlpMain.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300F));
+            tlpMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpMain.Controls.Add(pnlIzquierdo, 0, 0);
+            tlpMain.Controls.Add(pnlDerecho, 1, 0);
+            tlpMain.Dock = DockStyle.Fill;
+            tlpMain.Margin = new Padding(0);
+            tlpMain.Name = "tlpMain";
+            tlpMain.RowCount = 1;
+            tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpMain.TabIndex = 1;
+            //
+            // pnlIzquierdo
+            //
+            pnlIzquierdo.BackColor = Color.White;
+            pnlIzquierdo.Controls.Add(tlpIzquierdo);
+            pnlIzquierdo.Dock = DockStyle.Fill;
+            pnlIzquierdo.Margin = new Padding(0);
+            pnlIzquierdo.Name = "pnlIzquierdo";
+            pnlIzquierdo.Padding = new Padding(16, 12, 17, 16);
+            pnlIzquierdo.TabIndex = 0;
+            //
+            // tlpIzquierdo
+            //
+            tlpIzquierdo.BackColor = Color.White;
+            tlpIzquierdo.ColumnCount = 1;
+            tlpIzquierdo.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpIzquierdo.Controls.Add(lblSecEmpleado, 0, 0);
+            tlpIzquierdo.Controls.Add(pickerEmpleado, 0, 1);
+            tlpIzquierdo.Controls.Add(sepEmpleado, 0, 2);
+            tlpIzquierdo.Controls.Add(lblSecAprobacion, 0, 3);
+            tlpIzquierdo.Controls.Add(lblAprobadoPorTitulo, 0, 4);
+            tlpIzquierdo.Controls.Add(lblAprobadoPor, 0, 5);
+            tlpIzquierdo.Controls.Add(lblFechaPrestamo, 0, 6);
+            tlpIzquierdo.Controls.Add(dtpFecha, 0, 7);
+            tlpIzquierdo.Controls.Add(lblFechaDevolucion, 0, 8);
+            tlpIzquierdo.Controls.Add(dtpFechaDevolucion, 0, 9);
+            tlpIzquierdo.Controls.Add(lblObservaciones, 0, 10);
+            tlpIzquierdo.Controls.Add(txtObservaciones, 0, 11);
+            tlpIzquierdo.Controls.Add(sepAprobacion, 0, 12);
+            tlpIzquierdo.Controls.Add(lblSecSeleccion, 0, 13);
+            tlpIzquierdo.Controls.Add(pnlSeleccion, 0, 14);
+            tlpIzquierdo.Controls.Add(lblTotal, 0, 15);
+            tlpIzquierdo.Controls.Add(btnGuardar, 0, 16);
+            tlpIzquierdo.Controls.Add(btnCancelar, 0, 17);
+            tlpIzquierdo.Dock = DockStyle.Fill;
+            tlpIzquierdo.Margin = new Padding(0);
+            tlpIzquierdo.Name = "tlpIzquierdo";
+            tlpIzquierdo.RowCount = 18;
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpIzquierdo.TabIndex = 0;
+            //
+            // lblSecEmpleado
+            //
+            lblSecEmpleado.Dock = DockStyle.Fill;
+            lblSecEmpleado.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            lblSecEmpleado.Margin = new Padding(0, 0, 0, 4);
+            lblSecEmpleado.Name = "lblSecEmpleado";
+            lblSecEmpleado.Size = new Size(267, 20);
+            lblSecEmpleado.TabIndex = 0;
+            lblSecEmpleado.Text = "EMPLEADO";
+            //
             // pickerEmpleado
-            // 
-            pickerEmpleado.Location = new Point(157, 30);
-            pickerEmpleado.MinimumSize = new Size(200, 28);
+            //
+            pickerEmpleado.Dock = DockStyle.Fill;
+            pickerEmpleado.Margin = new Padding(0);
+            pickerEmpleado.MinimumSize = new Size(200, 38);
             pickerEmpleado.Name = "pickerEmpleado";
-            pickerEmpleado.Size = new Size(200, 28);
+            pickerEmpleado.Size = new Size(267, 38);
             pickerEmpleado.TabIndex = 1;
-            // 
+            //
+            // sepEmpleado
+            //
+            sepEmpleado.Dock = DockStyle.Fill;
+            sepEmpleado.Margin = new Padding(0, 14, 0, 14);
+            sepEmpleado.Name = "sepEmpleado";
+            sepEmpleado.Size = new Size(267, 1);
+            sepEmpleado.TabIndex = 2;
+            //
+            // lblSecAprobacion
+            //
+            lblSecAprobacion.Dock = DockStyle.Fill;
+            lblSecAprobacion.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            lblSecAprobacion.Margin = new Padding(0, 0, 0, 6);
+            lblSecAprobacion.Name = "lblSecAprobacion";
+            lblSecAprobacion.Size = new Size(267, 20);
+            lblSecAprobacion.TabIndex = 3;
+            lblSecAprobacion.Text = "APROBACIÓN Y FECHAS";
+            //
+            // lblAprobadoPorTitulo
+            //
+            lblAprobadoPorTitulo.Dock = DockStyle.Fill;
+            lblAprobadoPorTitulo.Font = new Font("Segoe UI", 9F);
+            lblAprobadoPorTitulo.Margin = new Padding(0);
+            lblAprobadoPorTitulo.Name = "lblAprobadoPorTitulo";
+            lblAprobadoPorTitulo.Size = new Size(267, 20);
+            lblAprobadoPorTitulo.TabIndex = 4;
+            lblAprobadoPorTitulo.Text = "Aprobado por";
+            //
             // lblAprobadoPor
-            // 
-            lblAprobadoPor.Location = new Point(386, 30);
+            //
+            lblAprobadoPor.AutoEllipsis = true;
+            lblAprobadoPor.Dock = DockStyle.Fill;
+            lblAprobadoPor.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblAprobadoPor.Margin = new Padding(0, 0, 0, 8);
             lblAprobadoPor.Name = "lblAprobadoPor";
-            lblAprobadoPor.Size = new Size(158, 23);
-            lblAprobadoPor.TabIndex = 2;
-            lblAprobadoPor.Text = "Aprobado por:";
-            // 
-            // pickerAprobador
-            // 
-            pickerAprobador.Location = new Point(592, 30);
-            pickerAprobador.MinimumSize = new Size(200, 28);
-            pickerAprobador.Name = "pickerAprobador";
-            pickerAprobador.Size = new Size(200, 28);
-            pickerAprobador.TabIndex = 3;
-            // 
+            lblAprobadoPor.Size = new Size(267, 24);
+            lblAprobadoPor.TabIndex = 5;
+            lblAprobadoPor.Text = "—";
+            //
             // lblFechaPrestamo
-            // 
-            lblFechaPrestamo.Location = new Point(15, 70);
+            //
+            lblFechaPrestamo.Dock = DockStyle.Fill;
+            lblFechaPrestamo.Font = new Font("Segoe UI", 9F);
+            lblFechaPrestamo.Margin = new Padding(0);
             lblFechaPrestamo.Name = "lblFechaPrestamo";
-            lblFechaPrestamo.Size = new Size(136, 23);
-            lblFechaPrestamo.TabIndex = 4;
-            lblFechaPrestamo.Text = "Fecha préstamo:";
-            // 
+            lblFechaPrestamo.Size = new Size(267, 20);
+            lblFechaPrestamo.TabIndex = 6;
+            lblFechaPrestamo.Text = "Fecha de préstamo";
+            //
             // dtpFecha
-            // 
+            //
             dtpFecha.CustomFormat = "dd/MM/yyyy";
+            dtpFecha.Dock = DockStyle.Fill;
             dtpFecha.Enabled = false;
             dtpFecha.Format = DateTimePickerFormat.Custom;
-            dtpFecha.Location = new Point(157, 70);
+            dtpFecha.Margin = new Padding(0, 2, 0, 8);
             dtpFecha.Name = "dtpFecha";
-            dtpFecha.Size = new Size(200, 23);
-            dtpFecha.TabIndex = 5;
-            // 
+            dtpFecha.Size = new Size(267, 27);
+            dtpFecha.TabIndex = 7;
+            //
             // lblFechaDevolucion
-            // 
-            lblFechaDevolucion.Location = new Point(386, 70);
+            //
+            lblFechaDevolucion.Dock = DockStyle.Fill;
+            lblFechaDevolucion.Font = new Font("Segoe UI", 9F);
+            lblFechaDevolucion.Margin = new Padding(0);
             lblFechaDevolucion.Name = "lblFechaDevolucion";
-            lblFechaDevolucion.Size = new Size(200, 23);
-            lblFechaDevolucion.TabIndex = 6;
-            lblFechaDevolucion.Text = "Fecha devolución esperada:";
-            // 
+            lblFechaDevolucion.Size = new Size(267, 20);
+            lblFechaDevolucion.TabIndex = 8;
+            lblFechaDevolucion.Text = "Devolución esperada";
+            //
             // dtpFechaDevolucion
-            // 
+            //
             dtpFechaDevolucion.CustomFormat = "dd/MM/yyyy";
+            dtpFechaDevolucion.Dock = DockStyle.Fill;
             dtpFechaDevolucion.Format = DateTimePickerFormat.Custom;
-            dtpFechaDevolucion.Location = new Point(592, 67);
+            dtpFechaDevolucion.Margin = new Padding(0, 2, 0, 8);
             dtpFechaDevolucion.Name = "dtpFechaDevolucion";
-            dtpFechaDevolucion.Size = new Size(200, 23);
-            dtpFechaDevolucion.TabIndex = 7;
-            // 
+            dtpFechaDevolucion.Size = new Size(267, 27);
+            dtpFechaDevolucion.TabIndex = 9;
+            //
             // lblObservaciones
-            // 
-            lblObservaciones.Location = new Point(15, 110);
+            //
+            lblObservaciones.Dock = DockStyle.Fill;
+            lblObservaciones.Font = new Font("Segoe UI", 9F);
+            lblObservaciones.Margin = new Padding(0);
             lblObservaciones.Name = "lblObservaciones";
-            lblObservaciones.Size = new Size(95, 23);
-            lblObservaciones.TabIndex = 8;
-            lblObservaciones.Text = "Observaciones:";
-            // 
+            lblObservaciones.Size = new Size(267, 20);
+            lblObservaciones.TabIndex = 10;
+            lblObservaciones.Text = "Observación";
+            //
             // txtObservaciones
-            // 
-            txtObservaciones.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            //
             txtObservaciones.BackColor = Color.White;
-            txtObservaciones.FloatingLabelText = "";
-            txtObservaciones.Location = new Point(157, 110);
-            txtObservaciones.MaxLength = 32767;
-            txtObservaciones.MinimumSize = new Size(0, 32);
-            txtObservaciones.Multiline = false;
+            txtObservaciones.Dock = DockStyle.Fill;
+            txtObservaciones.Margin = new Padding(0);
             txtObservaciones.Name = "txtObservaciones";
-            txtObservaciones.Padding = new Padding(0, 0, 0, 4);
-            txtObservaciones.PasswordChar = '\0';
-            txtObservaciones.PlaceholderText = "";
-            txtObservaciones.ReadOnly = false;
-            txtObservaciones.SelectionStart = 0;
-            txtObservaciones.Size = new Size(540, 32);
-            txtObservaciones.TabIndex = 9;
-            txtObservaciones.UseFloatingLabel = false;
-            // 
-            // grpHerramientas
-            // 
-            grpHerramientas.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            grpHerramientas.Controls.Add(tlpHerramientas);
-            grpHerramientas.Location = new Point(20, 238);
-            grpHerramientas.Name = "grpHerramientas";
-            grpHerramientas.Size = new Size(880, 340);
-            grpHerramientas.TabIndex = 2;
-            grpHerramientas.TabStop = false;
-            grpHerramientas.Text = "Selección de Herramientas";
-            // 
-            // tlpHerramientas
-            // 
-            tlpHerramientas.ColumnCount = 3;
-            tlpHerramientas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
-            tlpHerramientas.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90F));
-            tlpHerramientas.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
-            tlpHerramientas.Controls.Add(dgvDisponibles, 0, 0);
-            tlpHerramientas.Controls.Add(pnlBotonesTransferencia, 1, 0);
-            tlpHerramientas.Controls.Add(dgvSeleccionadas, 2, 0);
-            tlpHerramientas.Dock = DockStyle.Fill;
-            tlpHerramientas.Location = new Point(3, 19);
-            tlpHerramientas.Name = "tlpHerramientas";
-            tlpHerramientas.Padding = new Padding(7, 6, 7, 6);
-            tlpHerramientas.RowCount = 1;
-            tlpHerramientas.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpHerramientas.Size = new Size(874, 318);
-            tlpHerramientas.TabIndex = 0;
-            // 
-            // dgvDisponibles
-            // 
-            dgvDisponibles.AllowUserToAddRows = false;
-            dgvDisponibles.AllowUserToDeleteRows = false;
-            dgvDisponibles.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvDisponibles.Dock = DockStyle.Fill;
-            dgvDisponibles.Location = new Point(10, 9);
-            dgvDisponibles.Margin = new Padding(3, 3, 6, 3);
-            dgvDisponibles.MultiSelect = false;
-            dgvDisponibles.Name = "dgvDisponibles";
-            dgvDisponibles.ReadOnly = true;
-            dgvDisponibles.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDisponibles.Size = new Size(376, 300);
-            dgvDisponibles.TabIndex = 0;
-            // 
-            // pnlBotonesTransferencia
-            // 
-            pnlBotonesTransferencia.Anchor = AnchorStyles.None;
-            pnlBotonesTransferencia.Controls.Add(btnAgregar);
-            pnlBotonesTransferencia.Controls.Add(btnQuitar);
-            pnlBotonesTransferencia.Location = new Point(399, 113);
-            pnlBotonesTransferencia.Margin = new Padding(0);
-            pnlBotonesTransferencia.Name = "pnlBotonesTransferencia";
-            pnlBotonesTransferencia.Size = new Size(75, 91);
-            pnlBotonesTransferencia.TabIndex = 1;
-            // 
-            // btnAgregar
-            // 
-            btnAgregar.CornerRadius = 8;
-            btnAgregar.FlatStyle = FlatStyle.Flat;
-            btnAgregar.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
-            btnAgregar.Icon = FontAwesome.Sharp.IconChar.ArrowRight;
-            btnAgregar.IconColor = null;
-            btnAgregar.IconSize = 22;
-            btnAgregar.Location = new Point(0, 0);
-            btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(75, 38);
-            btnAgregar.TabIndex = 0;
-            btnAgregar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // btnQuitar
-            // 
-            btnQuitar.CornerRadius = 8;
-            btnQuitar.FlatStyle = FlatStyle.Flat;
-            btnQuitar.Font = new Font("Segoe UI", 11.5F, FontStyle.Bold);
-            btnQuitar.Icon = FontAwesome.Sharp.IconChar.ArrowLeft;
-            btnQuitar.IconColor = null;
-            btnQuitar.IconSize = 22;
-            btnQuitar.Location = new Point(0, 53);
-            btnQuitar.Name = "btnQuitar";
-            btnQuitar.Size = new Size(75, 38);
-            btnQuitar.TabIndex = 1;
-            btnQuitar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
-            // dgvSeleccionadas
-            // 
-            dgvSeleccionadas.AllowUserToAddRows = false;
-            dgvSeleccionadas.AllowUserToDeleteRows = false;
-            dgvSeleccionadas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvSeleccionadas.Dock = DockStyle.Fill;
-            dgvSeleccionadas.Location = new Point(488, 9);
-            dgvSeleccionadas.Margin = new Padding(6, 3, 3, 3);
-            dgvSeleccionadas.MultiSelect = false;
-            dgvSeleccionadas.Name = "dgvSeleccionadas";
-            dgvSeleccionadas.ReadOnly = true;
-            dgvSeleccionadas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvSeleccionadas.Size = new Size(376, 300);
-            dgvSeleccionadas.TabIndex = 1;
-            dgvSeleccionadas.CellContentClick += dgvSeleccionadas_CellContentClick;
-            // 
+            txtObservaciones.PlaceholderText = "Opcional";
+            txtObservaciones.Size = new Size(267, 38);
+            txtObservaciones.TabIndex = 11;
+            //
+            // sepAprobacion
+            //
+            sepAprobacion.Dock = DockStyle.Fill;
+            sepAprobacion.Margin = new Padding(0, 14, 0, 14);
+            sepAprobacion.Name = "sepAprobacion";
+            sepAprobacion.Size = new Size(267, 1);
+            sepAprobacion.TabIndex = 12;
+            //
+            // lblSecSeleccion
+            //
+            lblSecSeleccion.Dock = DockStyle.Fill;
+            lblSecSeleccion.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            lblSecSeleccion.Margin = new Padding(0, 0, 0, 6);
+            lblSecSeleccion.Name = "lblSecSeleccion";
+            lblSecSeleccion.Size = new Size(267, 20);
+            lblSecSeleccion.TabIndex = 13;
+            lblSecSeleccion.Text = "HERRAMIENTAS SELECCIONADAS";
+            //
+            // pnlSeleccion
+            //
+            pnlSeleccion.Controls.Add(lblSeleccionVacia);
+            pnlSeleccion.Controls.Add(lvSeleccion);
+            pnlSeleccion.Dock = DockStyle.Fill;
+            pnlSeleccion.Margin = new Padding(0);
+            pnlSeleccion.MinimumSize = new Size(0, 90);
+            pnlSeleccion.Name = "pnlSeleccion";
+            pnlSeleccion.TabIndex = 14;
+            //
+            // lvSeleccion
+            //
+            lvSeleccion.BorderStyle = BorderStyle.None;
+            lvSeleccion.Columns.AddRange(new ColumnHeader[] { colSelHerramienta, colSelUnidades, colSelCodigos });
+            lvSeleccion.Dock = DockStyle.Fill;
+            lvSeleccion.Font = new Font("Segoe UI", 9F);
+            lvSeleccion.FullRowSelect = true;
+            lvSeleccion.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lvSeleccion.MultiSelect = false;
+            lvSeleccion.Name = "lvSeleccion";
+            lvSeleccion.ShowItemToolTips = true;
+            lvSeleccion.TabIndex = 0;
+            lvSeleccion.UseCompatibleStateImageBehavior = false;
+            lvSeleccion.View = View.Details;
+            //
+            // colSelHerramienta
+            //
+            colSelHerramienta.Text = "Herramienta";
+            colSelHerramienta.Width = 112;
+            //
+            // colSelUnidades
+            //
+            colSelUnidades.Text = "Unidades";
+            colSelUnidades.TextAlign = HorizontalAlignment.Center;
+            colSelUnidades.Width = 66;
+            //
+            // colSelCodigos
+            //
+            colSelCodigos.Text = "Códigos";
+            colSelCodigos.Width = 86;
+            //
+            // lblSeleccionVacia
+            //
+            lblSeleccionVacia.BackColor = Color.White;
+            lblSeleccionVacia.Dock = DockStyle.Fill;
+            lblSeleccionVacia.Font = new Font("Segoe UI", 9.5F);
+            lblSeleccionVacia.Name = "lblSeleccionVacia";
+            lblSeleccionVacia.TabIndex = 1;
+            lblSeleccionVacia.Text = "Selecciona herramientas del catálogo";
+            lblSeleccionVacia.TextAlign = ContentAlignment.MiddleCenter;
+            //
+            // lblTotal
+            //
+            lblTotal.Dock = DockStyle.Fill;
+            lblTotal.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblTotal.Margin = new Padding(0, 6, 0, 10);
+            lblTotal.Name = "lblTotal";
+            lblTotal.Size = new Size(267, 24);
+            lblTotal.TabIndex = 15;
+            lblTotal.Text = "Total: 0 unidades";
+            lblTotal.TextAlign = ContentAlignment.MiddleLeft;
+            //
             // btnGuardar
-            // 
-            btnGuardar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnGuardar.CornerRadius = 8;
-            btnGuardar.FlatStyle = FlatStyle.Flat;
-            btnGuardar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            //
+            btnGuardar.Dock = DockStyle.Fill;
+            btnGuardar.Enabled = false;
             btnGuardar.Icon = FontAwesome.Sharp.IconChar.Save;
-            btnGuardar.IconColor = null;
-            btnGuardar.IconSize = 22;
-            btnGuardar.Location = new Point(640, 590);
+            btnGuardar.IconSize = 20;
+            btnGuardar.Margin = new Padding(0, 0, 0, 8);
             btnGuardar.Name = "btnGuardar";
-            btnGuardar.Size = new Size(120, 40);
-            btnGuardar.TabIndex = 3;
-            btnGuardar.Text = "Guardar";
-            btnGuardar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
+            btnGuardar.Size = new Size(267, 42);
+            btnGuardar.TabIndex = 16;
+            btnGuardar.Text = "Guardar préstamo";
+            btnGuardar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            //
             // btnCancelar
-            // 
-            btnCancelar.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            btnCancelar.CornerRadius = 8;
-            btnCancelar.FlatStyle = FlatStyle.Flat;
-            btnCancelar.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            //
+            btnCancelar.Dock = DockStyle.Fill;
             btnCancelar.Icon = FontAwesome.Sharp.IconChar.Close;
-            btnCancelar.IconColor = null;
-            btnCancelar.IconSize = 22;
-            btnCancelar.Location = new Point(775, 590);
+            btnCancelar.IconSize = 20;
+            btnCancelar.Margin = new Padding(0);
             btnCancelar.Name = "btnCancelar";
-            btnCancelar.Size = new Size(120, 40);
-            btnCancelar.TabIndex = 4;
+            btnCancelar.Size = new Size(267, 40);
+            btnCancelar.TabIndex = 17;
             btnCancelar.Text = "Cancelar";
-            btnCancelar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
-            // 
+            btnCancelar.Variant = PromacoHerra.Controls.MaterialButtonVariant.Secondary;
+            //
+            // pnlDerecho
+            //
+            pnlDerecho.Controls.Add(flpCatalogo);
+            pnlDerecho.Controls.Add(lblCatalogoVacio);
+            pnlDerecho.Controls.Add(tlpToolbar);
+            pnlDerecho.Dock = DockStyle.Fill;
+            pnlDerecho.Margin = new Padding(0);
+            pnlDerecho.Name = "pnlDerecho";
+            pnlDerecho.Padding = new Padding(20, 4, 8, 0);
+            pnlDerecho.TabIndex = 1;
+            //
+            // tlpToolbar
+            //
+            tlpToolbar.AutoSize = true;
+            tlpToolbar.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tlpToolbar.ColumnCount = 1;
+            tlpToolbar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpToolbar.Controls.Add(txtBuscar, 0, 0);
+            tlpToolbar.Controls.Add(flpCategorias, 0, 1);
+            tlpToolbar.Dock = DockStyle.Top;
+            tlpToolbar.Margin = new Padding(0);
+            tlpToolbar.Name = "tlpToolbar";
+            tlpToolbar.Padding = new Padding(0, 0, 12, 8);
+            tlpToolbar.RowCount = 2;
+            tlpToolbar.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpToolbar.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlpToolbar.TabIndex = 0;
+            //
+            // txtBuscar
+            //
+            txtBuscar.BackColor = Color.White;
+            txtBuscar.Dock = DockStyle.Fill;
+            txtBuscar.Margin = new Padding(0, 0, 0, 10);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.PlaceholderText = "Buscar por nombre, código, marca o categoría...";
+            txtBuscar.Size = new Size(860, 38);
+            txtBuscar.TabIndex = 0;
+            //
+            // flpCategorias
+            //
+            flpCategorias.AutoSize = true;
+            flpCategorias.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            flpCategorias.Dock = DockStyle.Fill;
+            flpCategorias.Margin = new Padding(0);
+            flpCategorias.Name = "flpCategorias";
+            flpCategorias.TabIndex = 1;
+            //
+            // flpCatalogo
+            //
+            flpCatalogo.AutoScroll = true;
+            flpCatalogo.Dock = DockStyle.Fill;
+            flpCatalogo.Name = "flpCatalogo";
+            flpCatalogo.Padding = new Padding(0, 4, 0, 12);
+            flpCatalogo.TabIndex = 1;
+            //
+            // lblCatalogoVacio
+            //
+            lblCatalogoVacio.Dock = DockStyle.Fill;
+            lblCatalogoVacio.Font = new Font("Segoe UI", 11F);
+            lblCatalogoVacio.Name = "lblCatalogoVacio";
+            lblCatalogoVacio.TabIndex = 2;
+            lblCatalogoVacio.Text = "No hay herramientas que coincidan con la búsqueda.";
+            lblCatalogoVacio.TextAlign = ContentAlignment.MiddleCenter;
+            lblCatalogoVacio.Visible = false;
+            //
             // FrmPrestamo
-            // 
-            ClientSize = new Size(925, 650);
+            //
+            ClientSize = new Size(1200, 720);
+            Controls.Add(tlpMain);
             Controls.Add(lblTitulo);
-            Controls.Add(grpPrestamo);
-            Controls.Add(grpHerramientas);
-            Controls.Add(btnGuardar);
-            Controls.Add(btnCancelar);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "FrmPrestamo";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Préstamos";
-            grpPrestamo.ResumeLayout(false);
-            grpHerramientas.ResumeLayout(false);
-            tlpHerramientas.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvDisponibles).EndInit();
-            pnlBotonesTransferencia.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvSeleccionadas).EndInit();
+            tlpMain.ResumeLayout(false);
+            pnlIzquierdo.ResumeLayout(false);
+            tlpIzquierdo.ResumeLayout(false);
+            pnlSeleccion.ResumeLayout(false);
+            pnlDerecho.ResumeLayout(false);
+            pnlDerecho.PerformLayout();
+            tlpToolbar.ResumeLayout(false);
+            tlpToolbar.PerformLayout();
             ResumeLayout(false);
         }
     }

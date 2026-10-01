@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Xml.Linq;
 using PromacoHerra.Data;
+using PromacoHerra.Models;
 using Microsoft.Data.SqlClient;
 
 namespace PromacoHerra.Services
@@ -16,25 +18,25 @@ namespace PromacoHerra.Services
     public static class PrestamoService
     {
         /// <summary>
-        /// Registra un préstamo nuevo con sus herramientas.
+        /// Registra un préstamo nuevo con las unidades físicas seleccionadas.
+        /// Lo aprueba el empleado ligado al usuario en sesión.
         /// Devuelve el PrestamoId generado, o 0 si falló.
         /// </summary>
         public static int Registrar(
             int empleadoId,
-            int aprobadoPorId,
             DateTime fechaDevolucionEsperada,
             string observaciones,
-            List<int> herramientaIds)
+            List<int> unidadIds)
         {
-            // Construir el XML con los IDs de herramientas
+            // Construir el XML con los IDs de las unidades
             var xml = new StringBuilder("<herramientas>");
-            foreach (var id in herramientaIds)
+            foreach (var id in unidadIds)
                 xml.Append($"<item id='{id}'/>");
             xml.Append("</herramientas>");
 
             var result = Db.ExecuteSPScalar("sp_Prestamo_Registrar",
                 Db.Param("@EmpleadoId", empleadoId),
-                Db.Param("@AprobadoPorId", aprobadoPorId),
+                Db.Param("@UsuarioId", Sesion.UsuarioId),
                 Db.Param("@FechaDevolucionEsperada", fechaDevolucionEsperada),
                 Db.Param("@Observaciones", observaciones),
                 Db.Param("@Herramientas",
@@ -143,5 +145,71 @@ namespace PromacoHerra.Services
         public static DataTable ObtenerDetallePendiente(int prestamoId) =>
             Db.QuerySP("sp_Devolucion_ObtenerDetallePendiente",
                 Db.Param("@PrestamoId", prestamoId));
+
+        public static List<PrestamoActivo> ListarPrestamosActivos()
+        {
+            var lista = new List<PrestamoActivo>();
+            foreach (DataRow r in ObtenerPrestamosActivos().Rows)
+            {
+                lista.Add(new PrestamoActivo
+                {
+                    PrestamoId = Convert.ToInt32(r["PrestamoId"]),
+                    Empleado = r["Empleado"].ToString() ?? "",
+                    CodigoEmpleado = r["CodigoEmpleado"].ToString() ?? "",
+                    Departamento = r["Departamento"] as string ?? "",
+                    FechaPrestamo = Convert.ToDateTime(r["FechaPrestamo"]),
+                    FechaDevolucionEsperada = Convert.ToDateTime(r["FechaDevolucionEsperada"]),
+                    Pendientes = Convert.ToInt32(r["HerramientasPendientes"]),
+                    ColorIndex = lista.Count
+                });
+            }
+            return lista;
+        }
+
+        public static List<DetallePendiente> ListarDetallePendiente(int prestamoId)
+        {
+            var lista = new List<DetallePendiente>();
+            foreach (DataRow r in ObtenerDetallePendiente(prestamoId).Rows)
+            {
+                lista.Add(new DetallePendiente
+                {
+                    PrestamoDetalleId = Convert.ToInt32(r["PrestamoDetalleId"]),
+                    UnidadId = Convert.ToInt32(r["UnidadId"]),
+                    Codigo = r["CodigoHerramienta"].ToString() ?? "",
+                    Herramienta = r["Herramienta"].ToString() ?? "",
+                    Marca = r["Marca"] as string ?? "",
+                    Categoria = r["Categoria"] as string ?? ""
+                });
+            }
+            return lista;
+        }
+
+        /// <summary>
+        /// Devuelve varias unidades de un préstamo en una sola transacción,
+        /// cada una con su condición (Bueno / Dañado / Perdido) y su nota.
+        /// Cierra el préstamo si ya no quedan pendientes.
+        /// </summary>
+        public static ResultadoDevolucion RegistrarVarias(int prestamoId, IEnumerable<DevolucionItem> items)
+        {
+            var xml = new XElement("items",
+                items.Select(i => new XElement("item",
+                    new XAttribute("id", i.PrestamoDetalleId),
+                    new XAttribute("estado", i.Condicion.ToString()),
+                    new XAttribute("nota", i.Nota ?? ""))));
+
+            var dt = Db.QuerySP("sp_Devolucion_RegistrarVarias",
+                Db.Param("@PrestamoId", prestamoId),
+                Db.Param("@Items", SqlDbType.Xml, xml.ToString()));
+
+            var r = dt.Rows[0];
+            return new ResultadoDevolucion
+            {
+                Buenas = Convert.ToInt32(r["Buenas"]),
+                Dañadas = Convert.ToInt32(r["Dañadas"]),
+                Perdidas = Convert.ToInt32(r["Perdidas"]),
+                Pendientes = Convert.ToInt32(r["Pendientes"]),
+                PrestamoCerrado = Convert.ToBoolean(r["PrestamoCerrado"])
+            };
+        }
     }
-}
+}

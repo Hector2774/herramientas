@@ -1,127 +1,293 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
+using PromacoHerra.Controls;
+using PromacoHerra.Models;
 using PromacoHerra.Services;
 
 namespace PromacoHerra
 {
+    // Registro de préstamos:
+    //   izquierda → empleado, aprobación/fechas, resumen de lo seleccionado y guardar
+    //   derecha   → catálogo de herramientas (una tarjeta por tipo) con búsqueda y filtro por categoría
+    // Cada tarjeta tiene un stepper: "+" asigna la siguiente unidad disponible y "−" quita la última;
+    // "Ver unidades ›" permite elegir exactamente cuáles.
     public partial class FrmPrestamo : Form
     {
+        private const string SinCategoria = "Sin categoría";
+
+        private List<HerramientaCatalogoItem> _catalogo = new();
+        private readonly Dictionary<int, HerramientaCardControl> _tarjetas = new();
+
+        // HerramientaId → UnidadIds seleccionadas, en el orden en que se agregaron
+        private readonly Dictionary<int, List<int>> _seleccion = new();
+
+        private readonly HashSet<string> _categoriasActivas = new(StringComparer.OrdinalIgnoreCase);
+
         public FrmPrestamo()
         {
             InitializeComponent();
             ThemeManager.ApplyTheme(this);
+            AplicarEstilos();
 
             this.Load += FrmPrestamo_Load;
-            btnAgregar.Click += btnAgregar_Click;
-            btnQuitar.Click += btnQuitar_Click;
             btnGuardar.Click += btnGuardar_Click;
             btnCancelar.Click += btnCancelar_Click;
+            pickerEmpleado.EmpleadoSeleccionado += (id, nombre, depto, codigo) => ActualizarResumen();
+            txtBuscar.TextChanged += (s, e) => AplicarFiltros();
+            lvSeleccion.DoubleClick += lvSeleccion_DoubleClick;
+            pnlIzquierdo.Paint += pnlIzquierdo_Paint;
+        }
+
+        // ThemeManager deja todas las etiquetas en TextPrimary; aquí se ajustan las secundarias
+        private void AplicarEstilos()
+        {
+            foreach (var lbl in new[] { lblSecEmpleado, lblSecAprobacion, lblSecSeleccion })
+                lbl.ForeColor = ThemeManager.TextSecondary;
+
+            foreach (var lbl in new[] { lblAprobadoPorTitulo, lblFechaPrestamo, lblFechaDevolucion,
+                                        lblObservaciones, lblSeleccionVacia, lblCatalogoVacio })
+                lbl.ForeColor = ThemeManager.TextSecondary;
+
+            foreach (var sep in new[] { sepEmpleado, sepAprobacion })
+                sep.BackColor = ThemeManager.BorderColor;
+
+            lvSeleccion.ForeColor = ThemeManager.TextPrimary;
+            btnGuardar.Variant = MaterialButtonVariant.Primary;
+            btnCancelar.Variant = MaterialButtonVariant.Secondary;
         }
 
         // ── Carga inicial ──────────────────────────────────────────
-        private void FrmPrestamo_Load(object sender, EventArgs e)
+        private void FrmPrestamo_Load(object? sender, EventArgs e)
         {
-            CargarHerramientasDisponibles();
-            InicializarGridSeleccionadas();
+            // Lo aprueba el empleado del usuario en sesión
+            lblAprobadoPor.Text = Sesion.NombreEmpleado;
 
-            // Fecha préstamo = hoy (solo lectura)
             dtpFecha.Value = DateTime.Now;
+            dtpFechaDevolucion.MinDate = DateTime.Today.AddDays(1);
+            dtpFechaDevolucion.Value = DateTime.Today.AddDays(7);
 
-            // Fecha devolución por defecto = 7 días adelante
-            dtpFechaDevolucion.Value = DateTime.Now.AddDays(7);
-            dtpFechaDevolucion.MinDate = DateTime.Now.AddDays(1);
+            CargarCatalogo();
         }
 
-        private void CargarHerramientasDisponibles()
+        private void CargarCatalogo()
         {
-            dgvDisponibles.DataSource = HerramientaService.ObtenerDisponibles();
-            OcultarColumna(dgvDisponibles, "HerramientaId");
-            OcultarColumna(dgvDisponibles, "StockDisponible");
-
-            RenombrarColumna(dgvDisponibles, "Codigo", "Código");
-            RenombrarColumna(dgvDisponibles, "Nombre", "Herramienta");
-            RenombrarColumna(dgvDisponibles, "Categoria", "Categoría");
-            RenombrarColumna(dgvDisponibles, "Marca", "Marca");
-            RenombrarColumna(dgvDisponibles, "Ubicacion", "Ubicación");
-        }
-
-        // ── Grid de seleccionadas — tabla manual en memoria ────────
-        private void InicializarGridSeleccionadas()
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("HerramientaId", typeof(int));
-            dt.Columns.Add("Codigo");
-            dt.Columns.Add("Nombre");
-            dt.Columns.Add("Categoria");
-            dt.Columns.Add("Marca");
-
-            dgvSeleccionadas.DataSource = dt;
-            OcultarColumna(dgvSeleccionadas, "HerramientaId");
-            RenombrarColumna(dgvSeleccionadas, "Codigo", "Código");
-            RenombrarColumna(dgvSeleccionadas, "Nombre", "Herramienta");
-            RenombrarColumna(dgvSeleccionadas, "Categoria", "Categoría");
-            RenombrarColumna(dgvSeleccionadas, "Marca", "Marca");
-        }
-
-        // ── Botón >> Agregar herramienta a seleccionadas ───────────
-        private void btnAgregar_Click(object sender, EventArgs e)
-        {
-            if (dgvDisponibles.CurrentRow == null) return;
-
-            var row = dgvDisponibles.CurrentRow;
-            var dtDisponibles = (DataTable)dgvDisponibles.DataSource;
-            var dtSeleccionadas = (DataTable)dgvSeleccionadas.DataSource;
-
-            // Evitar duplicados
-            int id = Convert.ToInt32(row.Cells["HerramientaId"].Value);
-            foreach (DataRow r in dtSeleccionadas.Rows)
+            try
             {
-                if (Convert.ToInt32(r["HerramientaId"]) == id)
-                {
-                    MessageBox.Show("Esta herramienta ya fue agregada.", "Aviso",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
+                _catalogo = HerramientaService.ObtenerCatalogoPrestamo();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error al cargar herramientas",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _catalogo = new();
             }
 
-            dtSeleccionadas.Rows.Add(
-                row.Cells["HerramientaId"].Value,
-                row.Cells["Codigo"].Value,
-                row.Cells["Nombre"].Value,
-                row.Cells["Categoria"].Value,
-                row.Cells["Marca"].Value
-            );
+            // Descarta selecciones de unidades que ya no están disponibles
+            var disponibles = _catalogo.SelectMany(h => h.Unidades).Select(u => u.UnidadId).ToHashSet();
+            foreach (var id in _seleccion.Keys.ToList())
+            {
+                _seleccion[id].RemoveAll(u => !disponibles.Contains(u));
+                if (_seleccion[id].Count == 0) _seleccion.Remove(id);
+            }
 
-            dtDisponibles.Rows.RemoveAt(row.Index);
+            ConstruirTarjetas();
+            ConstruirChips();
+            AplicarFiltros();
+            ActualizarResumen();
         }
 
-        // ── Botón << Quitar herramienta de seleccionadas ───────────
-        private void btnQuitar_Click(object sender, EventArgs e)
+        private void ConstruirTarjetas()
         {
-            if (dgvSeleccionadas.CurrentRow == null) return;
+            flpCatalogo.SuspendLayout();
 
-            var row = dgvSeleccionadas.CurrentRow;
-            var dtSeleccionadas = (DataTable)dgvSeleccionadas.DataSource;
-            var dtDisponibles = (DataTable)dgvDisponibles.DataSource;
+            foreach (Control c in flpCatalogo.Controls.Cast<Control>().ToList())
+                c.Dispose();
+            flpCatalogo.Controls.Clear();
+            _tarjetas.Clear();
 
-            dtDisponibles.Rows.Add(
-                row.Cells["HerramientaId"].Value,
-                row.Cells["Codigo"].Value,
-                row.Cells["Nombre"].Value,
-                row.Cells["Categoria"].Value,
-                row.Cells["Marca"].Value
-            );
+            foreach (var item in _catalogo)
+            {
+                var card = new HerramientaCardControl();
+                card.Cargar(item);
+                card.MasClick += (s, e) => AgregarUnidad(item);
+                card.MenosClick += (s, e) => QuitarUnidad(item);
+                card.VerUnidadesClick += (s, e) => AbrirSelectorUnidades(item);
 
-            dtSeleccionadas.Rows.RemoveAt(row.Index);
+                _tarjetas[item.HerramientaId] = card;
+                flpCatalogo.Controls.Add(card);
+            }
+
+            flpCatalogo.ResumeLayout();
         }
 
-        // ── Botón Guardar ──────────────────────────────────────────
-        private void btnGuardar_Click(object sender, EventArgs e)
+        // ── Chips de categoría ─────────────────────────────────────
+        private void ConstruirChips()
         {
-            // Validaciones
+            var categorias = _catalogo.Select(CategoriaDe).Distinct(StringComparer.OrdinalIgnoreCase)
+                                      .OrderBy(c => c == SinCategoria).ThenBy(c => c).ToList();
+
+            _categoriasActivas.RemoveWhere(c => !categorias.Contains(c, StringComparer.OrdinalIgnoreCase));
+
+            flpCategorias.SuspendLayout();
+            foreach (Control c in flpCategorias.Controls.Cast<Control>().ToList())
+                c.Dispose();
+            flpCategorias.Controls.Clear();
+
+            var chipTodas = new ChipToggle("Todas", null);
+            chipTodas.Click += (s, e) => { _categoriasActivas.Clear(); AplicarFiltros(); };
+            flpCategorias.Controls.Add(chipTodas);
+
+            foreach (var cat in categorias)
+            {
+                var chip = new ChipToggle(cat, cat);
+                chip.Click += (s, e) =>
+                {
+                    if (!_categoriasActivas.Remove(cat)) _categoriasActivas.Add(cat);
+                    AplicarFiltros();
+                };
+                flpCategorias.Controls.Add(chip);
+            }
+            flpCategorias.ResumeLayout();
+        }
+
+        private static string CategoriaDe(HerramientaCatalogoItem h) =>
+            string.IsNullOrWhiteSpace(h.Categoria) ? SinCategoria : h.Categoria;
+
+        // ── Búsqueda + filtro por categoría ────────────────────────
+        private void AplicarFiltros()
+        {
+            foreach (ChipToggle chip in flpCategorias.Controls)
+                chip.Seleccionado = chip.Categoria == null
+                    ? _categoriasActivas.Count == 0
+                    : _categoriasActivas.Contains(chip.Categoria);
+
+            string termino = txtBuscar.Text.Trim();
+            int visibles = 0;
+
+            flpCatalogo.SuspendLayout();
+            foreach (var item in _catalogo)
+            {
+                bool porCategoria = _categoriasActivas.Count == 0 || _categoriasActivas.Contains(CategoriaDe(item));
+                bool porTexto = termino == ""
+                    || Contiene(item.Nombre, termino) || Contiene(item.Codigo, termino)
+                    || Contiene(item.Marca, termino) || Contiene(item.Categoria, termino)
+                    || item.Unidades.Any(u => Contiene(u.Codigo, termino));
+
+                bool visible = porCategoria && porTexto;
+                _tarjetas[item.HerramientaId].Visible = visible;
+                if (visible) visibles++;
+            }
+            flpCatalogo.ResumeLayout();
+
+            lblCatalogoVacio.Text = _catalogo.Count == 0
+                ? "No hay herramientas habilitadas para préstamo."
+                : "No hay herramientas que coincidan con la búsqueda.";
+            lblCatalogoVacio.Visible = visibles == 0;
+            flpCatalogo.Visible = visibles > 0;
+        }
+
+        // Sin distinguir mayúsculas ni acentos ("electrica" encuentra "Eléctricas")
+        private static bool Contiene(string texto, string termino) =>
+            !string.IsNullOrEmpty(texto) &&
+            CultureInfo.InvariantCulture.CompareInfo.IndexOf(texto, termino,
+                CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) >= 0;
+
+        // ── Selección de unidades ──────────────────────────────────
+        private List<int> SeleccionDe(HerramientaCatalogoItem item) =>
+            _seleccion.TryGetValue(item.HerramientaId, out var lista) ? lista : new List<int>();
+
+        // "+" → la siguiente unidad disponible que aún no esté seleccionada
+        private void AgregarUnidad(HerramientaCatalogoItem item)
+        {
+            var actual = SeleccionDe(item);
+            var siguiente = item.Unidades.FirstOrDefault(u => !actual.Contains(u.UnidadId));
+            if (siguiente == null) return;
+
+            actual.Add(siguiente.UnidadId);
+            _seleccion[item.HerramientaId] = actual;
+            ActualizarResumen();
+        }
+
+        // "−" → quita la última unidad seleccionada
+        private void QuitarUnidad(HerramientaCatalogoItem item)
+        {
+            if (!_seleccion.TryGetValue(item.HerramientaId, out var actual) || actual.Count == 0) return;
+
+            actual.RemoveAt(actual.Count - 1);
+            if (actual.Count == 0) _seleccion.Remove(item.HerramientaId);
+            ActualizarResumen();
+        }
+
+        private void AbrirSelectorUnidades(HerramientaCatalogoItem item)
+        {
+            using var frm = new FrmSeleccionarUnidades(item, SeleccionDe(item));
+            if (frm.ShowDialog(FindForm()) != DialogResult.OK) return;
+
+            var elegidas = frm.UnidadesSeleccionadas;
+            if (elegidas.Count == 0) _seleccion.Remove(item.HerramientaId);
+            else _seleccion[item.HerramientaId] = elegidas;
+            ActualizarResumen();
+        }
+
+        private void lvSeleccion_DoubleClick(object? sender, EventArgs e)
+        {
+            if (lvSeleccion.SelectedItems.Count == 0) return;
+            int herramientaId = (int)lvSeleccion.SelectedItems[0].Tag!;
+            var item = _catalogo.FirstOrDefault(h => h.HerramientaId == herramientaId);
+            if (item != null) AbrirSelectorUnidades(item);
+        }
+
+        // Refresca tarjetas, lista de seleccionadas, total y el botón Guardar
+        private void ActualizarResumen()
+        {
+            lvSeleccion.BeginUpdate();
+            lvSeleccion.Items.Clear();
+            int total = 0;
+
+            foreach (var item in _catalogo)
+            {
+                var ids = SeleccionDe(item);
+                if (_tarjetas.TryGetValue(item.HerramientaId, out var card) && card.Cantidad != ids.Count)
+                    card.Cantidad = ids.Count;
+                if (ids.Count == 0) continue;
+
+                var codigos = item.Unidades.Where(u => ids.Contains(u.UnidadId)).Select(u => u.Codigo).ToList();
+                var lvi = new ListViewItem(item.Nombre)
+                {
+                    Tag = item.HerramientaId,
+                    ToolTipText = $"{item.Nombre}\n{string.Join(", ", codigos)}"
+                };
+                lvi.SubItems.Add(ids.Count.ToString());
+                lvi.SubItems.Add(CodigosCompactos(codigos));
+                lvSeleccion.Items.Add(lvi);
+                total += ids.Count;
+            }
+            lvSeleccion.EndUpdate();
+
+            lblSeleccionVacia.Visible = total == 0;
+            lblTotal.Text = total == 1 ? "Total: 1 unidad" : $"Total: {total} unidades";
+            btnGuardar.Enabled = pickerEmpleado.EmpleadoId != 0 && total > 0;
+        }
+
+        // "HER-0006-01, HER-0006-02" → "HER-0006-01, -02" para que quepa en la columna
+        private static string CodigosCompactos(List<string> codigos)
+        {
+            if (codigos.Count == 0) return "";
+            return codigos[0] + string.Concat(codigos.Skip(1).Select(c =>
+            {
+                int guion = c.LastIndexOf('-');
+                return guion > 0 ? ", " + c[guion..] : ", " + c;
+            }));
+        }
+
+        // ── Guardar ────────────────────────────────────────────────
+        private void btnGuardar_Click(object? sender, EventArgs e)
+        {
             if (pickerEmpleado.EmpleadoId == 0)
             {
                 MessageBox.Show("Seleccione el empleado solicitante.", "Campo requerido",
@@ -129,22 +295,16 @@ namespace PromacoHerra
                 return;
             }
 
-            if (pickerAprobador.EmpleadoId == 0)
-            {
-                MessageBox.Show("Seleccione quién aprueba el préstamo.", "Campo requerido",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (pickerEmpleado.EmpleadoId == pickerAprobador.EmpleadoId)
+            if (pickerEmpleado.EmpleadoId == Sesion.EmpleadoId)
             {
                 MessageBox.Show("El empleado no puede aprobar su propio préstamo.", "Validación",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            var dtSeleccionadas = (DataTable)dgvSeleccionadas.DataSource;
-            if (dtSeleccionadas.Rows.Count == 0)
+            // UnidadIds en el orden del catálogo
+            var ids = _catalogo.SelectMany(SeleccionDe).ToList();
+            if (ids.Count == 0)
             {
                 MessageBox.Show("Seleccione al menos una herramienta.", "Campo requerido",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -158,73 +318,50 @@ namespace PromacoHerra
                 return;
             }
 
-            // Armar lista de IDs
-            var ids = new List<int>();
-            foreach (DataRow r in dtSeleccionadas.Rows)
-                ids.Add(Convert.ToInt32(r["HerramientaId"]));
-
             try
             {
                 int prestamoId = PrestamoService.Registrar(
                     empleadoId: pickerEmpleado.EmpleadoId,
-                    aprobadoPorId: pickerAprobador.EmpleadoId,
                     fechaDevolucionEsperada: dtpFechaDevolucion.Value,
                     observaciones: txtObservaciones.Text.Trim(),
-                    herramientaIds: ids);
+                    unidadIds: ids);
 
                 MessageBox.Show(
                     $"Préstamo #{prestamoId} registrado correctamente.",
                     "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Limpiar para un nuevo préstamo
                 LimpiarFormulario();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error al registrar préstamo",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Puede que otra persona haya prestado alguna unidad mientras tanto
+                CargarCatalogo();
             }
         }
 
-        // ── Botón Cancelar ─────────────────────────────────────────
-        private void btnCancelar_Click(object sender, EventArgs e)
+        private void btnCancelar_Click(object? sender, EventArgs e)
         {
             LimpiarFormulario();
         }
 
-        // ── Helpers ────────────────────────────────────────────────
         private void LimpiarFormulario()
         {
             pickerEmpleado.Limpiar();
-            pickerAprobador.Limpiar();
             txtObservaciones.Clear();
             dtpFecha.Value = DateTime.Now;
-            dtpFechaDevolucion.Value = DateTime.Now.AddDays(7);
+            dtpFechaDevolucion.Value = DateTime.Today.AddDays(7);
 
-            CargarHerramientasDisponibles();
-            InicializarGridSeleccionadas();
+            _seleccion.Clear();
+            CargarCatalogo();
         }
 
-        private void OcultarColumna(DataGridView dgv, string nombre)
+        // Línea gris a la derecha del panel izquierdo
+        private void pnlIzquierdo_Paint(object? sender, PaintEventArgs e)
         {
-            if (dgv.Columns.Contains(nombre))
-                dgv.Columns[nombre].Visible = false;
-        }
-
-        private void RenombrarColumna(DataGridView dgv, string nombre, string header)
-        {
-            if (dgv.Columns.Contains(nombre))
-                dgv.Columns[nombre].HeaderText = header;
-        }
-
-        private void dgvSeleccionadas_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void grpPrestamo_Enter(object sender, EventArgs e)
-        {
-
+            using var pen = new Pen(ThemeManager.BorderColor, 1);
+            e.Graphics.DrawLine(pen, pnlIzquierdo.Width - 1, 0, pnlIzquierdo.Width - 1, pnlIzquierdo.Height);
         }
     }
 }
