@@ -13,8 +13,9 @@ namespace PromacoHerra
 {
     // Administración de herramientas en 3 pestañas:
     //   Herramientas   → lista (búsqueda + chips de categoría) | detalle editable con stock y últimas unidades
-    //   Catálogos      → categorías y marcas en la misma grilla (control segmentado)
-    //   Mantenimiento  → mantenimientos activos + panel para abrir uno nuevo o cerrar el seleccionado
+    //   Catálogos      → categorías, marcas, ubicaciones y proveedores en la misma grilla (control segmentado)
+    //   Mantenimiento  → mantenimientos activos | pendientes de reparación (unidades dañadas)
+    //                    + barra de acción para la fila seleccionada (cerrar / enviar a mantenimiento)
     public partial class FrmHerramientas : Form
     {
         private const string SinCategoria = "Sin categoría";
@@ -27,13 +28,14 @@ namespace PromacoHerra
         private string? _categoriaFiltro;             // null = Todas
 
         // Catálogos
-        private bool EsMarcas => segCatalogo.Seleccionado == 1;
+        private enum TipoCatalogo { Categorias, Marcas, Ubicaciones, Proveedores }   // mismo orden que segCatalogo.Opciones
+        private TipoCatalogo CatalogoActual => (TipoCatalogo)segCatalogo.Seleccionado;
         private int? _catalogoId;
 
         // Mantenimiento
         private DataView? _mantView;
-        private int? _mantenimientoId;
-        private DataTable _unidadesMant = new();
+        private DataRow? _mantSeleccionado;          // mantenimiento activo elegido en la grilla
+        private DataRow? _pendienteSeleccionado;     // unidad dañada elegida en la bandeja
 
         // Columnas de las grillas. Se crean en código y no en el Designer: el diseñador de
         // Visual Studio las eliminaba al volver a guardar el formulario.
@@ -43,12 +45,15 @@ namespace PromacoHerra
         private readonly DataGridViewTextBoxColumn colUDevolucion = Columna("Devolucion", "Devolución", 20);
         private readonly DataGridViewTextBoxColumn colCatNombre = Columna("Nombre", "Nombre", 30);
         private readonly DataGridViewTextBoxColumn colCatDescripcion = Columna("Descripcion", "Descripción", 55);
+        private readonly DataGridViewTextBoxColumn colCatTelefono = Columna("Telefono", "Teléfono", 18);
         private readonly DataGridViewTextBoxColumn colCatHerramientas = Columna("Herramientas", "Herramientas", 15);
         private readonly DataGridViewTextBoxColumn colMHerramienta = Columna("Herramienta", "Herramienta", 28);
         private readonly DataGridViewTextBoxColumn colMTipo = Columna("TipoMantenimiento", "Tipo", 15);
-        private readonly DataGridViewTextBoxColumn colMRealizadoPor = Columna("RealizadoPor", "Realizado por", 17);
-        private readonly DataGridViewTextBoxColumn colMDias = Columna("DiasEnMantenimiento", "Días activo", 12);
-        private readonly DataGridViewTextBoxColumn colMDescripcion = Columna("Descripcion", "Descripción", 28);
+        private readonly DataGridViewTextBoxColumn colMRealizadoPor = Columna("RealizadoPor", "Responsable", 22);
+        private readonly DataGridViewTextBoxColumn colMDias = Columna("DiasEnMantenimiento", "Días activo", 13);
+        private readonly DataGridViewTextBoxColumn colMDescripcion = Columna("Descripcion", "Descripción", 22);
+        private readonly DataGridViewTextBoxColumn colPUnidad = Columna("Herramienta", "Unidad", 58);
+        private readonly DataGridViewTextBoxColumn colPReporte = Columna("ReportadoPor", "Reportada", 42);
 
         public FrmHerramientas()
         {
@@ -86,12 +91,12 @@ namespace PromacoHerra
             txtBuscarMant.TextChanged += (s, e) => FiltrarMantenimientos();
             dgvMant.CellClick += dgvMant_CellClick;
             dgvMant.CellPainting += dgvMant_CellPainting;
-            btnNuevoMant.Click += (s, e) => ModoAbrirMantenimiento();
-            // "Nuevo" siempre en la esquina superior derecha del panel de acciones
-            pnlAccionesMant.Resize += (s, e) =>
-                btnNuevoMant.Left = pnlAccionesMant.ClientSize.Width - pnlAccionesMant.Padding.Right - btnNuevoMant.Width;
-            btnAbrirMant.Click += btnAbrirMant_Click;
-            btnCerrarMant.Click += btnCerrarMant_Click;
+            dgvMant.CellDoubleClick += (s, e) => { if (e.RowIndex >= 0) EjecutarAccionMantenimiento(); };
+            dgvPendientes.CellClick += dgvPendientes_CellClick;
+            dgvPendientes.CellDoubleClick += (s, e) => { if (e.RowIndex >= 0) EjecutarAccionMantenimiento(); };
+            dgvPendientes.CellPainting += dgvPendientes_CellPainting;
+            btnNuevoMant.Click += (s, e) => AbrirMantenimiento(null);
+            btnAccionMant.Click += (s, e) => EjecutarAccionMantenimiento();
             lnkHistorial.LinkClicked += (s, e) => VerHistorial();
 
             // Lo alineado a la derecha se ubica al cambiar de tamaño y no con Anchor: el detalle
@@ -115,8 +120,9 @@ namespace PromacoHerra
             foreach (var (dgv, columnas) in new[]
             {
                 (dgvUnidadesMini, new[] { colUCodigo, colUEstado, colUPrestadaA, colUDevolucion }),
-                (dgvCatalogo, new[] { colCatNombre, colCatDescripcion, colCatHerramientas }),
-                (dgvMant, new[] { colMHerramienta, colMTipo, colMRealizadoPor, colMDias, colMDescripcion })
+                (dgvCatalogo, new[] { colCatNombre, colCatDescripcion, colCatTelefono, colCatHerramientas }),
+                (dgvMant, new[] { colMHerramienta, colMTipo, colMRealizadoPor, colMDias, colMDescripcion }),
+                (dgvPendientes, new[] { colPUnidad, colPReporte })
             })
             {
                 dgv.AutoGenerateColumns = false;
@@ -153,11 +159,10 @@ namespace PromacoHerra
             icoBuscarH.BackColor = ThemeManager.CardBackground;
             icoBuscarH.IconColor = ThemeManager.TextSecondary;
 
-            foreach (var lbl in new[] { lblListaVacia, lblSeleccionaHerramienta, lblCodigoDet, lblCerrarInfo })
+            foreach (var lbl in new[] { lblListaVacia, lblSeleccionaHerramienta, lblCodigoDet, lblAccionInfo, lblPendientesVacio })
                 lbl.ForeColor = ThemeManager.TextSecondary;
             foreach (var lbl in new[] { lblCodigoF, lblUbicacionF, lblNombreF, lblCategoriaF, lblMarcaF, lblStockInicialF,
-                                        lblCaracteristicasF, lblUnidadMant, lblTipoMant, lblRealizadoPor, lblDescMant,
-                                        lblCosto, lblNotasCierre })
+                                        lblCaracteristicasF })
                 lbl.ForeColor = ThemeManager.TextSecondary;
             foreach (var lnk in new[] { lnkVerTodas, lnkCatCancelar, lnkHistorial })
                 lnk.LinkColor = lnk.ActiveLinkColor = ThemeManager.AccentBlue;
@@ -170,22 +175,26 @@ namespace PromacoHerra
             tileMantenimiento.ColorValor = Paleta.Naranja;
             tileDañadas.ColorValor = Paleta.Rojo;
 
-            segCatalogo.Opciones = new[] { "Categorías", "Marcas" };
+            segCatalogo.Opciones = new[] { "Categorías", "Marcas", "Ubicaciones", "Proveedores" };
             chipMantActivos.Fondo = Paleta.NaranjaSuave;
             chipMantActivos.Frente = Paleta.Naranja;
+            chipPendientes.Fondo = Paleta.RojoSuave;
+            chipPendientes.Frente = Paleta.Rojo;
 
             // Variantes que la heurística de ThemeManager (por texto) no adivina
             btnNuevaHerramienta.Variant = MaterialButtonVariant.Primary;
             btnDarDeBaja.Variant = MaterialButtonVariant.Default;
             btnCatAgregar.Variant = MaterialButtonVariant.Primary;
-            btnCerrarMant.Variant = MaterialButtonVariant.Primary;
-            btnNuevoMant.Variant = MaterialButtonVariant.Default;
+            btnAccionMant.Variant = MaterialButtonVariant.Primary;
+            btnNuevoMant.Variant = MaterialButtonVariant.Primary;
             pnlAccionesMant.CornerRadius = 12;
-            btnNuevoMant.BringToFront();
+            pnlPendientes.CornerRadius = 12;
+            pnlPendientesHeader.BackColor = ThemeManager.CardBackground;
 
             EstilizarGrid(dgvUnidadesMini, 38);
             EstilizarGrid(dgvCatalogo, 42);
             EstilizarGrid(dgvMant, 52);
+            EstilizarGrid(dgvPendientes, 52);
             colUCodigo.DefaultCellStyle.Font = FuenteCodigo;
         }
 
@@ -220,10 +229,6 @@ namespace PromacoHerra
         {
             splitHerramientas.SplitterDistance = 340;
 
-            if (cboTipoMant.Items.Count == 0)
-                cboTipoMant.Items.AddRange(new object[] { "Preventivo", "Correctivo", "Calibración" });
-            cboTipoMant.SelectedIndex = 0;
-
             CargarCombos();
             CargarHerramientas(null);
             CargarCatalogo();
@@ -241,7 +246,6 @@ namespace PromacoHerra
                 CargarCombo(cboMarcaF, MarcaService.ObtenerTodas(), "Nombre", "MarcaId");
                 CargarCombo(cboUbicacionF, UbicacionService.ObtenerTodas(), "Nombre", "UbicacionId");
                 ConstruirChips(categorias);
-                CargarUnidadesMant();
             }
             catch (Exception ex) { Error(ex.Message); }
         }
@@ -494,8 +498,7 @@ namespace PromacoHerra
                 else return;
 
                 CargarHerramientas(id);
-                CargarCatalogo();          // cambia el conteo de herramientas por categoría/marca
-                CargarUnidadesMant();      // una herramienta nueva trae unidades nuevas
+                CargarCatalogo();          // cambia el conteo de herramientas por categoría/marca/ubicación
             }
             catch (Exception ex) { Error(ex.Message); }
         }
@@ -517,7 +520,7 @@ namespace PromacoHerra
                 OK("Herramienta dada de baja.");
                 CargarHerramientas(null);
                 CargarCatalogo();
-                CargarUnidadesMant();
+                CargarMantenimientos();    // sus unidades dañadas salen de pendientes
             }
             catch (Exception ex) { Error(ex.Message); }
         }
@@ -532,21 +535,52 @@ namespace PromacoHerra
 
             CargarHerramientas(id);
             CargarMantenimientos();
-            CargarUnidadesMant();
         }
 
         // ══════════════════════════════════════════════════════════
-        // CATÁLOGOS (categorías / marcas)
+        // CATÁLOGOS (categorías / marcas / ubicaciones / proveedores)
         // ══════════════════════════════════════════════════════════
-        private string IdColumna => EsMarcas ? "MarcaId" : "CategoriaId";
+        private bool EsProveedores => CatalogoActual == TipoCatalogo.Proveedores;
+
+        private string IdColumna => CatalogoActual switch
+        {
+            TipoCatalogo.Marcas => "MarcaId",
+            TipoCatalogo.Ubicaciones => "UbicacionId",
+            TipoCatalogo.Proveedores => "ProveedorId",
+            _ => "CategoriaId"
+        };
+
+        private string NombreCatalogo => CatalogoActual switch
+        {
+            TipoCatalogo.Marcas => "marca",
+            TipoCatalogo.Ubicaciones => "ubicación",
+            TipoCatalogo.Proveedores => "proveedor",
+            _ => "categoría"
+        };
+
+        // "la marca" / "el proveedor"; "Marca agregada." / "Proveedor agregado."
+        private string Articulo => EsProveedores ? "el" : "la";
+        private string Mensaje(string accion) =>
+            char.ToUpper(NombreCatalogo[0]) + NombreCatalogo[1..] + " " + accion + (EsProveedores ? "o." : "a.");
 
         private void CargarCatalogo()
         {
             try
             {
-                dgvCatalogo.DataSource = EsMarcas ? MarcaService.ObtenerTodas() : CategoriaService.ObtenerTodas();
+                dgvCatalogo.DataSource = CatalogoActual switch
+                {
+                    TipoCatalogo.Marcas => MarcaService.ObtenerTodas(),
+                    TipoCatalogo.Ubicaciones => UbicacionService.ObtenerTodas(),
+                    TipoCatalogo.Proveedores => ProveedorService.ObtenerTodos(),
+                    _ => CategoriaService.ObtenerTodas()
+                };
             }
             catch (Exception ex) { Error(ex.Message); }
+
+            // Proveedores: teléfono y conteo de mantenimientos en lugar de herramientas
+            colCatTelefono.Visible = txtCatTelefono.Visible = EsProveedores;
+            colCatHerramientas.DataPropertyName = EsProveedores ? "Mantenimientos" : "Herramientas";
+            colCatHerramientas.HeaderText = EsProveedores ? "Mantenimientos" : "Herramientas";
             dgvCatalogo.ClearSelection();
             LimpiarFormCatalogo();
         }
@@ -556,7 +590,12 @@ namespace PromacoHerra
             _catalogoId = null;
             txtCatNombre.Clear();
             txtCatDescripcion.Clear();
-            txtCatNombre.PlaceholderText = EsMarcas ? "Nombre de la marca" : "Nombre de la categoría";
+            txtCatTelefono.Clear();
+            txtCatNombre.PlaceholderText = $"Nombre {(EsProveedores ? "del" : "de la")} {NombreCatalogo}";
+            txtCatDescripcion.PlaceholderText = EsProveedores ? "Especialidad, contacto…" : "Descripción";
+            // Largo de las columnas Descripcion: Ubicacion/Proveedor VARCHAR(250), Categoria/Marca VARCHAR(400)
+            txtCatNombre.MaxLength = 120;
+            txtCatDescripcion.MaxLength = CatalogoActual is TipoCatalogo.Ubicaciones or TipoCatalogo.Proveedores ? 250 : 400;
             MostrarBotonesEdicion(false);
             dgvCatalogo.ClearSelection();
         }
@@ -567,6 +606,7 @@ namespace PromacoHerra
             _catalogoId = Convert.ToInt32(r[IdColumna]);
             txtCatNombre.Text = r["Nombre"]?.ToString() ?? "";
             txtCatDescripcion.Text = r["Descripcion"]?.ToString() ?? "";
+            txtCatTelefono.Text = EsProveedores ? r["Telefono"]?.ToString() ?? "" : "";
             MostrarBotonesEdicion(true);
         }
 
@@ -597,9 +637,15 @@ namespace PromacoHerra
             if (string.IsNullOrWhiteSpace(txtCatNombre.Text)) { Aviso("El nombre es obligatorio."); return; }
             try
             {
-                if (EsMarcas) MarcaService.Insertar(txtCatNombre.Text.Trim(), txtCatDescripcion.Text.Trim());
-                else CategoriaService.Insertar(txtCatNombre.Text.Trim(), txtCatDescripcion.Text.Trim());
-                DespuesDeCambiarCatalogo(EsMarcas ? "Marca agregada." : "Categoría agregada.");
+                string nombre = txtCatNombre.Text.Trim(), descripcion = txtCatDescripcion.Text.Trim();
+                switch (CatalogoActual)
+                {
+                    case TipoCatalogo.Marcas: MarcaService.Insertar(nombre, descripcion); break;
+                    case TipoCatalogo.Ubicaciones: UbicacionService.Insertar(nombre, descripcion); break;
+                    case TipoCatalogo.Proveedores: ProveedorService.Insertar(nombre, txtCatTelefono.Text.Trim(), descripcion); break;
+                    default: CategoriaService.Insertar(nombre, descripcion); break;
+                }
+                DespuesDeCambiarCatalogo(Mensaje("agregad"));
             }
             catch (Exception ex) { Error(ex.Message); }
         }
@@ -610,9 +656,16 @@ namespace PromacoHerra
             if (string.IsNullOrWhiteSpace(txtCatNombre.Text)) { Aviso("El nombre es obligatorio."); return; }
             try
             {
-                if (EsMarcas) MarcaService.Actualizar(_catalogoId.Value, txtCatNombre.Text.Trim(), txtCatDescripcion.Text.Trim());
-                else CategoriaService.Actualizar(_catalogoId.Value, txtCatNombre.Text.Trim(), txtCatDescripcion.Text.Trim());
-                DespuesDeCambiarCatalogo(EsMarcas ? "Marca guardada." : "Categoría guardada.");
+                int id = _catalogoId.Value;
+                string nombre = txtCatNombre.Text.Trim(), descripcion = txtCatDescripcion.Text.Trim();
+                switch (CatalogoActual)
+                {
+                    case TipoCatalogo.Marcas: MarcaService.Actualizar(id, nombre, descripcion); break;
+                    case TipoCatalogo.Ubicaciones: UbicacionService.Actualizar(id, nombre, descripcion); break;
+                    case TipoCatalogo.Proveedores: ProveedorService.Actualizar(id, nombre, txtCatTelefono.Text.Trim(), descripcion); break;
+                    default: CategoriaService.Actualizar(id, nombre, descripcion); break;
+                }
+                DespuesDeCambiarCatalogo(Mensaje("guardad"));
             }
             catch (Exception ex) { Error(ex.Message); }
         }
@@ -620,20 +673,28 @@ namespace PromacoHerra
         private void btnCatEliminar_Click(object? sender, EventArgs e)
         {
             if (_catalogoId == null || dgvCatalogo.CurrentRow?.DataBoundItem is not DataRowView r) return;
-            int usadas = Convert.ToInt32(r["Herramientas"]);
-            string que = EsMarcas ? "marca" : "categoría";
-            string aviso = usadas > 0 ? $"\n\n{usadas} herramienta(s) quedarán sin {que}." : "";
-            if (Confirmar($"¿Eliminar la {que} \"{r["Nombre"]}\"?{aviso}") != DialogResult.Yes) return;
+            int usadas = Convert.ToInt32(r[colCatHerramientas.DataPropertyName]);
+            string que = NombreCatalogo;
+            string aviso = usadas == 0 ? ""
+                : EsProveedores ? $"\n\nTiene {usadas} mantenimiento(s) registrados: se desactivará y su historial se conserva."
+                : $"\n\n{usadas} herramienta(s) quedarán sin {que}.";
+            if (Confirmar($"¿Eliminar {Articulo} {que} \"{r["Nombre"]}\"?{aviso}") != DialogResult.Yes) return;
             try
             {
-                if (EsMarcas) MarcaService.Eliminar(_catalogoId.Value);
-                else CategoriaService.Eliminar(_catalogoId.Value);
-                DespuesDeCambiarCatalogo(EsMarcas ? "Marca eliminada." : "Categoría eliminada.");
+                switch (CatalogoActual)
+                {
+                    case TipoCatalogo.Marcas: MarcaService.Eliminar(_catalogoId.Value); break;
+                    case TipoCatalogo.Ubicaciones: UbicacionService.Eliminar(_catalogoId.Value); break;
+                    case TipoCatalogo.Proveedores: ProveedorService.Eliminar(_catalogoId.Value); break;
+                    default: CategoriaService.Eliminar(_catalogoId.Value); break;
+                }
+                DespuesDeCambiarCatalogo(Mensaje("eliminad"));
             }
             catch (Exception ex) { Error(ex.Message); }
         }
 
-        // Categorías y marcas alimentan combos, chips y la lista de herramientas
+        // Categorías, marcas y ubicaciones alimentan combos, chips y la lista de herramientas.
+        // Los proveedores se leen al abrir un mantenimiento.
         private void DespuesDeCambiarCatalogo(string mensaje)
         {
             OK(mensaje);
@@ -645,32 +706,28 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // MANTENIMIENTO
         // ══════════════════════════════════════════════════════════
-        // Unidades que pueden entrar a mantenimiento: disponibles o dañadas de herramientas activas
-        private void CargarUnidadesMant()
-        {
-            _unidadesMant = PromacoHerra.Data.Db.Query(@"
-                SELECT u.UnidadId,
-                       u.HerramientaId,
-                       u.CodigoUnidad + ' — ' + h.Nombre + ' (' + u.Estado + ')' AS Display
-                FROM   vw_HerramientaUnidad u
-                INNER  JOIN Herramienta h ON h.HerramientaId = u.HerramientaId
-                WHERE  h.Activa = 1
-                  AND  u.Estado IN ('Disponible', 'Dañada')
-                ORDER  BY h.Nombre, u.Numero");
-            CargarCombo(cboUnidadMant, _unidadesMant, "Display", "UnidadId");
-        }
-
+        // Recarga los activos y la bandeja de pendientes, y limpia la selección
         private void CargarMantenimientos()
         {
             try
             {
                 _mantView = MantenimientoService.ObtenerActivos().DefaultView;
                 dgvMant.DataSource = _mantView;
+
+                // Pendientes: unidades dañadas que esperan reparación
+                var pendientes = MantenimientoService.UnidadesElegibles().AsEnumerable()
+                    .Where(r => r.Field<string>("Estado") == "Dañada");
+                dgvPendientes.DataSource = pendientes.Any() ? pendientes.CopyToDataTable() : null;
+                int n = dgvPendientes.Rows.Count;
+                chipPendientes.Text = n.ToString();
+                chipPendientes.Left = lblPendientesTitulo.Right + 8;
+                lblPendientesVacio.Visible = n == 0;
+                dgvPendientes.Visible = n > 0;
             }
             catch (Exception ex) { Error(ex.Message); }
 
             FiltrarMantenimientos();
-            ModoAbrirMantenimiento();
+            SinSeleccionMantenimiento();
         }
 
         private void FiltrarMantenimientos()
@@ -700,15 +757,12 @@ namespace PromacoHerra
             if (e.ColumnIndex == colMHerramienta.Index)
             {
                 // Nombre (negrita) y código de unidad (monospace) en dos líneas
-                e.PaintBackground(e.CellBounds, sel);
-                var b = e.CellBounds;
-                TextRenderer.DrawText(e.Graphics, r["Herramienta"]?.ToString(), new Font("Segoe UI", 9.5F, FontStyle.Bold),
-                    new Rectangle(b.X + 10, b.Y + 7, b.Width - 14, 20), ThemeManager.TextPrimary,
-                    TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
-                TextRenderer.DrawText(e.Graphics, r["CodigoHerramienta"]?.ToString(), FuenteCodigo,
-                    new Rectangle(b.X + 10, b.Y + 28, b.Width - 14, 18), ThemeManager.TextSecondary,
-                    TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
-                e.Handled = true;
+                DibujarDosLineas(e, sel, r["Herramienta"]?.ToString(), r["CodigoHerramienta"]?.ToString(), FuenteCodigo);
+            }
+            else if (e.ColumnIndex == colMRealizadoPor.Index)
+            {
+                // Responsable y, debajo, si el servicio es interno (empleado) o externo (proveedor)
+                DibujarDosLineas(e, sel, r["RealizadoPor"]?.ToString(), r["TipoServicio"]?.ToString(), e.CellStyle!.Font!);
             }
             else if (e.ColumnIndex == colMTipo.Index)
             {
@@ -720,117 +774,155 @@ namespace PromacoHerra
             }
             else if (e.ColumnIndex == colMDias.Index)
             {
-                // Verde < 7 días, amarillo 7-15, rojo > 15
                 e.PaintBackground(e.CellBounds, sel);
                 int dias = e.Value is int d ? d : 0;
-                var (fondo, frente) = dias > 15 ? (Paleta.RojoSuave, Paleta.Rojo)
-                                    : dias >= 7 ? (Paleta.AmarilloSuave, Paleta.Amarillo)
-                                    : (Paleta.VerdeSuave, Paleta.Verde);
+                var (fondo, frente) = ColoresEspera(dias);
                 StatusChip.DibujarEnCelda(e.Graphics, e.CellBounds, dias == 1 ? "1 día" : $"{dias} días", fondo, frente);
                 e.Handled = true;
             }
         }
 
+        private void dgvPendientes_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.Graphics == null || dgvPendientes.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
+            bool sel = (e.State & DataGridViewElementStates.Selected) != 0;
+
+            if (e.ColumnIndex == colPUnidad.Index)
+                DibujarDosLineas(e, sel, r["Herramienta"]?.ToString(), r["CodigoUnidad"]?.ToString(), FuenteCodigo);
+            else if (e.ColumnIndex == colPReporte.Index)
+            {
+                // Quién la devolvió dañada y hace cuánto (sin devolución: se marcó dañada en almacén)
+                string quien = r["ReportadoPor"] is string q ? q : "En almacén";
+                string cuando = r["DiasEsperando"] is int d ? (d == 0 ? "hoy" : d == 1 ? "hace 1 día" : $"hace {d} días") : "";
+                DibujarDosLineas(e, sel, quien, cuando, e.CellStyle!.Font!);
+            }
+        }
+
+        // Verde < 7 días, amarillo 7-15, rojo > 15
+        private static (Color Fondo, Color Frente) ColoresEspera(int dias) =>
+            dias > 15 ? (Paleta.RojoSuave, Paleta.Rojo)
+            : dias >= 7 ? (Paleta.AmarilloSuave, Paleta.Amarillo)
+            : (Paleta.VerdeSuave, Paleta.Verde);
+
+        private static readonly Font FuenteNegrita = new("Segoe UI", 9.5F, FontStyle.Bold);
+
+        private static void DibujarDosLineas(DataGridViewCellPaintingEventArgs e, bool sel, string? arriba, string? abajo, Font fuenteAbajo)
+        {
+            e.PaintBackground(e.CellBounds, sel);
+            var b = e.CellBounds;
+            TextRenderer.DrawText(e.Graphics!, arriba, FuenteNegrita,
+                new Rectangle(b.X + 10, b.Y + 7, b.Width - 14, 20), ThemeManager.TextPrimary,
+                TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
+            TextRenderer.DrawText(e.Graphics!, abajo, fuenteAbajo,
+                new Rectangle(b.X + 10, b.Y + 28, b.Width - 14, 18), ThemeManager.TextSecondary,
+                TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
+            e.Handled = true;
+        }
+
+        // ── Selección: la barra inferior actúa sobre la última fila elegida en cualquiera de las dos grillas ──
         private void dgvMant_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || dgvMant.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
-            _mantenimientoId = Convert.ToInt32(r["MantenimientoId"]);
+            _mantSeleccionado = r.Row;
+            _pendienteSeleccionado = null;
+            dgvPendientes.ClearSelection();
 
             int dias = Convert.ToInt32(r["DiasEnMantenimiento"]);
-            lblCerrarInfo.Text = $"{r["Herramienta"]}  ·  {r["CodigoHerramienta"]}  ·  {r["TipoMantenimiento"]}  ·  " +
-                                 $"{(dias == 1 ? "1 día" : $"{dias} días")} en mantenimiento" +
-                                 (r["RealizadoPor"] is string tec && tec != "" ? $"  ·  {tec}" : "");
-            nudCosto.Value = 0;
-            txtNotasCierre.Clear();
-
-            pnlAbrirMant.Visible = false;
-            pnlCerrarMant.Visible = true;
+            lblAccionInfo.Text = $"{r["Herramienta"]}  ·  {r["CodigoHerramienta"]}  ·  {r["TipoMantenimiento"]}  ·  " +
+                                 $"{r["TipoServicio"]}: {r["RealizadoPor"]}  ·  " +
+                                 (dias == 1 ? "1 día" : $"{dias} días") + " en mantenimiento";
+            MostrarAccion("Cerrar mantenimiento", FontAwesome.Sharp.IconChar.CheckCircle);
         }
 
-        private void ModoAbrirMantenimiento()
+        private void dgvPendientes_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
-            _mantenimientoId = null;
+            if (e.RowIndex < 0 || dgvPendientes.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
+            _pendienteSeleccionado = r.Row;
+            _mantSeleccionado = null;
             dgvMant.ClearSelection();
-            pnlCerrarMant.Visible = false;
-            pnlAbrirMant.Visible = true;
+
+            string reporte = r["ReportadoPor"] is string quien
+                ? $"Devuelta dañada por {quien}" + (r["FechaReporte"] is DateTime f ? $" el {f:dd/MM/yyyy}" : "")
+                : "Marcada como dañada en almacén";
+            if (r["NotaReporte"] is string nota && nota != "") reporte += $": \"{nota}\"";
+            lblAccionInfo.Text = $"{r["Herramienta"]}  ·  {r["CodigoUnidad"]}  ·  {reporte}";
+            MostrarAccion("Enviar a mantenimiento", FontAwesome.Sharp.IconChar.Wrench);
         }
 
-        private void btnAbrirMant_Click(object? sender, EventArgs e)
+        private void MostrarAccion(string texto, FontAwesome.Sharp.IconChar icono)
         {
-            if (cboUnidadMant.SelectedValue == null) { Aviso("Seleccione una unidad."); return; }
-            if (cboTipoMant.SelectedIndex < 0) { Aviso("Seleccione el tipo de mantenimiento."); return; }
-
-            try
-            {
-                int unidadId = Convert.ToInt32(cboUnidadMant.SelectedValue);
-                int herramientaId = _unidadesMant.AsEnumerable()
-                    .First(r => r.Field<int>("UnidadId") == unidadId)
-                    .Field<int>("HerramientaId");
-
-                MantenimientoService.RegistrarEntrada(
-                    herramientaId: herramientaId,
-                    unidadIds: new[] { unidadId },
-                    tipoMantenimiento: cboTipoMant.SelectedItem!.ToString()!,
-                    descripcion: txtDescMant.Text.Trim(),
-                    realizadoPor: txtRealizadoPor.Text.Trim());
-
-                OK("Mantenimiento abierto. La unidad quedó fuera del stock disponible.\n" +
-                   "Para enviar todo el grupo, use \"Unidades / Stock\" en la pestaña Herramientas.");
-                cboTipoMant.SelectedIndex = 0;
-                txtRealizadoPor.Clear();
-                txtDescMant.Clear();
-                CargarMantenimientos();
-                CargarUnidadesMant();
-                CargarHerramientas(_actual?.HerramientaId);
-            }
-            catch (Exception ex) { Error(ex.Message); }
+            btnAccionMant.Text = texto;
+            btnAccionMant.Icon = icono;
+            lblAccionInfo.ForeColor = ThemeManager.TextPrimary;
+            btnAccionMant.Visible = true;
+            lnkHistorial.Visible = true;
         }
 
-        private void btnCerrarMant_Click(object? sender, EventArgs e)
+        private void SinSeleccionMantenimiento()
         {
-            if (_mantenimientoId == null) { Aviso("Seleccione un mantenimiento de la lista."); return; }
-
-            decimal? costo = nudCosto.Value > 0 ? nudCosto.Value : null;
-
-            var resultado = MessageBox.Show(
-                "¿La unidad quedó reparada?\n\n" +
-                "Sí: vuelve al stock disponible.\n" +
-                "No: es irreparable y se da de baja (sale del stock).",
-                "Cerrar mantenimiento", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-            if (resultado == DialogResult.Cancel) return;
-            bool reparada = resultado == DialogResult.Yes;
-
-            try
-            {
-                MantenimientoService.RegistrarSalida(
-                    mantenimientoId: _mantenimientoId.Value,
-                    descripcion: txtNotasCierre.Text.Trim(),
-                    costo: costo,
-                    reparada: reparada);
-
-                OK(reparada
-                    ? "Mantenimiento cerrado. La unidad volvió a estado Disponible."
-                    : "Mantenimiento cerrado. La unidad se dio de baja y salió del stock.");
-                CargarMantenimientos();
-                CargarUnidadesMant();
-                CargarHerramientas(_actual?.HerramientaId);
-            }
-            catch (Exception ex) { Error(ex.Message); }
+            _mantSeleccionado = null;
+            _pendienteSeleccionado = null;
+            dgvMant.ClearSelection();
+            dgvPendientes.ClearSelection();
+            lblAccionInfo.Text = "Seleccione un mantenimiento para cerrarlo, o una unidad pendiente para enviarla a reparación.";
+            lblAccionInfo.ForeColor = ThemeManager.TextSecondary;
+            btnAccionMant.Visible = false;
+            lnkHistorial.Visible = false;
         }
 
-        // Historial de mantenimientos de la herramienta del mantenimiento seleccionado
+        private void EjecutarAccionMantenimiento()
+        {
+            if (_mantSeleccionado != null) CerrarMantenimiento(_mantSeleccionado);
+            else if (_pendienteSeleccionado != null) AbrirMantenimiento(_pendienteSeleccionado.Field<int>("UnidadId"));
+        }
+
+        private void AbrirMantenimiento(int? unidadId)
+        {
+            int registradas;
+            using (var frm = new FrmAbrirMantenimiento(unidadId is int id ? new[] { id } : null))
+            {
+                if (frm.ShowDialog(this) != DialogResult.OK) return;
+                registradas = frm.UnidadesRegistradas;
+            }
+
+            OK(registradas == 1
+                ? "Mantenimiento abierto. La unidad quedó fuera del stock disponible."
+                : $"Mantenimiento abierto para {registradas} unidades. Quedaron fuera del stock disponible.");
+            DespuesDeCambiarMantenimiento();
+        }
+
+        private void CerrarMantenimiento(DataRow mantenimiento)
+        {
+            using (var frm = new FrmCerrarMantenimiento(mantenimiento))
+                if (frm.ShowDialog(this) != DialogResult.OK) return;
+
+            OK("Mantenimiento cerrado.");
+            DespuesDeCambiarMantenimiento();
+        }
+
+        // El stock de las herramientas cambia al abrir o cerrar un mantenimiento
+        private void DespuesDeCambiarMantenimiento()
+        {
+            CargarMantenimientos();
+            CargarHerramientas(_modoNuevo ? null : _actual?.HerramientaId);
+        }
+
+        // Historial de mantenimientos de la herramienta de la fila seleccionada (activa o pendiente)
         private void VerHistorial()
         {
-            if (dgvMant.CurrentRow?.DataBoundItem is not DataRowView r || _mantenimientoId == null)
-            { Aviso("Seleccione un mantenimiento de la lista para ver el historial de esa herramienta."); return; }
+            var fila = _mantSeleccionado ?? _pendienteSeleccionado;
+            if (fila == null) return;
 
-            int herramientaId = Convert.ToInt32(r["HerramientaId"]);
-            var dt = MantenimientoService.ObtenerPorHerramienta(herramientaId);
+            int herramientaId = fila.Field<int>("HerramientaId");
+            DataTable dt;
+            try { dt = MantenimientoService.ObtenerPorHerramienta(herramientaId); }
+            catch (Exception ex) { Error(ex.Message); return; }
+            if (dt.Rows.Count == 0) { Aviso($"\"{fila["Herramienta"]}\" no tiene mantenimientos registrados."); return; }
 
             using var frmHistorial = new Form
             {
-                Text = $"Historial de mantenimiento — {r["Herramienta"]}",
-                Size = new Size(900, 480),
+                Text = $"Historial de mantenimiento — {fila["Herramienta"]}",
+                Size = new Size(1100, 480),
                 StartPosition = FormStartPosition.CenterParent
             };
             var dgv = new DataGridView
@@ -839,7 +931,7 @@ namespace PromacoHerra
                 DataSource = dt,
                 ReadOnly = true,
                 AllowUserToAddRows = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells,
                 SelectionMode = DataGridViewSelectionMode.FullRowSelect
             };
             frmHistorial.Controls.Add(dgv);

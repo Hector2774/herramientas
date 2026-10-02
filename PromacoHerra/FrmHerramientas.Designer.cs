@@ -69,6 +69,7 @@
         private System.Windows.Forms.FlowLayoutPanel flpCatForm;
         private PromacoHerra.Controls.MaterialTextBox txtCatNombre;
         private PromacoHerra.Controls.MaterialTextBox txtCatDescripcion;
+        private PromacoHerra.Controls.MaterialTextBox txtCatTelefono;
         private PromacoHerra.Controls.MaterialButton btnCatAgregar;
         private PromacoHerra.Controls.MaterialButton btnCatGuardar;
         private PromacoHerra.Controls.MaterialButton btnCatEliminar;
@@ -81,29 +82,17 @@
         private PromacoHerra.Controls.MaterialTextBox txtBuscarMant;
         private PromacoHerra.Controls.ChipLabel chipMantActivos;
         private System.Windows.Forms.DataGridView dgvMant;
-        private PromacoHerra.RoundedPanel pnlAccionesMant;
         private PromacoHerra.Controls.MaterialButton btnNuevoMant;
-        private System.Windows.Forms.Panel pnlAbrirMant;
-        private System.Windows.Forms.Label lblAbrirTitulo;
-        private System.Windows.Forms.TableLayoutPanel tlpAbrir;
-        private System.Windows.Forms.Label lblUnidadMant;
-        private PromacoHerra.Controls.MaterialComboBox cboUnidadMant;
-        private System.Windows.Forms.Label lblTipoMant;
-        private PromacoHerra.Controls.MaterialComboBox cboTipoMant;
-        private System.Windows.Forms.Label lblRealizadoPor;
-        private PromacoHerra.Controls.MaterialTextBox txtRealizadoPor;
-        private System.Windows.Forms.Label lblDescMant;
-        private PromacoHerra.Controls.MaterialTextBox txtDescMant;
-        private PromacoHerra.Controls.MaterialButton btnAbrirMant;
-        private System.Windows.Forms.Panel pnlCerrarMant;
-        private System.Windows.Forms.Label lblCerrarTitulo;
-        private System.Windows.Forms.Label lblCerrarInfo;
-        private System.Windows.Forms.TableLayoutPanel tlpCerrar;
-        private System.Windows.Forms.Label lblCosto;
-        private System.Windows.Forms.NumericUpDown nudCosto;
-        private System.Windows.Forms.Label lblNotasCierre;
-        private PromacoHerra.Controls.MaterialTextBox txtNotasCierre;
-        private PromacoHerra.Controls.MaterialButton btnCerrarMant;
+        private PromacoHerra.RoundedPanel pnlPendientes;
+        private System.Windows.Forms.Panel pnlPendientesHeader;
+        private System.Windows.Forms.Label lblPendientesTitulo;
+        private PromacoHerra.Controls.ChipLabel chipPendientes;
+        private System.Windows.Forms.DataGridView dgvPendientes;
+        private System.Windows.Forms.Label lblPendientesVacio;
+        private PromacoHerra.RoundedPanel pnlAccionesMant;
+        private System.Windows.Forms.Label lblAccionInfo;
+        private System.Windows.Forms.FlowLayoutPanel flpAccionesMant;
+        private PromacoHerra.Controls.MaterialButton btnAccionMant;
         private System.Windows.Forms.LinkLabel lnkHistorial;
 
         protected override void Dispose(bool disposing)
@@ -171,6 +160,7 @@
             flpCatForm = new FlowLayoutPanel();
             txtCatNombre = new PromacoHerra.Controls.MaterialTextBox();
             txtCatDescripcion = new PromacoHerra.Controls.MaterialTextBox();
+            txtCatTelefono = new PromacoHerra.Controls.MaterialTextBox();
             btnCatAgregar = new PromacoHerra.Controls.MaterialButton();
             btnCatGuardar = new PromacoHerra.Controls.MaterialButton();
             btnCatEliminar = new PromacoHerra.Controls.MaterialButton();
@@ -182,30 +172,18 @@
             txtBuscarMant = new PromacoHerra.Controls.MaterialTextBox();
             chipMantActivos = new PromacoHerra.Controls.ChipLabel();
             dgvMant = new DataGridView();
-            pnlAccionesMant = new RoundedPanel();
             btnNuevoMant = new PromacoHerra.Controls.MaterialButton();
-            pnlAbrirMant = new Panel();
-            tlpAbrir = new TableLayoutPanel();
-            lblUnidadMant = new Label();
-            lblTipoMant = new Label();
-            lblRealizadoPor = new Label();
-            lblDescMant = new Label();
-            cboUnidadMant = new PromacoHerra.Controls.MaterialComboBox();
-            cboTipoMant = new PromacoHerra.Controls.MaterialComboBox();
-            txtRealizadoPor = new PromacoHerra.Controls.MaterialTextBox();
-            txtDescMant = new PromacoHerra.Controls.MaterialTextBox();
-            btnAbrirMant = new PromacoHerra.Controls.MaterialButton();
-            lblAbrirTitulo = new Label();
-            pnlCerrarMant = new Panel();
-            tlpCerrar = new TableLayoutPanel();
-            lblCosto = new Label();
-            lblNotasCierre = new Label();
-            nudCosto = new NumericUpDown();
-            txtNotasCierre = new PromacoHerra.Controls.MaterialTextBox();
-            btnCerrarMant = new PromacoHerra.Controls.MaterialButton();
+            pnlPendientes = new RoundedPanel();
+            pnlPendientesHeader = new Panel();
+            lblPendientesTitulo = new Label();
+            chipPendientes = new PromacoHerra.Controls.ChipLabel();
+            dgvPendientes = new DataGridView();
+            lblPendientesVacio = new Label();
+            pnlAccionesMant = new RoundedPanel();
+            lblAccionInfo = new Label();
+            flpAccionesMant = new FlowLayoutPanel();
+            btnAccionMant = new PromacoHerra.Controls.MaterialButton();
             lnkHistorial = new LinkLabel();
-            lblCerrarInfo = new Label();
-            lblCerrarTitulo = new Label();
             pnlHeader.SuspendLayout();
             flpHeaderAcciones.SuspendLayout();
             tabMain.SuspendLayout();
@@ -235,12 +213,11 @@
             tlpMant.SuspendLayout();
             flpMantTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvMant).BeginInit();
+            pnlPendientes.SuspendLayout();
+            pnlPendientesHeader.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvPendientes).BeginInit();
             pnlAccionesMant.SuspendLayout();
-            pnlAbrirMant.SuspendLayout();
-            tlpAbrir.SuspendLayout();
-            pnlCerrarMant.SuspendLayout();
-            tlpCerrar.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)nudCosto).BeginInit();
+            flpAccionesMant.SuspendLayout();
             SuspendLayout();
             // 
             // pnlHeader
@@ -1001,7 +978,7 @@
             segCatalogo.Location = new Point(0, 0);
             segCatalogo.Margin = new Padding(0, 0, 0, 12);
             segCatalogo.Name = "segCatalogo";
-            segCatalogo.Size = new Size(152, 38);
+            segCatalogo.Size = new Size(440, 38);
             segCatalogo.TabIndex = 0;
             // 
             // flpCatForm
@@ -1009,6 +986,7 @@
             flpCatForm.AutoSize = true;
             flpCatForm.Controls.Add(txtCatNombre);
             flpCatForm.Controls.Add(txtCatDescripcion);
+            flpCatForm.Controls.Add(txtCatTelefono);
             flpCatForm.Controls.Add(btnCatAgregar);
             flpCatForm.Controls.Add(btnCatGuardar);
             flpCatForm.Controls.Add(btnCatEliminar);
@@ -1058,6 +1036,26 @@
             txtCatDescripcion.Size = new Size(220, 38);
             txtCatDescripcion.TabIndex = 1;
             txtCatDescripcion.UseFloatingLabel = false;
+            // 
+            // txtCatTelefono
+            // 
+            txtCatTelefono.BackColor = Color.White;
+            txtCatTelefono.FloatingLabelText = "";
+            txtCatTelefono.Location = new Point(400, 0);
+            txtCatTelefono.Margin = new Padding(0, 0, 10, 0);
+            txtCatTelefono.MaxLength = 30;
+            txtCatTelefono.MinimumSize = new Size(0, 38);
+            txtCatTelefono.Multiline = false;
+            txtCatTelefono.Name = "txtCatTelefono";
+            txtCatTelefono.Padding = new Padding(0, 0, 0, 4);
+            txtCatTelefono.PasswordChar = '\0';
+            txtCatTelefono.PlaceholderText = "Teléfono";
+            txtCatTelefono.ReadOnly = false;
+            txtCatTelefono.SelectionStart = 0;
+            txtCatTelefono.Size = new Size(150, 38);
+            txtCatTelefono.TabIndex = 2;
+            txtCatTelefono.UseFloatingLabel = false;
+            txtCatTelefono.Visible = false;
             // 
             // btnCatAgregar
             // 
@@ -1147,18 +1145,22 @@
             // 
             // tlpMant
             // 
-            tlpMant.ColumnCount = 1;
-            tlpMant.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tlpMant.ColumnCount = 2;
+            tlpMant.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 62F));
+            tlpMant.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 38F));
             tlpMant.Controls.Add(flpMantTop, 0, 0);
+            tlpMant.Controls.Add(btnNuevoMant, 1, 0);
             tlpMant.Controls.Add(dgvMant, 0, 1);
+            tlpMant.Controls.Add(pnlPendientes, 1, 1);
             tlpMant.Controls.Add(pnlAccionesMant, 0, 2);
+            tlpMant.SetColumnSpan(pnlAccionesMant, 2);
             tlpMant.Dock = DockStyle.Fill;
             tlpMant.Location = new Point(20, 16);
             tlpMant.Name = "tlpMant";
             tlpMant.RowCount = 3;
             tlpMant.RowStyles.Add(new RowStyle());
             tlpMant.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tlpMant.RowStyles.Add(new RowStyle(SizeType.Absolute, 200F));
+            tlpMant.RowStyles.Add(new RowStyle(SizeType.Absolute, 68F));
             tlpMant.Size = new Size(1152, 596);
             tlpMant.TabIndex = 0;
             // 
@@ -1171,7 +1173,7 @@
             flpMantTop.Location = new Point(0, 0);
             flpMantTop.Margin = new Padding(0, 0, 0, 12);
             flpMantTop.Name = "flpMantTop";
-            flpMantTop.Size = new Size(1152, 38);
+            flpMantTop.Size = new Size(714, 38);
             flpMantTop.TabIndex = 0;
             flpMantTop.WrapContents = false;
             // 
@@ -1187,7 +1189,7 @@
             txtBuscarMant.Name = "txtBuscarMant";
             txtBuscarMant.Padding = new Padding(0, 0, 0, 4);
             txtBuscarMant.PasswordChar = '\0';
-            txtBuscarMant.PlaceholderText = "Buscar por herramienta, código, técnico…";
+            txtBuscarMant.PlaceholderText = "Buscar por herramienta, código, responsable…";
             txtBuscarMant.ReadOnly = false;
             txtBuscarMant.SelectionStart = 0;
             txtBuscarMant.Size = new Size(340, 38);
@@ -1204,368 +1206,169 @@
             chipMantActivos.TabIndex = 1;
             chipMantActivos.Text = "0 activos";
             // 
-            // dgvMant
-            // 
-            dgvMant.AllowUserToAddRows = false;
-            dgvMant.AllowUserToDeleteRows = false;
-            dgvMant.Dock = DockStyle.Fill;
-            dgvMant.Location = new Point(0, 50);
-            dgvMant.Margin = new Padding(0, 0, 0, 12);
-            dgvMant.Name = "dgvMant";
-            dgvMant.ReadOnly = true;
-            dgvMant.Size = new Size(1152, 334);
-            dgvMant.TabIndex = 1;
-            // 
-            // pnlAccionesMant
-            // 
-            pnlAccionesMant.BackColor = Color.White;
-            pnlAccionesMant.Controls.Add(btnNuevoMant);
-            pnlAccionesMant.Controls.Add(pnlAbrirMant);
-            pnlAccionesMant.Controls.Add(pnlCerrarMant);
-            pnlAccionesMant.Dock = DockStyle.Fill;
-            pnlAccionesMant.Location = new Point(0, 396);
-            pnlAccionesMant.Margin = new Padding(0);
-            pnlAccionesMant.Name = "pnlAccionesMant";
-            pnlAccionesMant.Padding = new Padding(18, 10, 24, 16);
-            pnlAccionesMant.Size = new Size(1152, 200);
-            pnlAccionesMant.TabIndex = 2;
-            // 
             // btnNuevoMant
             // 
+            btnNuevoMant.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnNuevoMant.CornerRadius = 8;
             btnNuevoMant.FlatStyle = FlatStyle.Flat;
             btnNuevoMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             btnNuevoMant.Icon = FontAwesome.Sharp.IconChar.Add;
             btnNuevoMant.IconColor = null;
             btnNuevoMant.IconSize = 14;
-            btnNuevoMant.Location = new Point(1020, 10);
+            btnNuevoMant.Location = new Point(942, 0);
+            btnNuevoMant.Margin = new Padding(0, 0, 0, 12);
             btnNuevoMant.Name = "btnNuevoMant";
-            btnNuevoMant.Size = new Size(110, 34);
-            btnNuevoMant.TabIndex = 0;
-            btnNuevoMant.Text = "Nuevo";
-            btnNuevoMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Default;
+            btnNuevoMant.Size = new Size(210, 38);
+            btnNuevoMant.TabIndex = 1;
+            btnNuevoMant.Text = "Nuevo mantenimiento";
+            btnNuevoMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
             // 
-            // pnlAbrirMant
+            // dgvMant
             // 
-            pnlAbrirMant.BackColor = Color.White;
-            pnlAbrirMant.Controls.Add(tlpAbrir);
-            pnlAbrirMant.Controls.Add(lblAbrirTitulo);
-            pnlAbrirMant.Dock = DockStyle.Fill;
-            pnlAbrirMant.Location = new Point(18, 10);
-            pnlAbrirMant.Name = "pnlAbrirMant";
-            pnlAbrirMant.Size = new Size(1110, 174);
-            pnlAbrirMant.TabIndex = 1;
+            dgvMant.AllowUserToAddRows = false;
+            dgvMant.AllowUserToDeleteRows = false;
+            dgvMant.Dock = DockStyle.Fill;
+            dgvMant.Location = new Point(0, 50);
+            dgvMant.Margin = new Padding(0, 0, 12, 12);
+            dgvMant.Name = "dgvMant";
+            dgvMant.ReadOnly = true;
+            dgvMant.Size = new Size(702, 466);
+            dgvMant.TabIndex = 2;
             // 
-            // tlpAbrir
+            // pnlPendientes
             // 
-            tlpAbrir.ColumnCount = 5;
-            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34F));
-            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 16F));
-            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
-            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
-            tlpAbrir.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120F));
-            tlpAbrir.Controls.Add(lblUnidadMant, 0, 0);
-            tlpAbrir.Controls.Add(lblTipoMant, 1, 0);
-            tlpAbrir.Controls.Add(lblRealizadoPor, 2, 0);
-            tlpAbrir.Controls.Add(lblDescMant, 3, 0);
-            tlpAbrir.Controls.Add(cboUnidadMant, 0, 1);
-            tlpAbrir.Controls.Add(cboTipoMant, 1, 1);
-            tlpAbrir.Controls.Add(txtRealizadoPor, 2, 1);
-            tlpAbrir.Controls.Add(txtDescMant, 3, 1);
-            tlpAbrir.Controls.Add(btnAbrirMant, 4, 1);
-            tlpAbrir.Dock = DockStyle.Top;
-            tlpAbrir.Location = new Point(0, 44);
-            tlpAbrir.Name = "tlpAbrir";
-            tlpAbrir.RowCount = 2;
-            tlpAbrir.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-            tlpAbrir.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
-            tlpAbrir.Size = new Size(1110, 68);
-            tlpAbrir.TabIndex = 1;
+            pnlPendientes.BackColor = Color.White;
+            pnlPendientes.Controls.Add(dgvPendientes);
+            pnlPendientes.Controls.Add(lblPendientesVacio);
+            pnlPendientes.Controls.Add(pnlPendientesHeader);
+            pnlPendientes.Dock = DockStyle.Fill;
+            pnlPendientes.Location = new Point(714, 50);
+            pnlPendientes.Margin = new Padding(0, 0, 0, 12);
+            pnlPendientes.Name = "pnlPendientes";
+            pnlPendientes.Padding = new Padding(14, 8, 14, 14);
+            pnlPendientes.Size = new Size(438, 466);
+            pnlPendientes.TabIndex = 3;
             // 
-            // lblUnidadMant
+            // pnlPendientesHeader
             // 
-            lblUnidadMant.AutoSize = true;
-            lblUnidadMant.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblUnidadMant.Location = new Point(3, 0);
-            lblUnidadMant.Name = "lblUnidadMant";
-            lblUnidadMant.Size = new Size(126, 15);
-            lblUnidadMant.TabIndex = 0;
-            lblUnidadMant.Text = "Herramienta (unidad)";
+            pnlPendientesHeader.Controls.Add(chipPendientes);
+            pnlPendientesHeader.Controls.Add(lblPendientesTitulo);
+            pnlPendientesHeader.Dock = DockStyle.Top;
+            pnlPendientesHeader.Location = new Point(14, 8);
+            pnlPendientesHeader.Name = "pnlPendientesHeader";
+            pnlPendientesHeader.Size = new Size(410, 40);
+            pnlPendientesHeader.TabIndex = 0;
             // 
-            // lblTipoMant
+            // lblPendientesTitulo
             // 
-            lblTipoMant.AutoSize = true;
-            lblTipoMant.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblTipoMant.Location = new Point(339, 0);
-            lblTipoMant.Name = "lblTipoMant";
-            lblTipoMant.Size = new Size(31, 15);
-            lblTipoMant.TabIndex = 1;
-            lblTipoMant.Text = "Tipo";
+            lblPendientesTitulo.AutoSize = true;
+            lblPendientesTitulo.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblPendientesTitulo.Location = new Point(0, 8);
+            lblPendientesTitulo.Name = "lblPendientesTitulo";
+            lblPendientesTitulo.Size = new Size(186, 20);
+            lblPendientesTitulo.TabIndex = 0;
+            lblPendientesTitulo.Text = "Pendientes de reparación";
             // 
-            // lblRealizadoPor
+            // chipPendientes
             // 
-            lblRealizadoPor.AutoSize = true;
-            lblRealizadoPor.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblRealizadoPor.Location = new Point(497, 0);
-            lblRealizadoPor.Name = "lblRealizadoPor";
-            lblRealizadoPor.Size = new Size(82, 15);
-            lblRealizadoPor.TabIndex = 2;
-            lblRealizadoPor.Text = "Realizado por";
+            chipPendientes.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            chipPendientes.Location = new Point(200, 8);
+            chipPendientes.Name = "chipPendientes";
+            chipPendientes.Size = new Size(30, 24);
+            chipPendientes.TabIndex = 1;
+            chipPendientes.Text = "0";
             // 
-            // lblDescMant
+            // lblPendientesVacio
             // 
-            lblDescMant.AutoSize = true;
-            lblDescMant.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblDescMant.Location = new Point(695, 0);
-            lblDescMant.Name = "lblDescMant";
-            lblDescMant.Size = new Size(72, 15);
-            lblDescMant.TabIndex = 3;
-            lblDescMant.Text = "Descripción";
+            lblPendientesVacio.Dock = DockStyle.Fill;
+            lblPendientesVacio.Font = new Font("Segoe UI", 9.5F);
+            lblPendientesVacio.Location = new Point(14, 48);
+            lblPendientesVacio.Name = "lblPendientesVacio";
+            lblPendientesVacio.Size = new Size(410, 404);
+            lblPendientesVacio.TabIndex = 1;
+            lblPendientesVacio.Text = "No hay unidades dañadas esperando reparación.";
+            lblPendientesVacio.TextAlign = ContentAlignment.MiddleCenter;
+            lblPendientesVacio.Visible = false;
             // 
-            // cboUnidadMant
+            // dgvPendientes
             // 
-            cboUnidadMant.BackColor = Color.White;
-            cboUnidadMant.DataSource = null;
-            cboUnidadMant.DisplayMember = "";
-            cboUnidadMant.Dock = DockStyle.Fill;
-            cboUnidadMant.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboUnidadMant.Location = new Point(0, 24);
-            cboUnidadMant.Margin = new Padding(0, 0, 10, 0);
-            cboUnidadMant.MinimumSize = new Size(0, 38);
-            cboUnidadMant.Name = "cboUnidadMant";
-            cboUnidadMant.Padding = new Padding(0, 0, 0, 4);
-            cboUnidadMant.SelectedIndex = -1;
-            cboUnidadMant.SelectedItem = null;
-            cboUnidadMant.SelectedValue = null;
-            cboUnidadMant.Size = new Size(326, 44);
-            cboUnidadMant.TabIndex = 4;
-            cboUnidadMant.ValueMember = "";
+            dgvPendientes.AllowUserToAddRows = false;
+            dgvPendientes.AllowUserToDeleteRows = false;
+            dgvPendientes.Dock = DockStyle.Fill;
+            dgvPendientes.Location = new Point(14, 48);
+            dgvPendientes.Name = "dgvPendientes";
+            dgvPendientes.ReadOnly = true;
+            dgvPendientes.Size = new Size(410, 404);
+            dgvPendientes.TabIndex = 2;
             // 
-            // cboTipoMant
+            // pnlAccionesMant
             // 
-            cboTipoMant.BackColor = Color.White;
-            cboTipoMant.DataSource = null;
-            cboTipoMant.DisplayMember = "";
-            cboTipoMant.Dock = DockStyle.Fill;
-            cboTipoMant.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboTipoMant.Location = new Point(336, 24);
-            cboTipoMant.Margin = new Padding(0, 0, 10, 0);
-            cboTipoMant.MinimumSize = new Size(0, 38);
-            cboTipoMant.Name = "cboTipoMant";
-            cboTipoMant.Padding = new Padding(0, 0, 0, 4);
-            cboTipoMant.SelectedIndex = -1;
-            cboTipoMant.SelectedItem = null;
-            cboTipoMant.SelectedValue = null;
-            cboTipoMant.Size = new Size(148, 44);
-            cboTipoMant.TabIndex = 5;
-            cboTipoMant.ValueMember = "";
+            pnlAccionesMant.BackColor = Color.White;
+            pnlAccionesMant.Controls.Add(lblAccionInfo);
+            pnlAccionesMant.Controls.Add(flpAccionesMant);
+            pnlAccionesMant.Dock = DockStyle.Fill;
+            pnlAccionesMant.Location = new Point(0, 528);
+            pnlAccionesMant.Margin = new Padding(0);
+            pnlAccionesMant.Name = "pnlAccionesMant";
+            pnlAccionesMant.Padding = new Padding(18, 14, 14, 14);
+            pnlAccionesMant.Size = new Size(1152, 68);
+            pnlAccionesMant.TabIndex = 4;
             // 
-            // txtRealizadoPor
+            // lblAccionInfo
             // 
-            txtRealizadoPor.BackColor = Color.White;
-            txtRealizadoPor.Dock = DockStyle.Fill;
-            txtRealizadoPor.FloatingLabelText = "";
-            txtRealizadoPor.Location = new Point(494, 24);
-            txtRealizadoPor.Margin = new Padding(0, 0, 10, 0);
-            txtRealizadoPor.MaxLength = 32767;
-            txtRealizadoPor.MinimumSize = new Size(0, 38);
-            txtRealizadoPor.Multiline = false;
-            txtRealizadoPor.Name = "txtRealizadoPor";
-            txtRealizadoPor.Padding = new Padding(0, 0, 0, 4);
-            txtRealizadoPor.PasswordChar = '\0';
-            txtRealizadoPor.PlaceholderText = "";
-            txtRealizadoPor.ReadOnly = false;
-            txtRealizadoPor.SelectionStart = 0;
-            txtRealizadoPor.Size = new Size(188, 44);
-            txtRealizadoPor.TabIndex = 6;
-            txtRealizadoPor.UseFloatingLabel = false;
+            lblAccionInfo.AutoEllipsis = true;
+            lblAccionInfo.Dock = DockStyle.Fill;
+            lblAccionInfo.Font = new Font("Segoe UI", 9.5F);
+            lblAccionInfo.Location = new Point(18, 14);
+            lblAccionInfo.Name = "lblAccionInfo";
+            lblAccionInfo.Size = new Size(780, 40);
+            lblAccionInfo.TabIndex = 0;
+            lblAccionInfo.Text = "Seleccione un mantenimiento para cerrarlo, o una unidad pendiente para enviarla a reparación.";
+            lblAccionInfo.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // txtDescMant
+            // flpAccionesMant
             // 
-            txtDescMant.BackColor = Color.White;
-            txtDescMant.Dock = DockStyle.Fill;
-            txtDescMant.FloatingLabelText = "";
-            txtDescMant.Location = new Point(692, 24);
-            txtDescMant.Margin = new Padding(0, 0, 10, 0);
-            txtDescMant.MaxLength = 32767;
-            txtDescMant.MinimumSize = new Size(0, 38);
-            txtDescMant.Multiline = false;
-            txtDescMant.Name = "txtDescMant";
-            txtDescMant.Padding = new Padding(0, 0, 0, 4);
-            txtDescMant.PasswordChar = '\0';
-            txtDescMant.PlaceholderText = "";
-            txtDescMant.ReadOnly = false;
-            txtDescMant.SelectionStart = 0;
-            txtDescMant.Size = new Size(287, 44);
-            txtDescMant.TabIndex = 7;
-            txtDescMant.UseFloatingLabel = false;
+            flpAccionesMant.AutoSize = true;
+            flpAccionesMant.Controls.Add(btnAccionMant);
+            flpAccionesMant.Controls.Add(lnkHistorial);
+            flpAccionesMant.Dock = DockStyle.Right;
+            flpAccionesMant.FlowDirection = FlowDirection.RightToLeft;
+            flpAccionesMant.Location = new Point(798, 14);
+            flpAccionesMant.Name = "flpAccionesMant";
+            flpAccionesMant.Size = new Size(340, 40);
+            flpAccionesMant.TabIndex = 1;
+            flpAccionesMant.WrapContents = false;
             // 
-            // btnAbrirMant
+            // btnAccionMant
             // 
-            btnAbrirMant.CornerRadius = 8;
-            btnAbrirMant.Dock = DockStyle.Fill;
-            btnAbrirMant.FlatStyle = FlatStyle.Flat;
-            btnAbrirMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnAbrirMant.Icon = FontAwesome.Sharp.IconChar.Wrench;
-            btnAbrirMant.IconColor = null;
-            btnAbrirMant.IconSize = 14;
-            btnAbrirMant.Location = new Point(989, 24);
-            btnAbrirMant.Margin = new Padding(0, 0, 0, 4);
-            btnAbrirMant.Name = "btnAbrirMant";
-            btnAbrirMant.Size = new Size(121, 40);
-            btnAbrirMant.TabIndex = 8;
-            btnAbrirMant.Text = "Abrir";
-            btnAbrirMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
-            // 
-            // lblAbrirTitulo
-            // 
-            lblAbrirTitulo.Dock = DockStyle.Top;
-            lblAbrirTitulo.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            lblAbrirTitulo.Location = new Point(0, 0);
-            lblAbrirTitulo.Name = "lblAbrirTitulo";
-            lblAbrirTitulo.Size = new Size(1110, 44);
-            lblAbrirTitulo.TabIndex = 0;
-            lblAbrirTitulo.Text = "Abrir nuevo mantenimiento";
-            lblAbrirTitulo.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // pnlCerrarMant
-            // 
-            pnlCerrarMant.BackColor = Color.White;
-            pnlCerrarMant.Controls.Add(tlpCerrar);
-            pnlCerrarMant.Controls.Add(lblCerrarInfo);
-            pnlCerrarMant.Controls.Add(lblCerrarTitulo);
-            pnlCerrarMant.Dock = DockStyle.Fill;
-            pnlCerrarMant.Location = new Point(18, 10);
-            pnlCerrarMant.Name = "pnlCerrarMant";
-            pnlCerrarMant.Size = new Size(1110, 174);
-            pnlCerrarMant.TabIndex = 2;
-            pnlCerrarMant.Visible = false;
-            // 
-            // tlpCerrar
-            // 
-            tlpCerrar.ColumnCount = 4;
-            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 160F));
-            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210F));
-            tlpCerrar.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110F));
-            tlpCerrar.Controls.Add(lblCosto, 0, 0);
-            tlpCerrar.Controls.Add(lblNotasCierre, 1, 0);
-            tlpCerrar.Controls.Add(nudCosto, 0, 1);
-            tlpCerrar.Controls.Add(txtNotasCierre, 1, 1);
-            tlpCerrar.Controls.Add(btnCerrarMant, 2, 1);
-            tlpCerrar.Controls.Add(lnkHistorial, 3, 1);
-            tlpCerrar.Dock = DockStyle.Top;
-            tlpCerrar.Location = new Point(0, 64);
-            tlpCerrar.Name = "tlpCerrar";
-            tlpCerrar.RowCount = 2;
-            tlpCerrar.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-            tlpCerrar.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
-            tlpCerrar.Size = new Size(1110, 68);
-            tlpCerrar.TabIndex = 2;
-            // 
-            // lblCosto
-            // 
-            lblCosto.AutoSize = true;
-            lblCosto.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblCosto.Location = new Point(3, 0);
-            lblCosto.Name = "lblCosto";
-            lblCosto.Size = new Size(56, 15);
-            lblCosto.TabIndex = 0;
-            lblCosto.Text = "Costo ($)";
-            // 
-            // lblNotasCierre
-            // 
-            lblNotasCierre.AutoSize = true;
-            lblNotasCierre.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblNotasCierre.Location = new Point(163, 0);
-            lblNotasCierre.Name = "lblNotasCierre";
-            lblNotasCierre.Size = new Size(92, 15);
-            lblNotasCierre.TabIndex = 1;
-            lblNotasCierre.Text = "Notas de cierre";
-            // 
-            // nudCosto
-            // 
-            nudCosto.DecimalPlaces = 2;
-            nudCosto.Dock = DockStyle.Fill;
-            nudCosto.Location = new Point(0, 28);
-            nudCosto.Margin = new Padding(0, 4, 10, 0);
-            nudCosto.Maximum = new decimal(new int[] { 9999999, 0, 0, 0 });
-            nudCosto.Name = "nudCosto";
-            nudCosto.Size = new Size(150, 23);
-            nudCosto.TabIndex = 2;
-            nudCosto.ThousandsSeparator = true;
-            // 
-            // txtNotasCierre
-            // 
-            txtNotasCierre.BackColor = Color.White;
-            txtNotasCierre.Dock = DockStyle.Fill;
-            txtNotasCierre.FloatingLabelText = "";
-            txtNotasCierre.Location = new Point(160, 24);
-            txtNotasCierre.Margin = new Padding(0, 0, 10, 0);
-            txtNotasCierre.MaxLength = 32767;
-            txtNotasCierre.MinimumSize = new Size(0, 38);
-            txtNotasCierre.Multiline = false;
-            txtNotasCierre.Name = "txtNotasCierre";
-            txtNotasCierre.Padding = new Padding(0, 0, 0, 4);
-            txtNotasCierre.PasswordChar = '\0';
-            txtNotasCierre.PlaceholderText = "Qué se hizo, piezas cambiadas…";
-            txtNotasCierre.ReadOnly = false;
-            txtNotasCierre.SelectionStart = 0;
-            txtNotasCierre.Size = new Size(620, 44);
-            txtNotasCierre.TabIndex = 3;
-            txtNotasCierre.UseFloatingLabel = false;
-            // 
-            // btnCerrarMant
-            // 
-            btnCerrarMant.CornerRadius = 8;
-            btnCerrarMant.Dock = DockStyle.Fill;
-            btnCerrarMant.FlatStyle = FlatStyle.Flat;
-            btnCerrarMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-            btnCerrarMant.Icon = FontAwesome.Sharp.IconChar.CheckCircle;
-            btnCerrarMant.IconColor = null;
-            btnCerrarMant.IconSize = 16;
-            btnCerrarMant.Location = new Point(790, 24);
-            btnCerrarMant.Margin = new Padding(0, 0, 10, 4);
-            btnCerrarMant.Name = "btnCerrarMant";
-            btnCerrarMant.Size = new Size(200, 40);
-            btnCerrarMant.TabIndex = 4;
-            btnCerrarMant.Text = "Cerrar mantenimiento";
-            btnCerrarMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            btnAccionMant.CornerRadius = 8;
+            btnAccionMant.FlatStyle = FlatStyle.Flat;
+            btnAccionMant.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
+            btnAccionMant.Icon = FontAwesome.Sharp.IconChar.CheckCircle;
+            btnAccionMant.IconColor = null;
+            btnAccionMant.IconSize = 16;
+            btnAccionMant.Location = new Point(130, 0);
+            btnAccionMant.Margin = new Padding(0);
+            btnAccionMant.Name = "btnAccionMant";
+            btnAccionMant.Size = new Size(210, 40);
+            btnAccionMant.TabIndex = 1;
+            btnAccionMant.Text = "Cerrar mantenimiento";
+            btnAccionMant.Variant = PromacoHerra.Controls.MaterialButtonVariant.Primary;
+            btnAccionMant.Visible = false;
             // 
             // lnkHistorial
             // 
-            lnkHistorial.Dock = DockStyle.Fill;
+            lnkHistorial.AutoSize = true;
             lnkHistorial.Font = new Font("Segoe UI", 9.5F);
             lnkHistorial.LinkBehavior = LinkBehavior.HoverUnderline;
-            lnkHistorial.Location = new Point(1003, 24);
+            lnkHistorial.Location = new Point(28, 11);
+            lnkHistorial.Margin = new Padding(0, 11, 16, 0);
             lnkHistorial.Name = "lnkHistorial";
-            lnkHistorial.Size = new Size(104, 44);
-            lnkHistorial.TabIndex = 5;
+            lnkHistorial.Size = new Size(86, 17);
+            lnkHistorial.TabIndex = 0;
             lnkHistorial.TabStop = true;
             lnkHistorial.Text = "Ver historial";
-            lnkHistorial.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblCerrarInfo
-            // 
-            lblCerrarInfo.AutoEllipsis = true;
-            lblCerrarInfo.Dock = DockStyle.Top;
-            lblCerrarInfo.Font = new Font("Segoe UI", 9.5F);
-            lblCerrarInfo.Location = new Point(0, 36);
-            lblCerrarInfo.Name = "lblCerrarInfo";
-            lblCerrarInfo.Size = new Size(1110, 28);
-            lblCerrarInfo.TabIndex = 1;
-            lblCerrarInfo.Text = "Herramienta · Código · Tipo · N días";
-            // 
-            // lblCerrarTitulo
-            // 
-            lblCerrarTitulo.Dock = DockStyle.Top;
-            lblCerrarTitulo.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            lblCerrarTitulo.Location = new Point(0, 0);
-            lblCerrarTitulo.Name = "lblCerrarTitulo";
-            lblCerrarTitulo.Size = new Size(1110, 36);
-            lblCerrarTitulo.TabIndex = 0;
-            lblCerrarTitulo.Text = "Cerrar mantenimiento";
-            lblCerrarTitulo.TextAlign = ContentAlignment.MiddleLeft;
+            lnkHistorial.Visible = false;
             // 
             // FrmHerramientas
             // 
@@ -1615,14 +1418,14 @@
             tlpMant.PerformLayout();
             flpMantTop.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvMant).EndInit();
+            pnlPendientes.ResumeLayout(false);
+            pnlPendientesHeader.ResumeLayout(false);
+            pnlPendientesHeader.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvPendientes).EndInit();
             pnlAccionesMant.ResumeLayout(false);
-            pnlAbrirMant.ResumeLayout(false);
-            tlpAbrir.ResumeLayout(false);
-            tlpAbrir.PerformLayout();
-            pnlCerrarMant.ResumeLayout(false);
-            tlpCerrar.ResumeLayout(false);
-            tlpCerrar.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)nudCosto).EndInit();
+            pnlAccionesMant.PerformLayout();
+            flpAccionesMant.ResumeLayout(false);
+            flpAccionesMant.PerformLayout();
             ResumeLayout(false);
         }
     }

@@ -58,8 +58,10 @@ namespace PromacoHerra
         private readonly KpiTile kpiDanadas = new("Herramientas dañadas", IconChar.HeartCrack, Paleta.Violeta, Paleta.VioletaSuave);
 
         // Controles de filtro (se reubican en el panel según el reporte activo)
-        private readonly MaterialComboBox cboEmpleado = Combo();
-        private readonly MaterialComboBox cboHerramienta = Combo();
+        // Empleados y herramientas son demasiados para un combo: se eligen con el buscador.
+        // Incluyen inactivos / dados de baja porque pueden aparecer en el historial.
+        private readonly EmpleadoPickerControl pickEmpleado = new() { IncluirInactivos = true, Height = 38, MinimumSize = new Size(200, 38) };
+        private readonly HerramientaPickerControl pickHerramienta = new() { IncluirInactivas = true, Height = 38, MinimumSize = new Size(200, 38) };
         private readonly MaterialComboBox cboEstadoPrestamo = Combo();
         private readonly MaterialComboBox cboCategoria = Combo();
         private readonly MaterialComboBox cboDepartamento = Combo();
@@ -156,8 +158,8 @@ namespace PromacoHerra
         // Cada control de filtro va dentro de un "campo": etiqueta pequeña en mayúsculas + control
         private void ConstruirFiltros()
         {
-            Campo("Empleado", cboEmpleado, 230);
-            Campo("Herramienta", cboHerramienta, 210);
+            Campo("Empleado", pickEmpleado, 230);
+            Campo("Herramienta", pickHerramienta, 210);
             Campo("Estado", cboEstadoPrestamo, 130);
             Campo("Desde", dtpDesde, 130);
             Campo("Hasta", dtpHasta, 130);
@@ -181,9 +183,9 @@ namespace PromacoHerra
             dtpHasta.Value = DateTime.Today;
 
             _info[Reporte.Historial] = new("Historial de préstamos", "Préstamos por fecha, empleado y estado", IconChar.ClockRotateLeft,
-                new Control[] { cboEmpleado, cboHerramienta, cboEstadoPrestamo, dtpDesde, dtpHasta }, true);
+                new Control[] { pickEmpleado, pickHerramienta, cboEstadoPrestamo, dtpDesde, dtpHasta }, true);
             _info[Reporte.Vencidos] = new("Vencidos / Pendientes", "Préstamos fuera de plazo hoy", IconChar.CalendarXmark,
-                new Control[] { cboEmpleado, cboCategoria }, false);
+                new Control[] { pickEmpleado, cboCategoria }, false);
             _info[Reporte.PorEmpleado] = new("Préstamos por empleado", "Actividad y atrasos por persona", IconChar.Users,
                 new Control[] { dtpDesde, dtpHasta, cboDepartamento }, true);
             _info[Reporte.Ranking] = new("Herramientas más usadas", "Ranking de demanda en el período", IconChar.Trophy,
@@ -191,7 +193,7 @@ namespace PromacoHerra
             _info[Reporte.Mantenimiento] = new("Historial de mantenimiento", "Costos, duración y técnicos", IconChar.ScrewdriverWrench,
                 new Control[] { dtpDesde, dtpHasta, cboTipoMant, cboEstadoMant }, true);
             _info[Reporte.Danadas] = new("Dañadas y perdidas", "Incidentes en devoluciones", IconChar.TriangleExclamation,
-                new Control[] { dtpDesde, dtpHasta, cboCondicion, cboEmpleado }, true);
+                new Control[] { dtpDesde, dtpHasta, cboCondicion, pickEmpleado }, true);
             _info[Reporte.Inventario] = new("Inventario por categoría", "Disponibilidad actual del stock", IconChar.BoxesStacked,
                 new Control[] { cboCategoria, cboMostrar }, false);
         }
@@ -224,6 +226,8 @@ namespace PromacoHerra
         private static object? Valor(MaterialComboBox cbo) => (cbo.SelectedItem as Opcion)?.Valor;
         private static int? ValorInt(MaterialComboBox cbo) => Valor(cbo) as int?;
         private static string? ValorTexto(MaterialComboBox cbo) => Valor(cbo) as string;
+        private int? EmpleadoFiltro => pickEmpleado.EmpleadoId > 0 ? pickEmpleado.EmpleadoId : null;
+        private int? HerramientaFiltro => pickHerramienta.HerramientaId > 0 ? pickHerramienta.HerramientaId : null;
 
         private void ConstruirTarjetas()
         {
@@ -286,14 +290,8 @@ namespace PromacoHerra
 
         private void CargarListas()
         {
-            // Todos los empleados (también inactivos: pueden tener préstamos en el historial)
-            var emp = Db.Query("SELECT EmpleadoId, Nombre FROM Empleado ORDER BY Nombre");
-            Llenar(cboEmpleado, new[] { new Opcion(null, "Todos los empleados") }
-                .Concat(emp.AsEnumerable().Select(r => new Opcion(r.Field<int>("EmpleadoId"), r.Field<string>("Nombre") ?? ""))).ToArray());
-
-            var her = Db.Query("SELECT HerramientaId, Nombre FROM Herramienta WHERE Activa = 1 ORDER BY Nombre");
-            Llenar(cboHerramienta, new[] { new Opcion(null, "Todas las herramientas") }
-                .Concat(her.AsEnumerable().Select(r => new Opcion(r.Field<int>("HerramientaId"), r.Field<string>("Nombre") ?? ""))).ToArray());
+            pickEmpleado.EstablecerTodos("Todos los empleados");
+            pickHerramienta.EstablecerTodas("Todas las herramientas");
 
             var cat = CategoriaService.ObtenerTodas();
             Llenar(cboCategoria, new[] { new Opcion(null, "Todas las categorías") }
@@ -381,7 +379,7 @@ namespace PromacoHerra
 
         private void CargarHistorial()
         {
-            var dt = ReporteService.HistorialPorPrestamo(ValorInt(cboEmpleado), ValorInt(cboHerramienta),
+            var dt = ReporteService.HistorialPorPrestamo(EmpleadoFiltro, HerramientaFiltro,
                 dtpDesde.Value, dtpHasta.Value, ValorTexto(cboEstadoPrestamo));
             Mostrar(dt, PeriodoFechas, new()
             {
@@ -397,7 +395,7 @@ namespace PromacoHerra
 
         private void CargarVencidos()
         {
-            var dt = ReporteService.Vencidos(ValorInt(cboEmpleado), ValorInt(cboCategoria));
+            var dt = ReporteService.Vencidos(EmpleadoFiltro, ValorInt(cboCategoria));
             Mostrar(dt, $"Vencidos al {DateTime.Now:dd/MM/yyyy}", new()
             {
                 new("PrestamoId", "Préstamo", Render.Prestamo, 80),
@@ -457,6 +455,7 @@ namespace PromacoHerra
                 new("Herramienta", "Herramienta", Render.HerramientaUnidad, 0, 30),
                 new("Tipo", "Tipo", Render.TipoMantenimiento, 120),
                 new("RealizadoPor", "Realizado por", Render.Texto, 0, 18),
+                new("Servicio", "Servicio", Render.Texto, 90),
                 new("FechaInicio", "Fecha inicio", Render.Fecha, 110),
                 new("FechaFin", "Fecha cierre", Render.Fecha, 110),
                 new("Duracion", "Duración", Render.Duracion, 100),
@@ -476,7 +475,7 @@ namespace PromacoHerra
         private void CargarDanadas()
         {
             var dt = ReporteService.DanadasPerdidas(dtpDesde.Value, dtpHasta.Value,
-                ValorTexto(cboCondicion), ValorInt(cboEmpleado));
+                ValorTexto(cboCondicion), EmpleadoFiltro);
             Mostrar(dt, PeriodoFechas, new()
             {
                 new("Herramienta", "Herramienta / Unidad", Render.HerramientaUnidad, 0, 28),
@@ -686,6 +685,8 @@ namespace PromacoHerra
                 case Render.Costo:
                     if (r["FechaFin"] == DBNull.Value)
                         EmpleadoGrid.DibujarTexto(g, b, "Pendiente", dgvReporte.DefaultCellStyle.Font!, ThemeManager.TextSecondary);
+                    else if (r["EnGarantia"] is true)
+                        EmpleadoGrid.DibujarTexto(g, b, "Garantía", dgvReporte.DefaultCellStyle.Font!, ThemeManager.TextSecondary);
                     else
                         EmpleadoGrid.DibujarTexto(g, b, r[c.Campo] == DBNull.Value ? "—" : $"{Moneda} {Convert.ToDecimal(r[c.Campo]):N2}",
                             dgvReporte.DefaultCellStyle.Font!, ThemeManager.TextPrimary);
@@ -810,6 +811,7 @@ namespace PromacoHerra
                 Render.HerramientaRanking => $"{v} ({row["Codigo"]})",
                 Render.HerramientaUnidad => $"{v} ({row["CodigoUnidad"]})",
                 Render.Costo => row["FechaFin"] == DBNull.Value ? "Pendiente"
+                               : row["EnGarantia"] is true ? "Garantía"
                                : v == DBNull.Value ? "—" : $"{Moneda} {Convert.ToDecimal(v):N2}",
                 _ => v == DBNull.Value ? "—" : v?.ToString() ?? ""
             };

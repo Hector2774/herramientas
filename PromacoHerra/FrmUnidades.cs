@@ -17,6 +17,7 @@ namespace PromacoHerra
     //   pie        → agregar unidades nuevas
     // La condición por fila cambia el estado de esa unidad: Bueno → Disponible, Dañado → Dañada,
     // Perdido → Perdida. No aplica a unidades prestadas, en mantenimiento o dadas de baja.
+    // "Enviar a mantenimiento" abre FrmAbrirMantenimiento con las unidades marcadas.
     public class FrmUnidades : Form
     {
         private sealed record Accion(string Texto, string Estado)
@@ -28,6 +29,7 @@ namespace PromacoHerra
         private static readonly Font FuenteCodigo = new("Consolas", 9.5F);
 
         private readonly int _herramientaId;
+        private string _codigo = "";
         private DataTable _unidades = new();
 
         // Encabezado
@@ -53,7 +55,6 @@ namespace PromacoHerra
         private readonly Panel pnlAcciones = new();
         private readonly Label lblSeleccion = new();
         private readonly ComboBox cboAccion = new();
-        private readonly ComboBox cboTipoMant = new();
         private readonly MaterialTextBox txtObservacion = new();
         private readonly MaterialButton btnAplicar = new();
         private readonly LinkLabel lnkLimpiar = new();
@@ -174,20 +175,14 @@ namespace PromacoHerra
                 new Accion("Marcar dañada", "Dañada"),
                 new Accion("Dar de baja (sale del stock)", "Baja"),
             });
+            // El mantenimiento pide sus datos en su propio formulario: la observación no aplica
             cboAccion.SelectedIndexChanged += (_, _) =>
-                cboTipoMant.Visible = (cboAccion.SelectedItem as Accion)?.Estado == EstadoMantenimiento;
-
-            cboTipoMant.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboTipoMant.Location = new Point(460, 17);
-            cboTipoMant.Width = 130;
-            cboTipoMant.Items.AddRange(new object[] { "Correctivo", "Preventivo", "Calibración" });
-            cboTipoMant.SelectedIndex = 0;
-            cboTipoMant.Visible = false;
+                txtObservacion.Visible = (cboAccion.SelectedItem as Accion)?.Estado != EstadoMantenimiento;
             cboAccion.SelectedIndex = 0;
 
             txtObservacion.PlaceholderText = "Observación (opcional)";
-            txtObservacion.Location = new Point(600, 12);
-            txtObservacion.Size = new Size(250, 38);
+            txtObservacion.Location = new Point(462, 12);
+            txtObservacion.Size = new Size(388, 38);
 
             btnAplicar.Text = "Aplicar";
             btnAplicar.Icon = FontAwesome.Sharp.IconChar.Check;
@@ -201,7 +196,7 @@ namespace PromacoHerra
             lnkLimpiar.Location = new Point(982, 22);
             lnkLimpiar.LinkClicked += (_, _) => MarcarTodas(false);
 
-            pnlAcciones.Controls.AddRange(new Control[] { lblSeleccion, cboAccion, cboTipoMant, txtObservacion, btnAplicar, lnkLimpiar });
+            pnlAcciones.Controls.AddRange(new Control[] { lblSeleccion, cboAccion, txtObservacion, btnAplicar, lnkLimpiar });
 
             // ── Pie ──
             var pnlFooter = new Panel { Dock = DockStyle.Bottom, Height = 64 };
@@ -304,6 +299,7 @@ namespace PromacoHerra
             }
 
             var h = dtH.Rows[0];
+            _codigo = h["Codigo"]?.ToString() ?? "";
             lblSubtitulo.Text = $"{h["Nombre"]}  ·  {h["Codigo"]}";
             chipDisponibles.Text = $"{h["StockDisponible"]} Disponibles";
             chipPrestadas.Text = $"{h["StockPrestado"]} Prestadas";
@@ -423,33 +419,41 @@ namespace PromacoHerra
             var ids = UnidadesMarcadas();
             if (ids.Count == 0) { Aviso("Marque una o más unidades de la lista."); return; }
 
+            if (accion.Estado == EstadoMantenimiento)
+            {
+                EnviarAMantenimiento(ids);
+                return;
+            }
+
             string alcance = ids.Count == 1 ? "la unidad seleccionada" : $"las {ids.Count} unidades seleccionadas";
             if (Confirmar($"¿{accion.Texto}: {alcance}?") != DialogResult.Yes) return;
 
             try
             {
-                string obs = txtObservacion.Text.Trim();
+                var (afectadas, omitidas) = HerramientaService.CambiarEstadoUnidades(
+                    _herramientaId, ids, accion.Estado, txtObservacion.Text.Trim());
 
-                if (accion.Estado == EstadoMantenimiento)
-                {
-                    int n = MantenimientoService.RegistrarEntrada(
-                        _herramientaId, ids, cboTipoMant.SelectedItem!.ToString()!, obs);
-                    OK($"{n} unidad(es) enviada(s) a mantenimiento.");
-                }
-                else
-                {
-                    var (afectadas, omitidas) = HerramientaService.CambiarEstadoUnidades(
-                        _herramientaId, ids, accion.Estado, obs);
-
-                    OK(omitidas > 0
-                        ? $"{afectadas} unidad(es) actualizada(s). {omitidas} se omitieron por estar prestadas, en mantenimiento o ya en ese estado."
-                        : $"{afectadas} unidad(es) actualizada(s).");
-                }
+                OK(omitidas > 0
+                    ? $"{afectadas} unidad(es) actualizada(s). {omitidas} se omitieron por estar prestadas, en mantenimiento o ya en ese estado."
+                    : $"{afectadas} unidad(es) actualizada(s).");
 
                 txtObservacion.Clear();
                 Cargar();
             }
             catch (Exception ex) { Error(ex.Message); }
+        }
+
+        // Tipo y responsable (empleado o proveedor) se eligen en el formulario de mantenimiento
+        private void EnviarAMantenimiento(List<int> ids)
+        {
+            int n;
+            using (var frm = new FrmAbrirMantenimiento(ids, _codigo))
+            {
+                if (frm.ShowDialog(this) != DialogResult.OK) return;
+                n = frm.UnidadesRegistradas;
+            }
+            OK($"{n} unidad(es) enviada(s) a mantenimiento.");
+            Cargar();
         }
 
         private void AlternarPrestamo()

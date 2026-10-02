@@ -56,11 +56,12 @@ namespace PromacoHerra
                 // Los wrapper Material (TextBox/ComboBox) ya se estilizan a sí mismos en su
                 // constructor — no dejar que el recorrido baje a re-estilizar su TextBox/ComboBox
                 // interno con las reglas clásicas (le pondría de vuelta el borde 3D, por ejemplo).
-                // EmpleadoPickerControl también fija su propio look (botón de lupa siempre azul)
-                // y no debe perderlo por la heurística genérica de texto.
+                // Los pickers (empleado / herramienta) también fijan su propio look (botón de lupa
+                // siempre azul) y no deben perderlo por la heurística genérica de texto.
                 bool esCompuestoAutoestilizado = ctrl is Controls.MaterialTextBox
                     || ctrl is Controls.MaterialComboBox
-                    || ctrl is Controls.EmpleadoPickerControl;
+                    || ctrl is Controls.EmpleadoPickerControl
+                    || ctrl is Controls.HerramientaPickerControl;
 
                 if (ctrl.HasChildren && !esCompuestoAutoestilizado)
                     ApplyToControls(ctrl.Controls);

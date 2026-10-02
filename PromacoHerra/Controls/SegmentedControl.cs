@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace PromacoHerra.Controls
 {
-    // Control segmentado tipo iOS: "Categorías | Marcas". Un solo segmento activo.
+    // Control segmentado tipo iOS: "Categorías | Marcas | Ubicaciones". Un solo segmento activo.
     public class SegmentedControl : Control
     {
         private string[] _opciones = { "Opción 1", "Opción 2" };

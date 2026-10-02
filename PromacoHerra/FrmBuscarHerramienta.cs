@@ -10,16 +10,16 @@ using PromacoHerra.Data;
 
 namespace PromacoHerra
 {
-    // Modal para elegir un empleado (lo abre EmpleadoPickerControl). Mismo estilo que FrmEmpleados:
-    // búsqueda sin acentos, filtro por departamento y grilla con avatar y chip de departamento.
-    // Teclado: ↓ o Enter en la búsqueda → primera fila · Enter en la grilla → elegir ·
-    // escribir con la grilla enfocada → sigue buscando.
-    // Con incluirInactivos (reportes) también lista a los inactivos, marcados como tales.
-    public class FrmBuscarEmpleado : Form
+    // Modal para elegir una herramienta (lo abre HerramientaPickerControl). Mismo estilo y teclado
+    // que FrmBuscarEmpleado: búsqueda sin acentos por nombre, código, categoría o marca, filtro por
+    // categoría y grilla con miniatura, código, nombre, chip de categoría y marca.
+    // Con incluirInactivas (reportes) también lista las dadas de baja, marcadas como tales.
+    public class FrmBuscarHerramienta : Form
     {
-        private sealed record Fila(int EmpleadoId, string Codigo, string Nombre, string Departamento, bool Activo);
+        private sealed record Fila(int HerramientaId, string Codigo, string Nombre, string Categoria, string Marca, bool Activa);
 
-        private const string TodosLosDepartamentos = "Todos los departamentos";
+        private const string TodasLasCategorias = "Todas las categorías";
+        private const string SinCategoria = "Sin categoría";
 
         private readonly Panel pnlHeader = new();
         private readonly Label lblTitulo = new();
@@ -27,7 +27,7 @@ namespace PromacoHerra
         private readonly Panel pnlFiltros = new();
         private readonly IconPictureBox icoBuscar = new();
         private readonly MaterialTextBox txtBuscar = new();
-        private readonly MaterialComboBox cboDepartamento = new();
+        private readonly MaterialComboBox cboCategoria = new();
         private readonly Label lblResultados = new();
         private readonly Panel pnlGrid = new();
         private readonly Label lblSinResultados = new();
@@ -38,28 +38,28 @@ namespace PromacoHerra
 
         // La grilla se crea después de ApplyTheme (ver EmpleadoGrid)
         private readonly DataGridView dgv = new();
-        private readonly DataGridViewTextBoxColumn colAvatar = EmpleadoGrid.Columna("", 44);
-        private readonly DataGridViewTextBoxColumn colCodigo = EmpleadoGrid.Columna("CÓDIGO", 90);
+        private readonly DataGridViewTextBoxColumn colMiniatura = EmpleadoGrid.Columna("", 52);
+        private readonly DataGridViewTextBoxColumn colCodigo = EmpleadoGrid.Columna("CÓDIGO", 100);
         private readonly DataGridViewTextBoxColumn colNombre = EmpleadoGrid.Columna("NOMBRE");
-        private readonly DataGridViewTextBoxColumn colDepartamento = EmpleadoGrid.Columna("DEPARTAMENTO", 220);
+        private readonly DataGridViewTextBoxColumn colCategoria = EmpleadoGrid.Columna("CATEGORÍA", 180);
+        private readonly DataGridViewTextBoxColumn colMarca = EmpleadoGrid.Columna("MARCA", 150);
 
-        private readonly bool _incluirInactivos;
-        private List<Fila> _todos = new();
+        private readonly bool _incluirInactivas;
+        private List<Fila> _todas = new();
 
-        public int EmpleadoIdSeleccionado { get; private set; }
+        public int HerramientaIdSeleccionada { get; private set; }
         public string NombreSeleccionado { get; private set; } = string.Empty;
-        public string DepartamentoSeleccionado { get; private set; } = string.Empty;
         public string CodigoSeleccionado { get; private set; } = string.Empty;
 
-        public FrmBuscarEmpleado(bool incluirInactivos = false)
+        public FrmBuscarHerramienta(bool incluirInactivas = false)
         {
-            _incluirInactivos = incluirInactivos;
+            _incluirInactivas = incluirInactivas;
             ConstruirUI();
             ThemeManager.ApplyTheme(this);
             ConstruirGrid();
             AplicarEstilos();
 
-            Load += FrmBuscarEmpleado_Load;
+            Load += FrmBuscarHerramienta_Load;
         }
 
         // ── Construcción de la UI (sin Designer) ───────────────────
@@ -71,16 +71,16 @@ namespace PromacoHerra
             MaximizeBox = false;
             MinimizeBox = false;
             ShowInTaskbar = false;
-            Text = "Seleccionar empleado";
+            Text = "Seleccionar herramienta";
 
             // Encabezado
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Height = 72;
-            lblTitulo.Text = "Seleccionar empleado";
+            lblTitulo.Text = "Seleccionar herramienta";
             lblTitulo.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             lblTitulo.Location = new Point(22, 14);
             lblTitulo.AutoSize = true;
-            lblSubtitulo.Text = "Busca por nombre, código o departamento";
+            lblSubtitulo.Text = "Busca por nombre, código, categoría o marca";
             lblSubtitulo.Font = new Font("Segoe UI", 9.5F);
             lblSubtitulo.Location = new Point(24, 42);
             lblSubtitulo.AutoSize = true;
@@ -95,20 +95,20 @@ namespace PromacoHerra
             icoBuscar.Location = new Point(22, 17);
             txtBuscar.Location = new Point(50, 8);
             txtBuscar.Size = new Size(300, 38);
-            txtBuscar.PlaceholderText = "Buscar por nombre o código…";
-            cboDepartamento.Location = new Point(366, 8);
-            cboDepartamento.Size = new Size(220, 38);
+            txtBuscar.PlaceholderText = "Buscar por nombre, código o marca…";
+            cboCategoria.Location = new Point(366, 8);
+            cboCategoria.Size = new Size(220, 38);
             lblResultados.Font = new Font("Segoe UI", 9F);
             lblResultados.Size = new Size(220, 20);
             lblResultados.Location = new Point(618, 18);
             lblResultados.TextAlign = ContentAlignment.MiddleRight;
-            pnlFiltros.Controls.AddRange(new Control[] { icoBuscar, txtBuscar, cboDepartamento, lblResultados });
+            pnlFiltros.Controls.AddRange(new Control[] { icoBuscar, txtBuscar, cboCategoria, lblResultados });
 
             // Grilla (se agrega en ConstruirGrid) + aviso sin resultados
             pnlGrid.Dock = DockStyle.Fill;
             pnlGrid.Padding = new Padding(20, 0, 20, 0);
             lblSinResultados.Dock = DockStyle.Fill;
-            lblSinResultados.Text = "Ningún empleado coincide con la búsqueda.";
+            lblSinResultados.Text = "Ninguna herramienta coincide con la búsqueda.";
             lblSinResultados.TextAlign = ContentAlignment.MiddleCenter;
             lblSinResultados.Font = new Font("Segoe UI", 10.5F);
             lblSinResultados.Visible = false;
@@ -144,7 +144,7 @@ namespace PromacoHerra
 
             txtBuscar.TextChanged += (s, e) => FiltrarGrid();
             txtBuscar.KeyDown += TxtBuscar_KeyDown;
-            cboDepartamento.SelectedIndexChanged += (s, e) => FiltrarGrid();
+            cboCategoria.SelectedIndexChanged += (s, e) => FiltrarGrid();
             btnSeleccionar.Click += (s, e) => ConfirmarSeleccion();
             btnCancelar.Click += (s, e) => { DialogResult = DialogResult.Cancel; Close(); };
         }
@@ -159,9 +159,9 @@ namespace PromacoHerra
 
         private void ConstruirGrid()
         {
-            colAvatar.Resizable = DataGridViewTriState.False;
+            colMiniatura.Resizable = DataGridViewTriState.False;
             dgv.Dock = DockStyle.Fill;
-            dgv.Columns.AddRange(colAvatar, colCodigo, colNombre, colDepartamento);
+            dgv.Columns.AddRange(colMiniatura, colCodigo, colNombre, colCategoria, colMarca);
             EmpleadoGrid.Configurar(dgv);
             dgv.CellPainting += Dgv_CellPainting;
             dgv.SelectionChanged += (s, e) => ActualizarSeleccion();
@@ -193,48 +193,51 @@ namespace PromacoHerra
         }
 
         // ── Carga inicial ───────────────────────────────────────────
-        private void FrmBuscarEmpleado_Load(object? sender, EventArgs e)
+        private void FrmBuscarHerramienta_Load(object? sender, EventArgs e)
         {
             AlinearDerecha();   // los paneles ya tienen su ancho final
-            CargarEmpleados();
+            CargarHerramientas();
             txtBuscar.Focus();
 
             // Al mostrarse, la grilla preselecciona la primera fila: se quita para que un Enter
-            // accidental no elija a nadie sin querer
+            // accidental no elija nada sin querer
             BeginInvoke(new Action(() => { dgv.ClearSelection(); ActualizarSeleccion(); }));
         }
 
-        private void CargarEmpleados()
+        private void CargarHerramientas()
         {
             DataTable dt;
             try
             {
-                dt = Db.Query($@"SELECT e.EmpleadoId, e.Codigo, e.Nombre, e.Activo,
-       ISNULL(d.Nombre, '—') AS Departamento
-FROM   Empleado e
-LEFT   JOIN Departamento d ON e.DepartamentoId = d.DepartamentoId
-{(_incluirInactivos ? "" : "WHERE  e.Activo = 1")}
-ORDER  BY e.Activo DESC, e.Nombre ASC");
+                dt = Db.Query($@"SELECT h.HerramientaId, h.Codigo, h.Nombre, h.Activa,
+       ISNULL(c.Nombre, '{SinCategoria}') AS Categoria,
+       ISNULL(m.NombreMarca, '')          AS Marca
+FROM   Herramienta h
+LEFT   JOIN CategoriaHerramienta c ON c.CategoriaId = h.CategoriaId
+LEFT   JOIN Marca                m ON m.MarcaId     = h.MarcaId
+{(_incluirInactivas ? "" : "WHERE  h.Activa = 1")}
+ORDER  BY h.Activa DESC, h.Nombre ASC");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar empleados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Error al cargar herramientas", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            _todos = dt.AsEnumerable().Select(r => new Fila(
-                r.Field<int>("EmpleadoId"),
+            _todas = dt.AsEnumerable().Select(r => new Fila(
+                r.Field<int>("HerramientaId"),
                 r["Codigo"]?.ToString() ?? "",
                 r["Nombre"]?.ToString() ?? "",
-                r["Departamento"]?.ToString() ?? "—",
-                r.Field<bool>("Activo"))).ToList();
+                r["Categoria"]?.ToString() ?? SinCategoria,
+                r["Marca"]?.ToString() ?? "",
+                r.Field<bool>("Activa"))).ToList();
 
-            cboDepartamento.Items.Clear();
-            cboDepartamento.Items.Add(TodosLosDepartamentos);
-            foreach (var d in _todos.Select(f => f.Departamento).Where(d => d != "—")
-                                    .Distinct().OrderBy(d => d, StringComparer.CurrentCultureIgnoreCase))
-                cboDepartamento.Items.Add(d);
-            cboDepartamento.SelectedIndex = 0;
+            cboCategoria.Items.Clear();
+            cboCategoria.Items.Add(TodasLasCategorias);
+            foreach (var c in _todas.Select(f => f.Categoria).Distinct()
+                                    .OrderBy(c => c == SinCategoria).ThenBy(c => c, StringComparer.CurrentCultureIgnoreCase))
+                cboCategoria.Items.Add(c);
+            cboCategoria.SelectedIndex = 0;
 
             FiltrarGrid();
         }
@@ -243,18 +246,18 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
         private void FiltrarGrid()
         {
             string texto = txtBuscar.Text.Trim();
-            string? depto = cboDepartamento.SelectedIndex > 0 ? cboDepartamento.SelectedItem as string : null;
+            string? categoria = cboCategoria.SelectedIndex > 0 ? cboCategoria.SelectedItem as string : null;
 
-            var visibles = _todos.Where(f =>
-                (depto == null || f.Departamento == depto) &&
+            var visibles = _todas.Where(f =>
+                (categoria == null || f.Categoria == categoria) &&
                 (texto == "" || EmpleadoGrid.Contiene(f.Nombre, texto) || EmpleadoGrid.Contiene(f.Codigo, texto) ||
-                 EmpleadoGrid.Contiene(f.Departamento, texto))).ToList();
+                 EmpleadoGrid.Contiene(f.Categoria, texto) || EmpleadoGrid.Contiene(f.Marca, texto))).ToList();
 
             dgv.SuspendLayout();
             dgv.Rows.Clear();
             foreach (var f in visibles)
             {
-                int i = dgv.Rows.Add("", f.Codigo, f.Nombre, f.Departamento);
+                int i = dgv.Rows.Add("", f.Codigo, f.Nombre, f.Categoria, f.Marca);
                 dgv.Rows[i].Tag = f;
             }
             dgv.ResumeLayout();
@@ -262,7 +265,7 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             dgv.CurrentCell = null;
             EmpleadoGrid.ReiniciarHover(dgv);
 
-            lblResultados.Text = visibles.Count == 1 ? "1 empleado encontrado" : $"{visibles.Count} empleados encontrados";
+            lblResultados.Text = visibles.Count == 1 ? "1 herramienta encontrada" : $"{visibles.Count} herramientas encontradas";
             lblSinResultados.Visible = visibles.Count == 0;
             dgv.Visible = visibles.Count > 0;
             ActualizarSeleccion();
@@ -276,8 +279,8 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             var f = FilaSeleccionada;
             btnSeleccionar.Enabled = f != null;
             lblSeleccion.Text = f == null
-                ? "Doble clic o Enter para elegir un empleado"
-                : $"{f.Codigo}  ·  {f.Nombre}  ·  {f.Departamento}";
+                ? "Doble clic o Enter para elegir una herramienta"
+                : string.Join("  ·  ", new[] { f.Codigo, f.Nombre, f.Categoria, f.Marca }.Where(s => s != ""));
             lblSeleccion.ForeColor = f == null ? ThemeManager.TextSecondary : ThemeManager.TextPrimary;
         }
 
@@ -287,15 +290,19 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
 
             EmpleadoGrid.PintarFondo(dgv, e);
             var g = e.Graphics;
-            if (e.ColumnIndex == colAvatar.Index)
-                EmpleadoGrid.DibujarAvatar(g, e.CellBounds, f.Codigo, f.Nombre);
+            var b = e.CellBounds;
+            if (e.ColumnIndex == colMiniatura.Index)
+                HerramientaListItem.DibujarMiniatura(g, new Rectangle(b.X + (b.Width - 32) / 2, b.Y + (b.Height - 32) / 2, 32, 32),
+                    f.Categoria, Paleta.Surface2, 16);
             else if (e.ColumnIndex == colCodigo.Index)
-                EmpleadoGrid.DibujarTexto(g, e.CellBounds, f.Codigo, EmpleadoGrid.FuenteCodigo, ThemeManager.TextSecondary);
+                EmpleadoGrid.DibujarTexto(g, b, f.Codigo, EmpleadoGrid.FuenteCodigo, ThemeManager.TextSecondary);
             else if (e.ColumnIndex == colNombre.Index)
-                EmpleadoGrid.DibujarTexto(g, e.CellBounds, f.Activo ? f.Nombre : f.Nombre + "  (inactivo)",
-                    EmpleadoGrid.FuenteNombre, f.Activo ? ThemeManager.TextPrimary : ThemeManager.TextSecondary);
-            else if (e.ColumnIndex == colDepartamento.Index)
-                EmpleadoGrid.DibujarChipDepartamento(g, e.CellBounds, f.Departamento);
+                EmpleadoGrid.DibujarTexto(g, b, f.Activa ? f.Nombre : f.Nombre + "  (dada de baja)",
+                    EmpleadoGrid.FuenteNombre, f.Activa ? ThemeManager.TextPrimary : ThemeManager.TextSecondary);
+            else if (e.ColumnIndex == colCategoria.Index)
+                EmpleadoGrid.DibujarChipDepartamento(g, b, f.Categoria);
+            else if (e.ColumnIndex == colMarca.Index)
+                EmpleadoGrid.DibujarTexto(g, b, f.Marca == "" ? "—" : f.Marca, dgv.DefaultCellStyle.Font!, ThemeManager.TextSecondary);
             e.Handled = true;
         }
 
@@ -343,9 +350,8 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
         {
             if (FilaSeleccionada is not Fila f) return;
 
-            EmpleadoIdSeleccionado = f.EmpleadoId;
+            HerramientaIdSeleccionada = f.HerramientaId;
             NombreSeleccionado = f.Nombre;
-            DepartamentoSeleccionado = f.Departamento;
             CodigoSeleccionado = f.Codigo;
 
             DialogResult = DialogResult.OK;

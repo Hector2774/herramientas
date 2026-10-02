@@ -74,6 +74,10 @@ namespace PromacoHerra.Services
                 Db.Param("@UbicacionId", id),
                 Db.Param("@Nombre", nombre),
                 Db.Param("@Descripcion", descripcion));
+
+        /// <summary>Elimina la ubicación; sus herramientas quedan sin ubicación.</summary>
+        public static void Eliminar(int id) =>
+            Db.ExecuteSP("sp_Ubicacion_Eliminar", Db.Param("@UbicacionId", id));
     }
 
     // ══════════════════════════════════════════════════════════════

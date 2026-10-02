@@ -1,5 +1,5 @@
 ﻿// Services/MantenimientoService.cs
-// Cubre: Mantenimiento y Reportes
+// Cubre: Mantenimiento, Proveedores y Reportes
 
 using System;
 using System.Data;
@@ -13,25 +13,31 @@ namespace PromacoHerra.Services
     // ══════════════════════════════════════════════════════════════
     public static class MantenimientoService
     {
+        public const string Interno = "Interno";
+        public const string Externo = "Externo";
+        public static readonly string[] Tipos = { "Correctivo", "Preventivo", "Calibración" };
+
         /// <summary>
-        /// Registra la entrada a mantenimiento de unidades de una herramienta.
-        /// unidadIds null = todas las unidades Disponibles o Dañadas del grupo.
-        /// tipoMantenimiento: 'Preventivo' o 'Correctivo'
+        /// Registra la entrada a mantenimiento de una o más unidades (pueden ser de distintas herramientas).
+        /// Interno → lo realiza un empleado (empleadoId); Externo → un proveedor (proveedorId).
         /// Devuelve cuántas unidades entraron a mantenimiento.
         /// </summary>
         public static int RegistrarEntrada(
-            int herramientaId,
-            IEnumerable<int>? unidadIds,
+            IEnumerable<int> unidadIds,
             string tipoMantenimiento,
-            string descripcion = null,
-            string realizadoPor = null)
+            string tipoServicio,
+            int? empleadoId,
+            int? proveedorId,
+            string? descripcion)
         {
             var result = Db.ExecuteSPScalar("sp_Mantenimiento_RegistrarEntrada",
-                Db.Param("@HerramientaId", herramientaId),
-                Db.Param("@UnidadIds", unidadIds == null ? DBNull.Value : string.Join(",", unidadIds)),
+                Db.Param("@UnidadIds", string.Join(",", unidadIds)),
                 Db.Param("@TipoMantenimiento", tipoMantenimiento),
-                Db.Param("@Descripcion", descripcion),
-                Db.Param("@RealizadoPor", realizadoPor));
+                Db.Param("@Descripcion", string.IsNullOrWhiteSpace(descripcion) ? null : descripcion),
+                Db.Param("@TipoServicio", tipoServicio),
+                Db.Param("@EmpleadoId", empleadoId),
+                Db.Param("@ProveedorId", proveedorId),
+                Db.Param("@RegistradoPorId", Sesion.Activa ? Sesion.UsuarioId : null));
 
             return result != null ? Convert.ToInt32(result) : 0;
         }
@@ -40,17 +46,33 @@ namespace PromacoHerra.Services
         /// Cierra un mantenimiento activo.
         /// reparada = true  → la unidad vuelve a Disponible.
         /// reparada = false → irreparable: la unidad se da de baja y sale del stock.
+        /// El costo total (materiales + mano de obra) lo calcula el SP. La mano de obra
+        /// y el folio de factura solo aplican a servicios externos.
         /// </summary>
         public static void RegistrarSalida(
             int mantenimientoId,
-            string descripcion = null,
-            decimal? costo = null,
-            bool reparada = true) =>
+            bool reparada,
+            decimal? costoMateriales,
+            decimal? costoManoObra,
+            bool enGarantia,
+            string? folioFactura,
+            string? notasCierre) =>
             Db.ExecuteSP("sp_Mantenimiento_RegistrarSalida",
                 Db.Param("@MantenimientoId", mantenimientoId),
-                Db.Param("@Descripcion", descripcion),
-                Db.Param("@Costo", (object)costo ?? DBNull.Value),
-                Db.Param("@Resultado", reparada ? "Disponible" : "Baja"));
+                Db.Param("@NotasCierre", notasCierre),
+                Db.Param("@CostoMateriales", costoMateriales),
+                Db.Param("@CostoManoObra", costoManoObra),
+                Db.Param("@EnGarantia", enGarantia),
+                Db.Param("@FolioFactura", folioFactura),
+                Db.Param("@Resultado", reparada ? "Disponible" : "Baja"),
+                Db.Param("@CerradoPorId", Sesion.Activa ? Sesion.UsuarioId : null));
+
+        /// <summary>
+        /// Unidades que pueden entrar a mantenimiento (Disponibles o Dañadas). Las Dañadas
+        /// van primero y traen quién reportó el daño, cuándo y su nota.
+        /// </summary>
+        public static DataTable UnidadesElegibles() =>
+            Db.QuerySP("sp_Mantenimiento_UnidadesElegibles");
 
         /// <summary>
         /// Historial completo de mantenimientos de una herramienta.
@@ -64,6 +86,32 @@ namespace PromacoHerra.Services
         /// </summary>
         public static DataTable ObtenerActivos() =>
             Db.QuerySP("sp_Mantenimiento_ObtenerActivos");
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // PROVEEDORES (talleres, servicio autorizado, laboratorios de calibración)
+    // ══════════════════════════════════════════════════════════════
+    public static class ProveedorService
+    {
+        public static DataTable ObtenerTodos() =>
+            Db.QuerySP("sp_Proveedor_ObtenerTodos");
+
+        public static void Insertar(string nombre, string telefono, string descripcion) =>
+            Db.ExecuteSP("sp_Proveedor_Insertar",
+                Db.Param("@Nombre", nombre),
+                Db.Param("@Telefono", telefono),
+                Db.Param("@Descripcion", descripcion));
+
+        public static void Actualizar(int id, string nombre, string telefono, string descripcion) =>
+            Db.ExecuteSP("sp_Proveedor_Actualizar",
+                Db.Param("@ProveedorId", id),
+                Db.Param("@Nombre", nombre),
+                Db.Param("@Telefono", telefono),
+                Db.Param("@Descripcion", descripcion));
+
+        /// <summary>Elimina el proveedor; si ya tiene mantenimientos solo se desactiva.</summary>
+        public static void Eliminar(int id) =>
+            Db.ExecuteSP("sp_Proveedor_Eliminar", Db.Param("@ProveedorId", id));
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -180,4 +228,4 @@ namespace PromacoHerra.Services
                 Db.Param("@FechaHasta", (object)fechaHasta ?? DBNull.Value),
                 Db.Param("@HerramientaId", (object)herramientaId ?? DBNull.Value));
     }
-}
+}

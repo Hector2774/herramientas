@@ -89,3 +89,10 @@ C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\
 C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\SixLabors.Fonts.dll
 C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\obj\Debug\net10.0-windows\PromacoHerra.FrmLogin.resources
 C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\bin\Debug\net10.0-windows\FontAwesome.Sharp.dll
+C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\obj\Debug\net10.0-windows\PromacoHerra.FrmUnidades.resources
+C:\Users\hecto\AppData\Local\Temp\claude\C--Users-hecto-source-repos-PromacoHerra\2877fdd8-09e9-464b-82a2-5e3263ed6e9b\scratchpad\buildcheck\PromacoHerra.exe
+C:\Users\hecto\AppData\Local\Temp\claude\C--Users-hecto-source-repos-PromacoHerra\2877fdd8-09e9-464b-82a2-5e3263ed6e9b\scratchpad\buildcheck\PromacoHerra.deps.json
+C:\Users\hecto\AppData\Local\Temp\claude\C--Users-hecto-source-repos-PromacoHerra\2877fdd8-09e9-464b-82a2-5e3263ed6e9b\scratchpad\buildcheck\PromacoHerra.runtimeconfig.json
+C:\Users\hecto\AppData\Local\Temp\claude\C--Users-hecto-source-repos-PromacoHerra\2877fdd8-09e9-464b-82a2-5e3263ed6e9b\scratchpad\buildcheck\PromacoHerra.dll
+C:\Users\hecto\AppData\Local\Temp\claude\C--Users-hecto-source-repos-PromacoHerra\2877fdd8-09e9-464b-82a2-5e3263ed6e9b\scratchpad\buildcheck\PromacoHerra.pdb
+C:\Users\hecto\source\repos\PromacoHerra\PromacoHerra\obj\Debug\net10.0-windows\PromacoHerra.FrmSeleccionarUnidades.resources

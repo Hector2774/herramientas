@@ -6,25 +6,25 @@ using FontAwesome.Sharp;
 
 namespace PromacoHerra.Controls
 {
-    public class EmpleadoPickerControl : UserControl
+    // Igual que EmpleadoPickerControl, pero abre FrmBuscarHerramienta
+    public class HerramientaPickerControl : UserControl
     {
-        private MaterialTextBox txtNombre = null!;
-        private MaterialButton btnBuscar = null!;
-        private MaterialButton btnLimpiar = null!;
-        private string? _textoTodos;
+        private readonly MaterialTextBox txtNombre;
+        private readonly MaterialButton btnBuscar;
+        private readonly MaterialButton btnLimpiar;
+        private string? _textoTodas;
 
-        public int EmpleadoId { get; private set; }
+        public int HerramientaId { get; private set; }
         public string Nombre { get; private set; } = string.Empty;
-        public string Departamento { get; private set; } = string.Empty;
         public string Codigo { get; private set; } = string.Empty;
 
-        /// <summary>El buscador también lista empleados inactivos (reportes e historial).</summary>
+        /// <summary>El buscador también lista herramientas dadas de baja (reportes e historial).</summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool IncluirInactivos { get; set; }
+        public bool IncluirInactivas { get; set; }
 
-        public event Action<int, string, string, string>? EmpleadoSeleccionado;
+        public event Action<int, string, string>? HerramientaSeleccionada;
 
-        public EmpleadoPickerControl()
+        public HerramientaPickerControl()
         {
             Height = 28;
             MinimumSize = new Size(200, 28);
@@ -42,7 +42,7 @@ namespace PromacoHerra.Controls
             };
             btnBuscar.Click += (s, e) => AbrirBusqueda();
 
-            // Solo en modo filtro (EstablecerTodos): vuelve a "Todos" cuando hay alguien elegido
+            // Solo en modo filtro (EstablecerTodas): vuelve a "Todas" cuando hay una elegida
             btnLimpiar = new MaterialButton
             {
                 Dock = DockStyle.Right,
@@ -55,13 +55,13 @@ namespace PromacoHerra.Controls
                 Cursor = Cursors.Hand,
                 Visible = false
             };
-            btnLimpiar.Click += (s, e) => EstablecerTodos(_textoTodos ?? "Todos");
+            btnLimpiar.Click += (s, e) => EstablecerTodas(_textoTodas ?? "Todas");
 
             txtNombre = new MaterialTextBox
             {
                 Dock = DockStyle.Fill,
                 ReadOnly = true,
-                PlaceholderText = "Seleccione un empleado...",
+                PlaceholderText = "Seleccione una herramienta...",
                 Cursor = Cursors.Hand
             };
             txtNombre.Click += (s, e) => AbrirBusqueda();
@@ -74,23 +74,20 @@ namespace PromacoHerra.Controls
 
         public void Limpiar()
         {
-            EmpleadoId = 0;
-            Nombre = null!;
-            Departamento = null!;
-            Codigo = null!;
+            HerramientaId = 0;
+            Nombre = string.Empty;
+            Codigo = string.Empty;
             txtNombre.Text = string.Empty;
             btnLimpiar.Visible = false;
         }
 
-        // Deja el picker en el estado "Todos los empleados" (EmpleadoId = 0).
-        // Úsalo en filtros/reportes donde no seleccionar a nadie es una opción válida;
+        // Deja el picker en el estado "Todas las herramientas" (HerramientaId = 0), para filtros;
         // a partir de ahí, la X junto a la lupa vuelve a este estado.
-        public void EstablecerTodos(string texto = "Todos")
+        public void EstablecerTodas(string texto = "Todas")
         {
-            _textoTodos = texto;
-            EmpleadoId = 0;
+            _textoTodas = texto;
+            HerramientaId = 0;
             Nombre = texto;
-            Departamento = string.Empty;
             Codigo = string.Empty;
             txtNombre.Text = texto;
             btnLimpiar.Visible = false;
@@ -98,16 +95,15 @@ namespace PromacoHerra.Controls
 
         private void AbrirBusqueda()
         {
-            using var frm = new FrmBuscarEmpleado(IncluirInactivos);
+            using var frm = new FrmBuscarHerramienta(IncluirInactivas);
             if (frm.ShowDialog(FindForm()) == DialogResult.OK)
             {
-                EmpleadoId = frm.EmpleadoIdSeleccionado;
+                HerramientaId = frm.HerramientaIdSeleccionada;
                 Nombre = frm.NombreSeleccionado;
-                Departamento = frm.DepartamentoSeleccionado;
                 Codigo = frm.CodigoSeleccionado;
                 txtNombre.Text = $"{frm.CodigoSeleccionado}  —  {frm.NombreSeleccionado}";
-                btnLimpiar.Visible = _textoTodos != null;
-                EmpleadoSeleccionado?.Invoke(EmpleadoId, Nombre, Departamento, Codigo);
+                btnLimpiar.Visible = _textoTodas != null;
+                HerramientaSeleccionada?.Invoke(HerramientaId, Nombre, Codigo);
             }
         }
     }
