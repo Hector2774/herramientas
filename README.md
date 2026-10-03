@@ -86,6 +86,17 @@ En SSMS: abrir cada script, seleccionar la base `PROMACO_Herramientas` y ejecuta
 > `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 017). Una instalación
 > nueva **no** los necesita: ya están incluidos en `000_esquema.sql`.
 
+**Opcional: datos de demostración.** Para ver el sistema con información (dashboard, reportes, vencidos,
+mantenimientos), cargar seis meses de operación simulada:
+
+```bash
+sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/demo/datos_demo.sql
+```
+
+Simula día por día préstamos, devoluciones (a tiempo, con atraso, dañadas o perdidas) y mantenimientos
+con sus costos, respetando las mismas reglas que la aplicación. En una base recién instalada crea además
+las 20 herramientas y empleados de ejemplo. Solo se puede cargar una vez por base.
+
 ### 2. Configurar la conexión
 
 La aplicación se conecta a `localhost` con autenticación de Windows. Si SQL Server está en otra
@@ -129,6 +140,7 @@ PromacoHerra/          código de la aplicación
 └── recursos/          logo
 Database/
 ├── instalacion/       scripts para instalar desde cero
+├── demo/              datos de demostración (opcional)
 └── migraciones/       historial de cambios de la base
 docs/                  diagrama entidad-relación y modelo de datos
 ```
