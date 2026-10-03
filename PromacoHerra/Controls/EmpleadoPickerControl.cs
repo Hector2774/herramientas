@@ -82,6 +82,17 @@ namespace PromacoHerra.Controls
             btnLimpiar.Visible = false;
         }
 
+        // Precarga un empleado ya elegido (p. ej. al editar un registro existente)
+        public void Establecer(int empleadoId, string nombre, string codigo, string departamento = "")
+        {
+            EmpleadoId = empleadoId;
+            Nombre = nombre;
+            Codigo = codigo;
+            Departamento = departamento;
+            txtNombre.Text = $"{codigo}  —  {nombre}";
+            btnLimpiar.Visible = _textoTodos != null;
+        }
+
         // Deja el picker en el estado "Todos los empleados" (EmpleadoId = 0).
         // Úsalo en filtros/reportes donde no seleccionar a nadie es una opción válida;
         // a partir de ahí, la X junto a la lupa vuelve a este estado.

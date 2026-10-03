@@ -19,6 +19,7 @@ namespace PromacoHerra.Models
         public string Marca { get; set; } = string.Empty;
         public string Ubicacion { get; set; } = string.Empty;
         public int StockTotal { get; set; }
+        public string? FotoNombre { get; set; }
         public List<UnidadDisponible> Unidades { get; } = new();
 
         public int Disponibles => Unidades.Count;

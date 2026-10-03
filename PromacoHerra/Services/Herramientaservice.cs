@@ -107,6 +107,7 @@ namespace PromacoHerra.Services
                     MarcaId = r["MarcaId"] as int?,
                     UbicacionId = r["UbicacionId"] as int?,
                     PrestamoHabilitado = Convert.ToBoolean(r["PrestamoHabilitado"]),
+                    FotoNombre = r["FotoNombre"] as string,
                     StockTotal = Convert.ToInt32(r["StockTotal"]),
                     StockDisponible = Convert.ToInt32(r["StockDisponible"]),
                     StockPrestado = Convert.ToInt32(r["StockPrestado"]),
@@ -143,7 +144,8 @@ namespace PromacoHerra.Services
                     Categoria = r["Categoria"] as string ?? "",
                     Marca = r["Marca"] as string ?? "",
                     Ubicacion = r["Ubicacion"] as string ?? "",
-                    StockTotal = Convert.ToInt32(r["StockTotal"])
+                    StockTotal = Convert.ToInt32(r["StockTotal"]),
+                    FotoNombre = r["FotoNombre"] as string
                 };
                 catalogo.Add(item);
                 porId[item.HerramientaId] = item;
@@ -201,6 +203,12 @@ namespace PromacoHerra.Services
                 Db.Param("@UbicacionId", (object)ubicacionId ?? DBNull.Value),
                 Db.Param("@StockTotal", (object?)stockTotal ?? DBNull.Value));
 
+        /// <summary>Guarda el nombre del archivo de la foto (null = sin foto).</summary>
+        public static void ActualizarFoto(int id, string? fotoNombre) =>
+            Db.ExecuteSP("sp_Herramienta_ActualizarFoto",
+                Db.Param("@HerramientaId", id),
+                Db.Param("@FotoNombre", (object?)fotoNombre ?? DBNull.Value));
+
         /// <summary>
         /// Da de baja el grupo completo (todas sus unidades) y lo oculta.
         /// Para dar de baja una sola unidad usar CambiarEstadoUnidades.
@@ -247,4 +255,4 @@ namespace PromacoHerra.Services
                 : (0, 0);
         }
     }
-}
+}

@@ -30,6 +30,7 @@ namespace PromacoHerra.Models
         public string Herramienta { get; set; } = string.Empty;
         public string Marca { get; set; } = string.Empty;
         public string Categoria { get; set; } = string.Empty;
+        public string? FotoNombre { get; set; }
     }
 
     public enum CondicionDevolucion { Bueno, Dañado, Perdido }

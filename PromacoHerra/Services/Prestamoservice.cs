@@ -178,7 +178,8 @@ namespace PromacoHerra.Services
                     Codigo = r["CodigoHerramienta"].ToString() ?? "",
                     Herramienta = r["Herramienta"].ToString() ?? "",
                     Marca = r["Marca"] as string ?? "",
-                    Categoria = r["Categoria"] as string ?? ""
+                    Categoria = r["Categoria"] as string ?? "",
+                    FotoNombre = r["FotoNombre"] as string
                 });
             }
             return lista;
@@ -212,4 +213,4 @@ namespace PromacoHerra.Services
             };
         }
     }
-}
+}

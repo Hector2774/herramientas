@@ -55,10 +55,32 @@ namespace PromacoHerra
         private readonly DataGridViewTextBoxColumn colPUnidad = Columna("Herramienta", "Unidad", 58);
         private readonly DataGridViewTextBoxColumn colPReporte = Columna("ReportadoPor", "Reportada", 42);
 
+        // Foto del detalle: columna derecha de tlpForm (también se crea en código)
+        private const int LadoFoto = 200;
+        private readonly PictureBox picFoto = new()
+        {
+            Name = "picFoto",
+            Size = new Size(LadoFoto, LadoFoto),
+            SizeMode = PictureBoxSizeMode.Zoom,
+            BackColor = Color.FromArgb(240, 242, 246)
+        };
+        private readonly MaterialButton btnCambiarFoto = new()
+        {
+            Name = "btnCambiarFoto",
+            Text = "Cambiar foto",
+            Icon = FontAwesome.Sharp.IconChar.Camera,
+            IconSize = 14,
+            FlatStyle = FlatStyle.Flat,
+            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+            CornerRadius = 8,
+            Size = new Size(LadoFoto, 34)
+        };
+
         public FrmHerramientas()
         {
             InitializeComponent();
             ConfigurarColumnas();
+            ConstruirPanelFoto();
             ThemeManager.ApplyTheme(this);
             AplicarEstilos();
 
@@ -74,6 +96,7 @@ namespace PromacoHerra
             btnGuardarH.Click += btnGuardarH_Click;
             btnCancelarH.Click += btnCancelarH_Click;
             btnUnidades.Click += (s, e) => AbrirUnidades();
+            btnCambiarFoto.Click += btnCambiarFoto_Click;
             lnkVerTodas.LinkClicked += (s, e) => AbrirUnidades();
             dgvUnidadesMini.CellPainting += dgvUnidadesMini_CellPainting;
             pnlDetalleFooter.Paint += (s, e) => LineaSuperior(e, pnlDetalleFooter);
@@ -131,6 +154,31 @@ namespace PromacoHerra
             }
         }
 
+        // Foto + "Cambiar foto" a la derecha de los campos, ocupando todas las filas del formulario
+        private void ConstruirPanelFoto()
+        {
+            using (var path = RoundedGeometry.RoundedRect(new Rectangle(0, 0, LadoFoto, LadoFoto), 10))
+                picFoto.Region = new Region(path);
+            btnCambiarFoto.Location = new Point(0, LadoFoto + 8);
+
+            var pnlFoto = new Panel
+            {
+                Name = "pnlFoto",
+                Size = new Size(LadoFoto, btnCambiarFoto.Bottom),
+                Margin = new Padding(20, 0, 0, 12),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
+            };
+            pnlFoto.Controls.Add(picFoto);
+            pnlFoto.Controls.Add(btnCambiarFoto);
+
+            tlpForm.SuspendLayout();
+            tlpForm.ColumnCount = 3;
+            tlpForm.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, LadoFoto + pnlFoto.Margin.Horizontal));
+            tlpForm.Controls.Add(pnlFoto, 2, 0);
+            tlpForm.SetRowSpan(pnlFoto, tlpForm.RowCount);
+            tlpForm.ResumeLayout();
+        }
+
         private void AlinearDetalle()
         {
             foreach (var c in new Control[] { btnUnidades, lnkVerTodas, btnGuardarH, btnCancelarH, lblNombreDet, lblCodigoDet })
@@ -184,6 +232,7 @@ namespace PromacoHerra
             // Variantes que la heurística de ThemeManager (por texto) no adivina
             btnNuevaHerramienta.Variant = MaterialButtonVariant.Primary;
             btnDarDeBaja.Variant = MaterialButtonVariant.Default;
+            btnCambiarFoto.Variant = MaterialButtonVariant.Default;
             btnCatAgregar.Variant = MaterialButtonVariant.Primary;
             btnAccionMant.Variant = MaterialButtonVariant.Primary;
             btnNuevoMant.Variant = MaterialButtonVariant.Primary;
@@ -381,6 +430,7 @@ namespace PromacoHerra
             SeleccionarEnCombo(cboCategoriaF, h.CategoriaId);
             SeleccionarEnCombo(cboMarcaF, h.MarcaId);
             SeleccionarEnCombo(cboUbicacionF, h.UbicacionId);
+            ImagenHelper.MostrarEn(picFoto, h.FotoNombre);
 
             ModoFormulario(nuevo: false);
             CargarUnidadesMini(h.HerramientaId);
@@ -401,6 +451,7 @@ namespace PromacoHerra
             cboMarcaF.SelectedIndex = -1;
             cboUbicacionF.SelectedIndex = -1;
             nudStockInicial.Value = 1;
+            ImagenHelper.MostrarEn(picFoto, null);
 
             ModoFormulario(nuevo: true);
             txtNombreF.Focus();
@@ -417,6 +468,7 @@ namespace PromacoHerra
             lblStockInicialF.Visible = nuevo;
             nudStockInicial.Visible = nuevo;
             btnGuardarH.Text = nuevo ? "Crear herramienta" : "Guardar cambios";
+            btnCambiarFoto.Enabled = !nuevo;   // el archivo se nombra con el código, que aún no existe
             tlpDetalle.ResumeLayout();
 
             btnDarDeBaja.Enabled = !nuevo;
@@ -521,6 +573,23 @@ namespace PromacoHerra
                 CargarHerramientas(null);
                 CargarCatalogo();
                 CargarMantenimientos();    // sus unidades dañadas salen de pendientes
+            }
+            catch (Exception ex) { Error(ex.Message); }
+        }
+
+        // Se guarda al momento (no espera a "Guardar cambios"): la foto queda en Fotos\{Código}.ext
+        private void btnCambiarFoto_Click(object? sender, EventArgs e)
+        {
+            if (_actual == null) return;
+
+            try
+            {
+                string? nombreArchivo = ImagenHelper.SeleccionarYCopiarFoto(_actual.Codigo, this);
+                if (nombreArchivo == null) return;
+
+                HerramientaService.ActualizarFoto(_actual.HerramientaId, nombreArchivo);
+                _actual.FotoNombre = nombreArchivo;   // misma instancia que en _herramientas
+                ImagenHelper.MostrarEn(picFoto, nombreArchivo);
             }
             catch (Exception ex) { Error(ex.Message); }
         }

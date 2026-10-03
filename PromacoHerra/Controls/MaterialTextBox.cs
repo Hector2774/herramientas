@@ -40,7 +40,7 @@ namespace PromacoHerra.Controls
             _inner.TextChanged += (s, e) => { OnTextChanged(EventArgs.Empty); UpdateFloatingLabel(); };
             _inner.KeyDown += (s, e) => OnKeyDown(e);
             _inner.KeyPress += (s, e) => OnKeyPress(e);
-            _inner.Enter += (s, e) => { _underlineAnimator.AnimateTo(ThemeManager.AccentBlue); UpdateFloatingLabel(); };
+            _inner.Enter += (s, e) => { _underlineAnimator.AnimateTo(ColorFoco); UpdateFloatingLabel(); };
             _inner.Leave += (s, e) => { _underlineAnimator.AnimateTo(ThemeManager.BorderColor); UpdateFloatingLabel(); };
             // El TextBox interno ocupa casi toda el área visible, así que un click ahí nunca
             // llegaría al Click del wrapper — se reenvía para que siga funcionando igual que antes.
@@ -101,6 +101,12 @@ namespace PromacoHerra.Controls
             set => _inner.MaxLength = value;
         }
 
+        // Color del underline (y de la etiqueta flotante) con foco. null = ThemeManager.AccentBlue
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Color? FocusColor { get; set; }
+
+        private Color ColorFoco => FocusColor ?? ThemeManager.AccentBlue;
+
         public new bool Focus() => _inner.Focus();
 
         public void Clear() => _inner.Clear();
@@ -148,7 +154,7 @@ namespace PromacoHerra.Controls
             if (arriba)
             {
                 _floatingLabel.Font = new Font("Segoe UI", 7.5f, FontStyle.Bold);
-                _floatingLabel.ForeColor = ThemeManager.AccentBlue;
+                _floatingLabel.ForeColor = ColorFoco;
                 _floatingLabel.Location = new Point(2, -2);
             }
             else

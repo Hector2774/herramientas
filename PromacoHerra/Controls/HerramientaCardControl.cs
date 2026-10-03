@@ -40,7 +40,8 @@ namespace PromacoHerra.Controls
             set { _cantidad = value; ActualizarVista(); }
         }
 
-        // Reservado para la foto de la herramienta; null = placeholder "Sin imagen"
+        // Foto de la herramienta (miniatura compartida de ImagenHelper: no se libera aquí);
+        // null = placeholder "Sin imagen"
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Image? Imagen
         {
@@ -79,6 +80,7 @@ namespace PromacoHerra.Controls
             lblMarca.Visible = !string.IsNullOrEmpty(item.Marca);
 
             _tip.SetToolTip(lblNombre, $"{item.Codigo} — {item.Nombre}");
+            _imagen = ImagenHelper.ObtenerMiniatura(item.FotoNombre, 200);
 
             _cantidad = 0;
             ActualizarVista();
@@ -147,14 +149,17 @@ namespace PromacoHerra.Controls
             var imagenRect = new Rectangle(cardRect.X, cardRect.Y, cardRect.Width, ImagenAltura);
             var clipAnterior = g.Clip;
             g.SetClip(cardPath, CombineMode.Intersect);
+            using (var brush = new SolidBrush(ImagenFondo))
+                g.FillRectangle(brush, imagenRect);
             if (_imagen != null)
             {
-                g.DrawImage(_imagen, imagenRect);
+                // Completa y sin deformar; el margen deja ver el fondo gris alrededor
+                var r = imagenRect;
+                r.Inflate(-8, -6);
+                ImagenHelper.DibujarAjustada(g, _imagen, r);
             }
             else
             {
-                using (var brush = new SolidBrush(ImagenFondo))
-                    g.FillRectangle(brush, imagenRect);
                 using var fuente = new Font("Segoe UI", 8.5F);
                 TextRenderer.DrawText(g, "Sin imagen", fuente, imagenRect, ThemeManager.TextSecondary,
                     TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);

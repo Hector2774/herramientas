@@ -14,6 +14,7 @@ namespace PromacoHerra.Models
         public int? MarcaId { get; set; }
         public int? UbicacionId { get; set; }
         public bool PrestamoHabilitado { get; set; }
+        public string? FotoNombre { get; set; }   // archivo en Fotos\ (ImagenHelper)
 
         public int StockTotal { get; set; }
         public int StockDisponible { get; set; }

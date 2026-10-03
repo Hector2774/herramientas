@@ -182,12 +182,22 @@ namespace PromacoHerra.Controls
             }
         }
 
-        // Miniatura reservada para la foto futura: fondo gris + ícono de herramienta
+        // Foto de la herramienta; sin foto: fondo gris + ícono de herramienta
         private void DibujarMiniatura(Graphics g, Rectangle r)
         {
             using (var path = RoundedGeometry.RoundedRect(r, 6))
             using (var brush = new SolidBrush(_seleccionado ? Color.White : GrisSuave))
                 g.FillPath(brush, path);
+
+            // Miniatura compartida de ImagenHelper (cacheada): no se libera aquí
+            var foto = ImagenHelper.ObtenerMiniatura(Detalle.FotoNombre, 96);
+            if (foto != null)
+            {
+                var interior = r;
+                interior.Inflate(-3, -3);
+                ImagenHelper.DibujarAjustada(g, foto, interior);
+                return;
+            }
 
             _iconoHerramienta ??= IconChar.Wrench.ToBitmap(ThemeManager.TextSecondary, 20);
             g.DrawImage(_iconoHerramienta, r.X + (r.Width - 20) / 2, r.Y + (r.Height - 20) / 2, 20, 20);

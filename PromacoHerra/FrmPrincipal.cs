@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using FontAwesome.Sharp;
+using PromacoHerra.Services;
 
 namespace PromacoHerra
 {
@@ -25,6 +26,9 @@ namespace PromacoHerra
             sidebar.AgregarItem("prestamos", "Préstamos", IconChar.HandHolding);
             sidebar.AgregarItem("devoluciones", "Devoluciones", IconChar.ArrowRotateLeft);
             sidebar.AgregarItem("reportes", "Reportes", IconChar.ChartColumn);
+            if (Sesion.AdministraUsuarios)
+                sidebar.AgregarItem("usuarios", "Usuarios", IconChar.UserShield);
+            sidebar.AgregarItem("password", "Mi contraseña", IconChar.Key, alFinal: true);
             sidebar.AgregarItem("salir", "Salir", IconChar.RightFromBracket, alFinal: true);
             sidebar.ItemSeleccionado += (s, clave) => AbrirSeccion(clave);
         }
@@ -49,6 +53,7 @@ namespace PromacoHerra
                 FrmPrestamo => "prestamos",
                 FrmDevolucion => "devoluciones",
                 FrmReportes => "reportes",
+                FrmUsuarios => "usuarios",
                 _ => sidebar.Activo
             };
         }
@@ -66,6 +71,11 @@ namespace PromacoHerra
                 case "prestamos": AbrirFormulario(new FrmPrestamo()); break;
                 case "devoluciones": AbrirFormulario(new FrmDevolucion()); break;
                 case "reportes": AbrirFormulario(new FrmReportes()); break;
+                case "usuarios" when Sesion.AdministraUsuarios: AbrirFormulario(new FrmUsuarios()); break;
+                case "password":
+                    using (var frm = new FrmCambiarPassword(obligatorio: false))
+                        frm.ShowDialog(this);
+                    break;
                 case "salir": Application.Exit(); break;
             }
         }
