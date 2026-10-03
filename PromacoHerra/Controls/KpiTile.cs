@@ -28,6 +28,11 @@ namespace PromacoHerra.Controls
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int Valor { get => _valor; set { _valor = value; Invalidate(); } }
 
+        // Valor como texto (montos, promedios). null = mostrar Valor como número entero
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string? Texto { get => _texto; set { _texto = value; Invalidate(); } }
+        private string? _texto;
+
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Etiqueta { get => _etiqueta; set { _etiqueta = value ?? ""; Invalidate(); } }
 
@@ -91,7 +96,7 @@ namespace PromacoHerra.Controls
 
             int x = cuadro.Right + 12;
             int ancho = Math.Max(10, Width - x - 10);
-            TextRenderer.DrawText(g, _valor.ToString("N0"), FuenteValor, new Rectangle(x, 8, ancho, 34), _color,
+            TextRenderer.DrawText(g, _texto ?? _valor.ToString("N0"), FuenteValor, new Rectangle(x, 8, ancho, 34), _color,
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
             TextRenderer.DrawText(g, _etiqueta, FuenteEtiqueta, new Rectangle(x, 44, ancho, 18), ThemeManager.TextPrimary,
                 TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);

@@ -129,9 +129,9 @@ erDiagram
         int PrestamoDetalleId FK "devolución que lo originó"
         datetime FechaInicio
         datetime FechaFin
-        decimal CostoMateriales "Q"
-        decimal CostoManoObra "Q, solo externo"
-        decimal Costo "total en Q"
+        decimal CostoMateriales "L."
+        decimal CostoManoObra "L., solo externo"
+        decimal Costo "total en L."
         bit EnGarantia
         varchar FolioFactura
         varchar Resultado "Reparada o Baja"

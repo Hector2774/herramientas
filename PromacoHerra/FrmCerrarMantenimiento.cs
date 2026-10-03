@@ -14,7 +14,7 @@ namespace PromacoHerra
     //               no hay costo. El folio de factura solo aplica a servicios externos.
     public class FrmCerrarMantenimiento : Form
     {
-        private const string Moneda = "Q.";
+        private const string Moneda = Dinero.Simbolo;
 
         private readonly int _mantenimientoId;
         private readonly bool _externo;

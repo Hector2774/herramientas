@@ -1,7 +1,7 @@
 -- ============================================================
 -- 018 · Mantenimiento.Costo con centavos
 --   La columna era DECIMAL(18,0): el costo total (materiales + mano de obra, ambas
---   DECIMAL(10,2)) se redondeaba al quetzal. Q 125.50 se guardaba como Q 126.
+--   DECIMAL(10,2)) se redondeaba a la unidad. L. 125.50 se guardaba como L. 126.
 --   Pasa a DECIMAL(12,2): admite la suma de los dos componentes sin redondear.
 --   Los registros existentes no cambian (ya estaban redondeados).
 --

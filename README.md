@@ -29,7 +29,7 @@ cada préstamo.
 - **Stock por unidad.** Cada pieza tiene su estado: Disponible, Prestada, En Mantenimiento, Dañada, Perdida o Baja. Una pieza dañada no bloquea a las demás del mismo tipo.
 - **Préstamos.** Nadie puede aprobar su propio préstamo: el aprobador es el empleado del usuario que inició sesión. La fecha de devolución debe ser posterior a hoy, y los préstamos fuera de plazo se marcan como vencidos.
 - **Devoluciones.** Las unidades dañadas no vuelven al stock hasta pasar por mantenimiento; las perdidas se descuentan. El préstamo se cierra solo cuando no le quedan unidades pendientes.
-- **Mantenimiento.** Preventivo, correctivo o calibración; interno (técnico de la empresa) o externo (proveedor). Se registra lo que cuesta a la empresa en quetzales (Q): materiales, más mano de obra solo si es externo. En garantía no hay costo. Una unidad irreparable se da de baja.
+- **Mantenimiento.** Preventivo, correctivo o calibración; interno (técnico de la empresa) o externo (proveedor). Se registra lo que cuesta a la empresa en lempiras (L.): materiales, más mano de obra solo si es externo. En garantía no hay costo. Una unidad irreparable se da de baja.
 - **Nada se borra.** Herramientas, unidades y usuarios se dan de baja o se desactivan, para conservar el historial.
 
 ### Seguridad

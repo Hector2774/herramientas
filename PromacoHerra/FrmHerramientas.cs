@@ -988,24 +988,17 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); return; }
             if (dt.Rows.Count == 0) { Aviso($"\"{fila["Herramienta"]}\" no tiene mantenimientos registrados."); return; }
 
-            using var frmHistorial = new Form
+            // Encabezado con el nombre y código del grupo (la fila de la bandeja trae la unidad)
+            string titulo = fila["Herramienta"]?.ToString() ?? "";
+            try
             {
-                Text = $"Historial de mantenimiento — {fila["Herramienta"]}",
-                Size = new Size(1100, 480),
-                StartPosition = FormStartPosition.CenterParent
-            };
-            var dgv = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                DataSource = dt,
-                ReadOnly = true,
-                AllowUserToAddRows = false,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            };
-            frmHistorial.Controls.Add(dgv);
-            ThemeManager.ApplyTheme(frmHistorial);
-            frmHistorial.ShowDialog(this);
+                var h = HerramientaService.ObtenerPorId(herramientaId);
+                if (h.Rows.Count > 0) titulo = $"{h.Rows[0]["Nombre"]}  ·  {h.Rows[0]["Codigo"]}";
+            }
+            catch { /* el encabezado conserva el texto de la fila */ }
+
+            using var frm = new FrmHistorialMantenimiento(titulo, dt);
+            frm.ShowDialog(this);
         }
 
         // ══════════════════════════════════════════════════════════

@@ -23,7 +23,7 @@ namespace PromacoHerra
     // Cada reporte define sus columnas (Col) y eso mismo se usa para dibujar y para exportar.
     public partial class FrmReportes : Form
     {
-        private const string Moneda = "Q.";
+        private const string Moneda = Dinero.Simbolo;
 
         private enum Reporte { Historial, Vencidos, PorEmpleado, Ranking, Mantenimiento, Danadas, Inventario }
 
