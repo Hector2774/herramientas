@@ -5,7 +5,7 @@
 -- Crea todas las tablas, restricciones, índices, vistas, funciones y
 -- procedimientos almacenados en su estado actual. Para una instalación
 -- nueva se ejecuta este script y luego 001_datos_iniciales.sql.
--- (Database/migraciones/ guarda la historia de cambios 002–016; una
+-- (Database/migraciones/ guarda la historia de cambios 002–017; una
 --  instalación nueva NO necesita ejecutarlos: ya están incluidos aquí.)
 --
 -- Pasos:
@@ -1343,9 +1343,14 @@ BEGIN
             FROM   HerramientaUnidad WITH (UPDLOCK, HOLDLOCK)
             WHERE  HerramientaId = @HerramientaId), 0);
 
+        -- Números 1..1000: centenas x decenas x unidades
+        WITH Digitos AS (SELECT d FROM (VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9)) AS t(d)),
+             Numeros AS (SELECT c.d * 100 + de.d * 10 + u.d + 1 AS n
+                         FROM Digitos c CROSS JOIN Digitos de CROSS JOIN Digitos u)
         INSERT INTO HerramientaUnidad (HerramientaId, Numero)
-        SELECT @HerramientaId, @Ultimo + g.value
-        FROM   GENERATE_SERIES(1, @Cantidad) g;
+        SELECT @HerramientaId, @Ultimo + n
+        FROM   Numeros
+        WHERE  n <= @Cantidad;
 
         COMMIT TRANSACTION;
     END TRY
