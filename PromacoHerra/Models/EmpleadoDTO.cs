@@ -14,4 +14,4 @@ namespace PromacoHerra.Models
         [JsonPropertyName("departamento")]
         public string Departamento { get; set; }
     }
-}
+}

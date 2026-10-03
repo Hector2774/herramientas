@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mssql": {
+      "command": "mssql-mcp",
+      "env": {
+        "MSSQL_CONNECTION_STRING": "Server=localhost;Database=PROMACO_Herramientas;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;",
+        "MSSQL_ACCESS_MODE": "unrestricted"
+      }
+    }
+  }
+}

@@ -23,6 +23,12 @@ namespace PromacoHerra
         public static Color WarningOrange = Color.FromArgb(217, 119, 6);
         public static Color DangerRed = Color.FromArgb(185, 28, 28);
 
+        // Marca PROMACO: tomados del logo (Recursos\logo.png)
+        public static Color BrandNavy = Color.FromArgb(14, 0, 77);          // #0E004D
+        public static Color BrandNavyLight = Color.FromArgb(34, 22, 110);   // extremo claro del degradado
+        public static Color BrandRed = Color.FromArgb(227, 28, 35);         // #E31C23
+        public static Color BrandRedHover = Color.FromArgb(196, 20, 27);
+
         // ── Geometría compartida por los controles Material ────────
         // Un solo número por familia de control para que el radio de esquinas
         // sea consistente en toda la app (botones vs. tarjetas).
@@ -56,11 +62,12 @@ namespace PromacoHerra
                 // Los wrapper Material (TextBox/ComboBox) ya se estilizan a sí mismos en su
                 // constructor — no dejar que el recorrido baje a re-estilizar su TextBox/ComboBox
                 // interno con las reglas clásicas (le pondría de vuelta el borde 3D, por ejemplo).
-                // EmpleadoPickerControl también fija su propio look (botón de lupa siempre azul)
-                // y no debe perderlo por la heurística genérica de texto.
+                // Los pickers (empleado / herramienta) también fijan su propio look (botón de lupa
+                // siempre azul) y no deben perderlo por la heurística genérica de texto.
                 bool esCompuestoAutoestilizado = ctrl is Controls.MaterialTextBox
                     || ctrl is Controls.MaterialComboBox
-                    || ctrl is Controls.EmpleadoPickerControl;
+                    || ctrl is Controls.EmpleadoPickerControl
+                    || ctrl is Controls.HerramientaPickerControl;
 
                 if (ctrl.HasChildren && !esCompuestoAutoestilizado)
                     ApplyToControls(ctrl.Controls);

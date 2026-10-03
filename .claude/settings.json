@@ -1,4 +1,4 @@
-{
+﻿{
   "mcpServers": {
     "mssql": {
       "command": "npx",

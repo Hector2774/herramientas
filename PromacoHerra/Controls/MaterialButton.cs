@@ -13,7 +13,10 @@ namespace PromacoHerra.Controls
         Primary,
         Secondary,
         Danger,
-        Sidebar
+        Sidebar,
+        Success,
+        Brand,   // rojo PROMACO sólido: acción principal del login
+        Ghost    // sin relleno, borde gris delgado: acción secundaria que no compite
     }
 
     // Button plano, sin relieve 3D, con esquinas redondeadas recortadas de verdad (Region)
@@ -132,9 +135,21 @@ namespace PromacoHerra.Controls
                     return (ThemeManager.AccentBlue, ThemeManager.TextOnDark,
                             Color.Transparent, Color.FromArgb(0, 65, 150));
 
+                case MaterialButtonVariant.Success:
+                    return (ThemeManager.SuccessGreen, ThemeManager.TextOnDark,
+                            Color.Transparent, Color.FromArgb(21, 128, 61));
+
                 case MaterialButtonVariant.Danger:
                     return (Color.FromArgb(254, 242, 242), ThemeManager.DangerRed,
                             Color.FromArgb(252, 165, 165), Color.FromArgb(254, 226, 226));
+
+                case MaterialButtonVariant.Brand:
+                    return (ThemeManager.BrandRed, ThemeManager.TextOnDark,
+                            Color.Transparent, ThemeManager.BrandRedHover);
+
+                case MaterialButtonVariant.Ghost:
+                    return (Parent?.BackColor ?? ThemeManager.CardBackground, ThemeManager.TextSecondary,
+                            ThemeManager.BorderColor, Color.FromArgb(243, 244, 246));
 
                 case MaterialButtonVariant.Secondary:
                     return (Color.FromArgb(248, 249, 250), ThemeManager.TextPrimary,

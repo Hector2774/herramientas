@@ -11,6 +11,7 @@ namespace PromacoHerra
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Directory.CreateDirectory(ImagenHelper.FotosDir);   // fotos de herramientas, junto al .exe
             Application.Run(new FrmLogin());
         }
     }
