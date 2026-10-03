@@ -9,6 +9,8 @@
 --   · una devolución dañada genera un mantenimiento correctivo ligado a ella
 --     (interno con técnico de la empresa, o externo con proveedor y factura)
 --   · mantenimiento preventivo mensual y calibración trimestral del nivel láser
+--   · costos en lempiras (L.): cada rango se redondea a múltiplos de L. 15 ("/ 5 ... * 15"),
+--     o sea el triple de un monto redondeado a L. 5
 --   · lo que "todavía no se devuelve" queda como préstamo activo o vencido, y el estado
 --     final de cada unidad coincide con su último movimiento
 --
@@ -302,7 +304,7 @@ BEGIN
                     SET @m0 = DATEADD(MINUTE, 450, CAST(@dia AS DATETIME2(0)));
                     SET @m1 = DATEADD(MINUTE, 600 + FLOOR(@r * 420), @m0);
                     SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
-                    SET @mat = ROUND((35 + @r * 85) / 5, 0) * 5;
+                    SET @mat = ROUND((35 + @r * 85) / 5, 0) * 15;
                     SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
                     SELECT @usr = UsuarioId FROM @Aprob WHERE Id = 1 + FLOOR(@r * @nAprob);
                     SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
@@ -344,7 +346,7 @@ BEGIN
                     SET @m0 = DATEADD(MINUTE, 480, CAST(@dia AS DATETIME2(0)));
                     SET @m1 = DATEADD(MINUTE, 300 + FLOOR(@r * 120), DATEADD(DAY, 3 + FLOOR(@r * 3), @m0));
                     SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
-                    SET @mano = ROUND((300 + @r * 150) / 5, 0) * 5;
+                    SET @mano = ROUND((300 + @r * 150) / 5, 0) * 15;
                     SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
                     SELECT @usr = UsuarioId FROM @Aprob WHERE Id = 1 + FLOOR(@r * @nAprob);
 
@@ -509,13 +511,13 @@ BEGIN
                             SET @baja = CASE WHEN @r > 0.9 THEN 1 ELSE 0 END;
                             SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
                             SET @mat = CASE WHEN @garantia = 1 OR @baja = 1 THEN 0
-                                            WHEN @externo = 1 THEN ROUND((80 + @r * 570) / 5, 0) * 5
-                                            ELSE ROUND((45 + @r * 405) / 5, 0) * 5 END;
+                                            WHEN @externo = 1 THEN ROUND((80 + @r * 570) / 5, 0) * 15
+                                            ELSE ROUND((45 + @r * 405) / 5, 0) * 15 END;
                             SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
                             SET @mano = CASE WHEN @externo = 0 THEN NULL
                                              WHEN @garantia = 1 THEN 0
-                                             WHEN @baja = 1 THEN ROUND((100 + @r * 100) / 5, 0) * 5     -- solo el diagnóstico
-                                             ELSE ROUND((150 + @r * 450) / 5, 0) * 5 END;
+                                             WHEN @baja = 1 THEN ROUND((100 + @r * 100) / 5, 0) * 15     -- solo el diagnóstico
+                                             ELSE ROUND((150 + @r * 450) / 5, 0) * 15 END;
                             SELECT @r = r FROM #Azar WHERE i = @k; SET @k += 1;
                             SELECT @usr = UsuarioId FROM @Aprob WHERE Id = 1 + FLOOR(@r * @nAprob);
                             IF @externo = 1 AND @garantia = 0 SET @folio += 1 + FLOOR(@r * 40);
