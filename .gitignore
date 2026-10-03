@@ -1,0 +1,27 @@
+# ── Visual Studio / .NET ────────────────────────────────────
+# Resultados de compilación: se regeneran al compilar
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Configuración local de Visual Studio (por usuario / por máquina)
+.vs/
+*.user
+*.suo
+*.userprefs
+*.rsuser
+
+# Paquetes NuGet restaurados
+packages/
+*.nupkg
+
+# Resultados de pruebas y logs
+TestResults/
+*.log
+
+# ── Proyecto ────────────────────────────────────────────────
+# Fotos de herramientas: viven junto al .exe, no en el repositorio
+[Ff]otos/
