@@ -136,7 +136,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MostrarError(ex.Message);
+                MostrarError(Errores.Mensaje(ex));
                 return;
             }
             finally { Cursor = Cursors.Default; }

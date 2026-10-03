@@ -112,7 +112,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar empleados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar empleados", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _empleados = new();
             }
 
@@ -205,7 +205,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error de sincronización",
+                MessageBox.Show(Errores.Mensaje(ex), "Error de sincronización",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             finally

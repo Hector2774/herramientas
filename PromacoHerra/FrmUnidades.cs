@@ -289,7 +289,7 @@ namespace PromacoHerra
         {
             DataTable dtH;
             try { dtH = HerramientaService.ObtenerPorId(_herramientaId); }
-            catch (Exception ex) { Error(ex.Message); return; }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); return; }
 
             if (dtH.Rows.Count == 0 || !Convert.ToBoolean(dtH.Rows[0]["Activa"]))
             {
@@ -406,7 +406,7 @@ namespace PromacoHerra
                 HerramientaService.CambiarEstadoUnidades(_herramientaId, new[] { Convert.ToInt32(r["UnidadId"]) }, nuevoEstado);
                 Cargar();
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         // ══════════════════════════════════════════════════════════
@@ -440,7 +440,7 @@ namespace PromacoHerra
                 txtObservacion.Clear();
                 Cargar();
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         // Tipo y responsable (empleado o proveedor) se eligen en el formulario de mantenimiento
@@ -470,7 +470,7 @@ namespace PromacoHerra
                 HerramientaService.HabilitarPrestamo(_herramientaId, !habilitado);
                 Cargar();
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         private void AgregarUnidades()
@@ -484,7 +484,7 @@ namespace PromacoHerra
                 nudAgregar.Value = 1;
                 Cargar();
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         // ══════════════════════════════════════════════════════════

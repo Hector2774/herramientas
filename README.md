@@ -83,7 +83,7 @@ sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/ins
 
 En SSMS: abrir cada script, seleccionar la base `PROMACO_Herramientas` y ejecutar.
 
-> `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 017). Una instalación
+> `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 018). Una instalación
 > nueva **no** los necesita: ya están incluidos en `000_esquema.sql`.
 
 **Opcional: datos de demostración.** Para ver el sistema con información (dashboard, reportes, vencidos,
@@ -125,6 +125,8 @@ las cuentas del resto del personal, cada una ligada a un empleado.
 - **Empleados.** Se cargan desde la API de RRHH con *Sincronizar empleados* (pantalla Empleados). La
   dirección de la API está en `PromacoHerra/Services/EmpleadoService.cs` y solo responde dentro de la
   red de la empresa.
+- **Errores.** Si la base de datos no responde, la aplicación lo indica con un mensaje claro y sigue
+  abierta. El detalle técnico de los errores inesperados se guarda en `%LOCALAPPDATA%\PROMACO\errores.log`.
 - **Fotos de herramientas.** Se guardan en la carpeta `Fotos\` junto al ejecutable y no forman parte del
   repositorio. Sin fotos, el sistema muestra un ícono genérico; se agregan desde Herramientas → *Cambiar foto*.
 

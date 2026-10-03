@@ -6,7 +6,7 @@ namespace PromacoHerra.Data
     public static class Db
     {
         private static readonly string _cs =
-            "Server=localhost;Database=PROMACO_Herramientas;Trusted_Connection=True;TrustServerCertificate=True;";
+            "Server=localhost;Database=PROMACO_Herramientas;Trusted_Connection=True;TrustServerCertificate=True;Connect Timeout=8;";
 
         // ── Métodos originales (sin cambios) ──────────────────────
 

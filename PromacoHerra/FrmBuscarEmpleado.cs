@@ -218,7 +218,7 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar empleados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar empleados", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

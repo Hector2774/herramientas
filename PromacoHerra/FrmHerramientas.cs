@@ -296,7 +296,7 @@ namespace PromacoHerra
                 CargarCombo(cboUbicacionF, UbicacionService.ObtenerTodas(), "Nombre", "UbicacionId");
                 ConstruirChips(categorias);
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         private static void CargarCombo(MaterialComboBox cbo, DataTable dt, string display, string value)
@@ -320,7 +320,7 @@ namespace PromacoHerra
         private void CargarHerramientas(int? seleccionarId)
         {
             try { _herramientas = HerramientaService.Listar(); }
-            catch (Exception ex) { Error(ex.Message); _herramientas = new(); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); _herramientas = new(); }
 
             if (seleccionarId == null) MostrarVacio();
             AplicarFiltroLista(seleccionarId, refrescarDetalle: true);
@@ -504,7 +504,7 @@ namespace PromacoHerra
                         r["FechaDevolucionEsperada"] is DateTime f ? f.ToString("dd/MM/yyyy") : "—");
                 }
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
 
             dgvUnidadesMini.DataSource = dt;
             dgvUnidadesMini.Height = dgvUnidadesMini.ColumnHeadersHeight + Math.Max(1, dt.Rows.Count) * dgvUnidadesMini.RowTemplate.Height + 2;
@@ -552,7 +552,7 @@ namespace PromacoHerra
                 CargarHerramientas(id);
                 CargarCatalogo();          // cambia el conteo de herramientas por categoría/marca/ubicación
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         private void btnCancelarH_Click(object? sender, EventArgs e)
@@ -574,7 +574,7 @@ namespace PromacoHerra
                 CargarCatalogo();
                 CargarMantenimientos();    // sus unidades dañadas salen de pendientes
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         // Se guarda al momento (no espera a "Guardar cambios"): la foto queda en Fotos\{Código}.ext
@@ -591,7 +591,7 @@ namespace PromacoHerra
                 _actual.FotoNombre = nombreArchivo;   // misma instancia que en _herramientas
                 ImagenHelper.MostrarEn(picFoto, nombreArchivo);
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         // Unidades / Stock: acciones sobre unidades concretas o sobre todo el grupo
@@ -644,7 +644,7 @@ namespace PromacoHerra
                     _ => CategoriaService.ObtenerTodas()
                 };
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
 
             // Proveedores: teléfono y conteo de mantenimientos en lugar de herramientas
             colCatTelefono.Visible = txtCatTelefono.Visible = EsProveedores;
@@ -716,7 +716,7 @@ namespace PromacoHerra
                 }
                 DespuesDeCambiarCatalogo(Mensaje("agregad"));
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         private void btnCatGuardar_Click(object? sender, EventArgs e)
@@ -736,7 +736,7 @@ namespace PromacoHerra
                 }
                 DespuesDeCambiarCatalogo(Mensaje("guardad"));
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         private void btnCatEliminar_Click(object? sender, EventArgs e)
@@ -759,7 +759,7 @@ namespace PromacoHerra
                 }
                 DespuesDeCambiarCatalogo(Mensaje("eliminad"));
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         // Categorías, marcas y ubicaciones alimentan combos, chips y la lista de herramientas.
@@ -793,7 +793,7 @@ namespace PromacoHerra
                 lblPendientesVacio.Visible = n == 0;
                 dgvPendientes.Visible = n > 0;
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
 
             FiltrarMantenimientos();
             SinSeleccionMantenimiento();
@@ -985,7 +985,7 @@ namespace PromacoHerra
             int herramientaId = fila.Field<int>("HerramientaId");
             DataTable dt;
             try { dt = MantenimientoService.ObtenerPorHerramienta(herramientaId); }
-            catch (Exception ex) { Error(ex.Message); return; }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); return; }
             if (dt.Rows.Count == 0) { Aviso($"\"{fila["Herramienta"]}\" no tiene mantenimientos registrados."); return; }
 
             using var frmHistorial = new Form

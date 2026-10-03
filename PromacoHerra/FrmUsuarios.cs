@@ -188,7 +188,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar usuarios", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar usuarios", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -272,7 +272,7 @@ namespace PromacoHerra
             string temporal = PasswordHasher.GenerarTemporal();
             int id = UsuarioId(_seleccionado);
             try { UsuarioService.RestablecerPassword(id, temporal); }
-            catch (Exception ex) { Error(ex.Message); return; }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); return; }
 
             MostrarPasswordTemporal(username, temporal, "Contraseña restablecida");
             Cargar(id);
@@ -296,7 +296,7 @@ namespace PromacoHerra
                 UsuarioService.Actualizar(id, _seleccionado["Username"].ToString() ?? "",
                     Convert.ToInt32(_seleccionado["EmpleadoId"]), Convert.ToInt32(_seleccionado["RolId"]), !activo);
             }
-            catch (Exception ex) { Error(ex.Message); return; }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); return; }
             Cargar(id);
         }
 

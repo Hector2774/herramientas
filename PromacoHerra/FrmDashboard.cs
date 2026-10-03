@@ -123,7 +123,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                _error = ex.Message;
+                _error = Errores.Mensaje(ex);
             }
             finally
             {

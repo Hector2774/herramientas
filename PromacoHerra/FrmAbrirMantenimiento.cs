@@ -298,7 +298,7 @@ namespace PromacoHerra
                 cboProveedor.ValueMember = "ProveedorId";
                 cboProveedor.SelectedIndex = -1;
             }
-            catch (Exception ex) { Error(ex.Message); Close(); return; }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); Close(); return; }
 
             _unidades.Columns.Add("Sel", typeof(bool));
             _unidades.Columns.Add("ReporteTexto", typeof(string));
@@ -428,7 +428,7 @@ namespace PromacoHerra
                 DialogResult = DialogResult.OK;
                 Close();
             }
-            catch (Exception ex) { Error(ex.Message); }
+            catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
         private static void Aviso(string m) => MessageBox.Show(m, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);

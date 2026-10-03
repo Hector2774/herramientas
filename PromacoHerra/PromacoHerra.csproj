@@ -15,7 +15,9 @@
     <PackageReference Include="itext" Version="9.5.0" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.5.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
+    <!-- No se usa directamente: itext trae Newtonsoft.Json 9.0.1 (vulnerabilidad GHSA-5crp-9r3c-p9vr);
+         se fija una versión corregida -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <!-- Logo de la empresa: embebido en el .exe (PromacoHerra.Recursos.logo.png) -->

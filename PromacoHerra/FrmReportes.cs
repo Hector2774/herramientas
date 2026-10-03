@@ -281,7 +281,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar filtros", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar filtros", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             AlinearDerecha();
             SeleccionarReporte(Reporte.Historial);
@@ -325,7 +325,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                lblSubtitulo.Text = "No se pudieron cargar los indicadores: " + ex.Message;
+                lblSubtitulo.Text = "No se pudieron cargar los indicadores: " + Errores.Mensaje(ex);
             }
         }
 
@@ -369,7 +369,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al generar reporte", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al generar reporte", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally { Cursor = Cursors.Default; }
         }
@@ -845,7 +845,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al exportar a Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al exportar a Excel", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -913,7 +913,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al exportar a PDF", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al exportar a PDF", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

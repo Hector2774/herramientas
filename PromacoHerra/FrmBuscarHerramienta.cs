@@ -220,7 +220,7 @@ ORDER  BY h.Activa DESC, h.Nombre ASC");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar herramientas", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar herramientas", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

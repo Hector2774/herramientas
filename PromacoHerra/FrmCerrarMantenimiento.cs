@@ -216,7 +216,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Errores.Mensaje(ex), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

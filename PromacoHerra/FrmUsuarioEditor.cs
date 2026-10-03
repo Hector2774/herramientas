@@ -140,7 +140,7 @@ namespace PromacoHerra
         private void CargarDatos()
         {
             try { _roles = RolService.ObtenerTodos(); }
-            catch (Exception ex) { lblError.Text = ex.Message; btnGuardar.Enabled = false; return; }
+            catch (Exception ex) { lblError.Text = Errores.Mensaje(ex); btnGuardar.Enabled = false; return; }
 
             cboRol.DataSource = _roles;
             cboRol.DisplayMember = "Nombre";
@@ -214,7 +214,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                lblError.Text = ex.Message;
+                lblError.Text = Errores.Mensaje(ex);
                 return;
             }
             finally { Cursor = Cursors.Default; }

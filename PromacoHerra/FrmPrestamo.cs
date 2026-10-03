@@ -82,7 +82,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar herramientas",
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar herramientas",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _catalogo = new();
             }
@@ -334,7 +334,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al registrar préstamo",
+                MessageBox.Show(Errores.Mensaje(ex), "Error al registrar préstamo",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // Puede que otra persona haya prestado alguna unidad mientras tanto
                 CargarCatalogo();

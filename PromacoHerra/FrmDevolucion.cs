@@ -91,7 +91,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar préstamos",
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar préstamos",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 _prestamos = new();
             }
@@ -194,7 +194,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al cargar el detalle",
+                MessageBox.Show(Errores.Mensaje(ex), "Error al cargar el detalle",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -317,7 +317,7 @@ namespace PromacoHerra
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error al registrar la devolución",
+                MessageBox.Show(Errores.Mensaje(ex), "Error al registrar la devolución",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CargarPrestamos(prestamo.PrestamoId);
                 return;

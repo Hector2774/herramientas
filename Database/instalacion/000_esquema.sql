@@ -5,7 +5,7 @@
 -- Crea todas las tablas, restricciones, índices, vistas, funciones y
 -- procedimientos almacenados en su estado actual. Para una instalación
 -- nueva se ejecuta este script y luego 001_datos_iniciales.sql.
--- (Database/migraciones/ guarda la historia de cambios 002–017; una
+-- (Database/migraciones/ guarda la historia de cambios 002–018; una
 --  instalación nueva NO necesita ejecutarlos: ya están incluidos aquí.)
 --
 -- Pasos:
@@ -481,7 +481,7 @@ CREATE TABLE [dbo].[Mantenimiento](
 	[TipoMantenimiento] [varchar](50) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	[Descripcion] [varchar](400) COLLATE Modern_Spanish_CI_AS NULL,
 	[RealizadoPor] [varchar](120) COLLATE Modern_Spanish_CI_AS NULL,
-	[Costo] [decimal](18, 0) NULL,
+	[Costo] [decimal](12, 2) NULL,
 	[UnidadId] [int] NOT NULL,
 	[TipoServicio] [varchar](10) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	[EmpleadoId] [int] NULL,
