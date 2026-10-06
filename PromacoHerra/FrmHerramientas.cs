@@ -24,16 +24,16 @@ namespace PromacoHerra
         // Herramientas
         private List<HerramientaResumen> _herramientas = new();
         private HerramientaResumen? _actual;          // herramienta mostrada en el detalle
-        private bool _modoNuevo;
+        private bool _modoNuevo;                      // true mientras se está creando una herramienta nueva
         private string? _categoriaFiltro;             // null = Todas
 
         // Catálogos
         private enum TipoCatalogo { Categorias, Marcas, Ubicaciones, Proveedores }   // mismo orden que segCatalogo.Opciones
         private TipoCatalogo CatalogoActual => (TipoCatalogo)segCatalogo.Seleccionado;
-        private int? _catalogoId;
+        private int? _catalogoId;                     // registro del catálogo que se está editando (null = ninguno)
 
         // Mantenimiento
-        private DataView? _mantView;
+        private DataView? _mantView;                 // mantenimientos activos (vista filtrable por la búsqueda)
         private DataRow? _mantSeleccionado;          // mantenimiento activo elegido en la grilla
         private DataRow? _pendienteSeleccionado;     // unidad dañada elegida en la bandeja
 
@@ -76,6 +76,8 @@ namespace PromacoHerra
             Size = new Size(LadoFoto, 34)
         };
 
+        // Prepara columnas, foto y estilos, y conecta los eventos de las 3 pestañas
+        // (cada bloque comentado abajo corresponde a una pestaña)
         public FrmHerramientas()
         {
             InitializeComponent();
@@ -129,6 +131,11 @@ namespace PromacoHerra
             pnlDetalleFooter.Resize += (s, e) => AlinearDetalle();
         }
 
+        // ══════════════════════════════════════════════════════════
+        // PREPARACIÓN DE LA INTERFAZ
+        // ══════════════════════════════════════════════════════════
+
+        // Ayudante: crea una columna de grilla enlazada a un campo de los datos
         private static DataGridViewTextBoxColumn Columna(string propiedad, string encabezado, float peso) => new()
         {
             DataPropertyName = propiedad,
@@ -138,6 +145,7 @@ namespace PromacoHerra
             ReadOnly = true
         };
 
+        // Asigna a cada una de las 4 grillas sus columnas
         private void ConfigurarColumnas()
         {
             foreach (var (dgv, columnas) in new[]
@@ -179,6 +187,7 @@ namespace PromacoHerra
             tlpForm.ResumeLayout();
         }
 
+        // Acomoda a mano los controles del detalle que van a la derecha (botones, enlace, títulos)
         private void AlinearDetalle()
         {
             foreach (var c in new Control[] { btnUnidades, lnkVerTodas, btnGuardarH, btnCancelarH, lblNombreDet, lblCodigoDet })
@@ -265,6 +274,7 @@ namespace PromacoHerra
             dgv.MultiSelect = false;
         }
 
+        // Dibuja una línea divisoria fina en el borde superior de un panel
         private static void LineaSuperior(PaintEventArgs e, Control c)
         {
             using var pen = new Pen(ThemeManager.BorderColor);
@@ -274,6 +284,7 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // CARGA INICIAL
         // ══════════════════════════════════════════════════════════
+        // Al abrir: carga combos, lista de herramientas, catálogo y mantenimientos (las 3 pestañas)
         private void FrmHerramientas_Load(object? sender, EventArgs e)
         {
             splitHerramientas.SplitterDistance = 340;
@@ -286,6 +297,7 @@ namespace PromacoHerra
             BeginInvoke(new Action(() => ActiveControl = null));   // que se vean los placeholders
         }
 
+        // Llena los combos Categoría, Marca y Ubicación del detalle y los chips de categoría
         private void CargarCombos()
         {
             try
@@ -299,6 +311,7 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Ayudante: enlaza un combo a una tabla (texto visible + Id) y lo deja sin selección
         private static void CargarCombo(MaterialComboBox cbo, DataTable dt, string display, string value)
         {
             cbo.DataSource = dt;
@@ -307,6 +320,7 @@ namespace PromacoHerra
             cbo.SelectedIndex = -1;
         }
 
+        // Ayudante: selecciona en el combo el registro con ese Id (o ninguno si no existe)
         private static void SeleccionarEnCombo(MaterialComboBox cbo, int? id)
         {
             if (id == null) { cbo.SelectedIndex = -1; return; }
@@ -317,6 +331,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // HERRAMIENTAS — lista
         // ══════════════════════════════════════════════════════════
+
+        // Trae todas las herramientas de la base de datos y refresca la lista de la izquierda;
+        // si se indica un Id, lo deja seleccionado y muestra su detalle
         private void CargarHerramientas(int? seleccionarId)
         {
             try { _herramientas = HerramientaService.Listar(); }
@@ -326,6 +343,7 @@ namespace PromacoHerra
             AplicarFiltroLista(seleccionarId, refrescarDetalle: true);
         }
 
+        // Crea los chips de filtro "Todas" + uno por categoría (solo se puede elegir uno a la vez)
         private void ConstruirChips(DataTable categorias)
         {
             var nombres = categorias.AsEnumerable().Select(r => r.Field<string>("Nombre") ?? "").ToList();
@@ -350,6 +368,8 @@ namespace PromacoHerra
             flpChips.ResumeLayout();
         }
 
+        // Llena la lista con las herramientas que coinciden con la categoría elegida y el texto
+        // buscado (nombre, código, categoría, marca o ubicación).
         // refrescarDetalle: solo cuando los datos vienen recién leídos de la BD. Al buscar o filtrar
         // no se toca el detalle, para no perder cambios sin guardar.
         private void AplicarFiltroLista(int? seleccionarId, bool refrescarDetalle = false)
@@ -381,17 +401,20 @@ namespace PromacoHerra
             }
         }
 
+        // Búsqueda sin distinguir mayúsculas ni acentos
         private static bool Contiene(string texto, string termino) =>
             !string.IsNullOrEmpty(texto) &&
             CultureInfo.InvariantCulture.CompareInfo.IndexOf(texto, termino,
                 CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) >= 0;
 
+        // Dibuja cada elemento de la lista como una tarjeta (miniatura, nombre, código, stock)
         private void lstHerramientas_DrawItem(object? sender, DrawItemEventArgs e)
         {
             if (e.Index < 0 || lstHerramientas.Items[e.Index] is not HerramientaResumen h) return;
             HerramientaListItem.Dibujar(e.Graphics, e.Bounds, h, (e.State & DrawItemState.Selected) != 0);
         }
 
+        // Al elegir una herramienta de la lista se muestra su detalle a la derecha
         private void lstHerramientas_SelectedIndexChanged(object? sender, EventArgs e)
         {
             if (lstHerramientas.SelectedItem is HerramientaResumen h) MostrarHerramienta(h);
@@ -400,6 +423,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // HERRAMIENTAS — detalle
         // ══════════════════════════════════════════════════════════
+
+        // Sin herramienta elegida: oculta el detalle y muestra "Selecciona una herramienta"
         private void MostrarVacio()
         {
             _actual = null;
@@ -409,6 +434,8 @@ namespace PromacoHerra
             btnDarDeBaja.Enabled = false;
         }
 
+        // Llena el detalle con la herramienta elegida: título, contadores de stock, campos
+        // editables, foto y las últimas unidades
         private void MostrarHerramienta(HerramientaResumen h)
         {
             _actual = h;
@@ -436,6 +463,7 @@ namespace PromacoHerra
             CargarUnidadesMini(h.HerramientaId);
         }
 
+        // Botón "Nueva herramienta": deja el detalle en blanco para crear una
         private void NuevaHerramienta()
         {
             lstHerramientas.ClearSelected();
@@ -457,6 +485,7 @@ namespace PromacoHerra
             txtNombreF.Focus();
         }
 
+        // Muestra u oculta partes del detalle según si se está creando o editando.
         // Nueva: sin stock, unidades ni "Unidades / Stock"; con "Unidades iniciales"
         private void ModoFormulario(bool nuevo)
         {
@@ -512,6 +541,7 @@ namespace PromacoHerra
             lnkVerTodas.Text = $"Ver todas ({total}) →";
         }
 
+        // Dibuja la columna Estado de la mini-tabla de unidades como chip de color
         private void dgvUnidadesMini_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex != colUEstado.Index || e.Graphics == null) return;
@@ -522,6 +552,8 @@ namespace PromacoHerra
             e.Handled = true;
         }
 
+        // Botón "Crear herramienta" / "Guardar cambios": valida el nombre e inserta o actualiza
+        // la herramienta en la base de datos
         private void btnGuardarH_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtNombreF.Text)) { Aviso("El Nombre es obligatorio."); return; }
@@ -555,12 +587,14 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Botón "Cancelar" del detalle: descarta lo escrito
         private void btnCancelarH_Click(object? sender, EventArgs e)
         {
             if (_modoNuevo || _actual == null) { MostrarVacio(); return; }
             MostrarHerramienta(_actual);   // descarta cambios sin guardar
         }
 
+        // Botón "Dar de baja": retira la herramienta completa (todas sus unidades) tras confirmar
         private void btnDarDeBaja_Click(object? sender, EventArgs e)
         {
             if (_actual == null) { Aviso("Seleccione una herramienta."); return; }
@@ -577,6 +611,7 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Botón "Cambiar foto": el usuario elige una imagen y se copia a la carpeta de fotos.
         // Se guarda al momento (no espera a "Guardar cambios"): la foto queda en Fotos\{Código}.ext
         private void btnCambiarFoto_Click(object? sender, EventArgs e)
         {
@@ -594,7 +629,8 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
-        // Unidades / Stock: acciones sobre unidades concretas o sobre todo el grupo
+        // Botón "Unidades / Stock" (o "Ver todas"): abre FrmUnidades y al cerrarlo recarga los datos.
+        // Ahí se hacen acciones sobre unidades concretas o sobre todo el grupo
         private void AbrirUnidades()
         {
             if (_actual == null) return;
@@ -609,6 +645,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // CATÁLOGOS (categorías / marcas / ubicaciones / proveedores)
         // ══════════════════════════════════════════════════════════
+        // Los 4 catálogos comparten la misma grilla y el mismo formulario; estas propiedades
+        // devuelven lo que cambia según el catálogo elegido (columna Id, nombre, artículo)
         private bool EsProveedores => CatalogoActual == TipoCatalogo.Proveedores;
 
         private string IdColumna => CatalogoActual switch
@@ -632,6 +670,7 @@ namespace PromacoHerra
         private string Mensaje(string accion) =>
             char.ToUpper(NombreCatalogo[0]) + NombreCatalogo[1..] + " " + accion + (EsProveedores ? "o." : "a.");
 
+        // Carga en la grilla el catálogo elegido en el control segmentado y ajusta las columnas
         private void CargarCatalogo()
         {
             try
@@ -654,6 +693,7 @@ namespace PromacoHerra
             LimpiarFormCatalogo();
         }
 
+        // Deja en blanco el formulario del catálogo (modo "Agregar") con textos de ayuda adecuados
         private void LimpiarFormCatalogo()
         {
             _catalogoId = null;
@@ -669,6 +709,7 @@ namespace PromacoHerra
             dgvCatalogo.ClearSelection();
         }
 
+        // Clic en una fila del catálogo: pasa sus datos al formulario para editarla o eliminarla
         private void dgvCatalogo_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || dgvCatalogo.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
@@ -679,6 +720,7 @@ namespace PromacoHerra
             MostrarBotonesEdicion(true);
         }
 
+        // Alterna entre el botón "Agregar" y los botones de edición (Guardar, Eliminar, Cancelar).
         // Uno por uno y en orden visual: al hacerse visible, cada control crea su ventana y
         // WinForms reordena los hijos del FlowLayoutPanel según el orden de creación.
         // (a.Visible = b.Visible = true se evalúa de derecha a izquierda y los invertía)
@@ -701,6 +743,7 @@ namespace PromacoHerra
             e.Handled = true;
         }
 
+        // Botón "Agregar": crea un registro nuevo en el catálogo actual
         private void btnCatAgregar_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtCatNombre.Text)) { Aviso("El nombre es obligatorio."); return; }
@@ -719,6 +762,7 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Botón "Guardar": actualiza el registro del catálogo que se está editando
         private void btnCatGuardar_Click(object? sender, EventArgs e)
         {
             if (_catalogoId == null) return;
@@ -739,6 +783,8 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Botón "Eliminar": pide confirmación (avisando cuántas herramientas o mantenimientos
+        // lo usan) y elimina el registro
         private void btnCatEliminar_Click(object? sender, EventArgs e)
         {
             if (_catalogoId == null || dgvCatalogo.CurrentRow?.DataBoundItem is not DataRowView r) return;
@@ -799,6 +845,7 @@ namespace PromacoHerra
             SinSeleccionMantenimiento();
         }
 
+        // Filtra los mantenimientos activos por el texto buscado y actualiza el contador
         private void FiltrarMantenimientos()
         {
             if (_mantView == null) return;
@@ -818,6 +865,8 @@ namespace PromacoHerra
             dgvMant.ClearSelection();
         }
 
+        // Dibujo personalizado de la grilla de mantenimientos activos: textos en dos líneas,
+        // chip del tipo y chip de días con color según la espera
         private void dgvMant_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.Graphics == null || dgvMant.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
@@ -851,6 +900,7 @@ namespace PromacoHerra
             }
         }
 
+        // Dibujo personalizado de la bandeja de pendientes: unidad y quién la reportó, en dos líneas
         private void dgvPendientes_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.Graphics == null || dgvPendientes.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
@@ -875,6 +925,7 @@ namespace PromacoHerra
 
         private static readonly Font FuenteNegrita = new("Segoe UI", 9.5F, FontStyle.Bold);
 
+        // Ayudante: dibuja en una celda un texto principal en negrita y uno secundario debajo
         private static void DibujarDosLineas(DataGridViewCellPaintingEventArgs e, bool sel, string? arriba, string? abajo, Font fuenteAbajo)
         {
             e.PaintBackground(e.CellBounds, sel);
@@ -889,6 +940,7 @@ namespace PromacoHerra
         }
 
         // ── Selección: la barra inferior actúa sobre la última fila elegida en cualquiera de las dos grillas ──
+        // Clic en un mantenimiento activo: muestra su resumen y el botón "Cerrar mantenimiento"
         private void dgvMant_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || dgvMant.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
@@ -903,6 +955,7 @@ namespace PromacoHerra
             MostrarAccion("Cerrar mantenimiento", FontAwesome.Sharp.IconChar.CheckCircle);
         }
 
+        // Clic en una unidad pendiente: muestra quién la reportó y el botón "Enviar a mantenimiento"
         private void dgvPendientes_CellClick(object? sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || dgvPendientes.Rows[e.RowIndex].DataBoundItem is not DataRowView r) return;
@@ -918,6 +971,7 @@ namespace PromacoHerra
             MostrarAccion("Enviar a mantenimiento", FontAwesome.Sharp.IconChar.Wrench);
         }
 
+        // Configura y muestra el botón de acción de la barra inferior y el enlace al historial
         private void MostrarAccion(string texto, FontAwesome.Sharp.IconChar icono)
         {
             btnAccionMant.Text = texto;
@@ -927,6 +981,7 @@ namespace PromacoHerra
             lnkHistorial.Visible = true;
         }
 
+        // Sin fila elegida: limpia la selección de ambas grillas y oculta el botón de acción
         private void SinSeleccionMantenimiento()
         {
             _mantSeleccionado = null;
@@ -939,12 +994,15 @@ namespace PromacoHerra
             lnkHistorial.Visible = false;
         }
 
+        // Botón de acción (o doble clic): cierra el mantenimiento elegido o envía a
+        // mantenimiento la unidad pendiente elegida
         private void EjecutarAccionMantenimiento()
         {
             if (_mantSeleccionado != null) CerrarMantenimiento(_mantSeleccionado);
             else if (_pendienteSeleccionado != null) AbrirMantenimiento(_pendienteSeleccionado.Field<int>("UnidadId"));
         }
 
+        // Abre FrmAbrirMantenimiento (vacío o con una unidad ya marcada) y luego recarga
         private void AbrirMantenimiento(int? unidadId)
         {
             int registradas;
@@ -960,6 +1018,7 @@ namespace PromacoHerra
             DespuesDeCambiarMantenimiento();
         }
 
+        // Abre FrmCerrarMantenimiento para el mantenimiento elegido y luego recarga
         private void CerrarMantenimiento(DataRow mantenimiento)
         {
             using (var frm = new FrmCerrarMantenimiento(mantenimiento))
@@ -1004,6 +1063,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // HELPERS
         // ══════════════════════════════════════════════════════════
+
+        // Atajos para los cuadros de mensaje: aviso, éxito, error y confirmación Sí/No
         private void Aviso(string m) => MessageBox.Show(m, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void OK(string m) => MessageBox.Show(m, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void Error(string m) => MessageBox.Show(m, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

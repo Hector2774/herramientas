@@ -19,12 +19,15 @@ namespace PromacoHerra
     {
         private static readonly Color StatFondo = Color.FromArgb(248, 249, 251);
 
-        private List<PrestamoActivo> _prestamos = new();
-        private PrestamoItemControl? _itemSeleccionado;
-        private readonly List<HerramientaDevolucionRow> _filas = new();
+        private List<PrestamoActivo> _prestamos = new();                    // préstamos con herramientas pendientes
+        private PrestamoItemControl? _itemSeleccionado;                     // préstamo elegido en la lista izquierda
+        private readonly List<HerramientaDevolucionRow> _filas = new();     // filas de unidades del lado derecho
 
+        // Préstamo que se está viendo en el detalle (null si no hay ninguno elegido)
         private PrestamoActivo? Actual => _itemSeleccionado?.Prestamo;
 
+        // Aplica estilos y conecta los eventos: carga, búsqueda, "Seleccionar todo" y los
+        // botones de devolver
         public FrmDevolucion()
         {
             InitializeComponent();
@@ -70,6 +73,7 @@ namespace PromacoHerra
             btnDevolverTodo.Variant = MaterialButtonVariant.Success;
         }
 
+        // Al abrir se cargan los préstamos activos
         private void FrmDevolucion_Load(object? sender, EventArgs e)
         {
             CargarPrestamos(null);
@@ -119,6 +123,8 @@ namespace PromacoHerra
             else MostrarVacio();
         }
 
+        // Muestra solo los préstamos que coinciden con lo buscado: nombre o código del empleado,
+        // código del préstamo o número (con o sin "#")
         private void AplicarFiltro()
         {
             string termino = txtBuscar.Text.Trim();
@@ -161,6 +167,7 @@ namespace PromacoHerra
             }
         }
 
+        // Al hacer clic en un préstamo: lo resalta y carga su detalle a la derecha
         private void SeleccionarPrestamo(PrestamoItemControl item)
         {
             if (_itemSeleccionado != null) _itemSeleccionado.Seleccionado = false;
@@ -169,6 +176,7 @@ namespace PromacoHerra
             CargarDetalle(item.Prestamo);
         }
 
+        // Línea gris a la derecha del panel izquierdo
         private void pnlIzquierdo_Paint(object? sender, PaintEventArgs e)
         {
             using var pen = new Pen(ThemeManager.BorderColor, 1);
@@ -178,6 +186,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DETALLE
         // ══════════════════════════════════════════════════════════
+
+        // Sin préstamo elegido: oculta el detalle y muestra el mensaje de "selecciona un préstamo"
         private void MostrarVacio()
         {
             LimpiarFilas();
@@ -185,6 +195,8 @@ namespace PromacoHerra
             lblVacio.Visible = true;
         }
 
+        // Llena el lado derecho con el préstamo elegido: datos del empleado, estadísticas
+        // (prestadas, plazo), alerta si está vencido y una fila por cada unidad pendiente
         private void CargarDetalle(PrestamoActivo p)
         {
             List<DetallePendiente> detalle;
@@ -240,6 +252,7 @@ namespace PromacoHerra
             ActualizarSeleccion();
         }
 
+        // Quita (y libera de memoria) las filas de unidades del préstamo anterior
         private void LimpiarFilas()
         {
             foreach (var f in _filas) f.Dispose();
@@ -247,6 +260,7 @@ namespace PromacoHerra
             flpHerramientas.Controls.Clear();
         }
 
+        // Cuenta las unidades marcadas, actualiza los textos y habilita "Devolver seleccionadas"
         private void ActualizarSeleccion()
         {
             int n = _filas.Count(f => f.Seleccionado);
@@ -262,6 +276,7 @@ namespace PromacoHerra
             lnkSeleccionarTodo.Text = total > 0 && n == total ? "Deseleccionar todo" : "Seleccionar todo";
         }
 
+        // Enlace "Seleccionar todo / Deseleccionar todo": marca o desmarca todas las unidades
         private void lnkSeleccionarTodo_LinkClicked(object? sender, LinkLabelLinkClickedEventArgs e)
         {
             bool seleccionar = !_filas.All(f => f.Seleccionado);
@@ -271,17 +286,23 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DEVOLVER
         // ══════════════════════════════════════════════════════════
+
+        // Botón "Devolver seleccionadas": devuelve solo las unidades marcadas
         private void btnDevolverSeleccionadas_Click(object? sender, EventArgs e)
         {
             Devolver(_filas.Where(f => f.Seleccionado).ToList());
         }
 
+        // Botón "Devolver todo": marca y devuelve todas las unidades pendientes del préstamo
         private void btnDevolverTodo_Click(object? sender, EventArgs e)
         {
             foreach (var f in _filas) f.Seleccionado = true;
             Devolver(_filas.ToList());
         }
 
+        // Proceso de devolución: arma la lista con la condición y nota de cada unidad, pide
+        // confirmación (avisando qué pasa con las dañadas y perdidas), la registra en la base de
+        // datos, muestra un resumen y recarga la lista de préstamos
         private void Devolver(List<HerramientaDevolucionRow> filas)
         {
             var prestamo = Actual;
@@ -335,8 +356,10 @@ namespace PromacoHerra
             CargarPrestamos(r.PrestamoCerrado ? null : prestamo.PrestamoId);
         }
 
+        // Ayudante de texto: "1 herramienta" / "3 herramientas"
         private static string Cantidad(int n, string palabra) => n == 1 ? $"1 {palabra}" : $"{n} {palabra}s";
 
+        // Ayudante de texto: líneas con cuántas unidades vuelven buenas, dañadas o perdidas
         private static string DesgloseCondiciones(int buenas, int dañadas, int perdidas)
         {
             var lineas = new List<string>();

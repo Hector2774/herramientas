@@ -18,10 +18,11 @@ namespace PromacoHerra
     {
         private static readonly Font FuenteCodigo = new("Consolas", 9.5F);
 
-        private readonly HashSet<int> _preseleccion;
-        private DataTable _unidades = new();
-        private DataView? _vista;
+        private readonly HashSet<int> _preseleccion;   // unidades que deben llegar ya marcadas
+        private DataTable _unidades = new();           // unidades que pueden entrar a mantenimiento
+        private DataView? _vista;                      // vista filtrable de _unidades (lo que muestra la grilla)
 
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirInterfaz)
         // Unidades
         private readonly MaterialTextBox txtBuscar = new();
         private readonly MaterialCheckBox chkSoloDañadas = new();
@@ -51,6 +52,7 @@ namespace PromacoHerra
 
         /// <param name="preseleccion">Unidades que llegan marcadas (desde un pendiente o desde FrmUnidades).</param>
         /// <param name="filtro">Texto inicial del buscador (p. ej. el código de la herramienta).</param>
+        // Guarda la preselección, arma la interfaz y al abrirse carga las unidades
         public FrmAbrirMantenimiento(IEnumerable<int>? preseleccion = null, string? filtro = null)
         {
             _preseleccion = new HashSet<int>(preseleccion ?? Enumerable.Empty<int>());
@@ -63,6 +65,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // INTERFAZ
         // ══════════════════════════════════════════════════════════
+
+        // Crea las zonas de la ventana: encabezado, barra de búsqueda, grilla de unidades con
+        // casillas, panel de detalle (tipo, servicio, responsable, descripción) y pie con botones
         private void ConstruirInterfaz()
         {
             Text = "Nuevo mantenimiento";
@@ -238,6 +243,7 @@ namespace PromacoHerra
             CancelButton = btnCancelar;
         }
 
+        // Ayudante: configura una columna de solo lectura enlazada a un campo de los datos
         private static void Columna(DataGridViewTextBoxColumn c, string propiedad, string encabezado, float peso)
         {
             c.DataPropertyName = propiedad;
@@ -246,6 +252,7 @@ namespace PromacoHerra
             c.ReadOnly = true;
         }
 
+        // Ayudante: etiqueta en negrita para los títulos de los campos
         private static Label Etiqueta(string texto) => new()
         {
             Text = texto,
@@ -253,6 +260,7 @@ namespace PromacoHerra
             AutoSize = true
         };
 
+        // Colores, fuentes y tamaños de la grilla y los botones
         private void AplicarEstilos()
         {
             BackColor = ThemeManager.CardBackground;
@@ -278,6 +286,7 @@ namespace PromacoHerra
             colCodigo.DefaultCellStyle.Font = FuenteCodigo;
         }
 
+        // Dibuja una línea divisoria fina en el borde superior de un panel
         private static void LineaSuperior(PaintEventArgs e, Control c)
         {
             using var pen = new Pen(ThemeManager.BorderColor);
@@ -287,6 +296,10 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DATOS
         // ══════════════════════════════════════════════════════════
+
+        // Trae de la base de datos las unidades elegibles y los proveedores, agrega dos columnas
+        // auxiliares (casilla "Sel" y texto del reporte de daño), marca la preselección y
+        // sugiere tipo y descripción según lo que venga marcado
         private void Cargar(string? filtro)
         {
             try
@@ -337,9 +350,12 @@ namespace PromacoHerra
             return partes.Count > 0 ? string.Join("  ·  ", partes) : "Marcada como dañada";
         }
 
+        // Unidades que tienen la casilla marcada
         private IEnumerable<DataRow> Marcadas() =>
             _unidades.AsEnumerable().Where(r => r.Field<bool>("Sel"));
 
+        // Filtra la grilla por el texto buscado (en varias columnas) y, si está marcado,
+        // muestra solo las unidades dañadas
         private void Filtrar()
         {
             if (_vista == null) return;
@@ -358,6 +374,7 @@ namespace PromacoHerra
             dgvUnidades.ClearSelection();
         }
 
+        // Actualiza el contador "N unidades marcadas"
         private void ActualizarSeleccion()
         {
             int n = Marcadas().Count();
@@ -366,6 +383,7 @@ namespace PromacoHerra
             dgvUnidades.InvalidateColumn(colSel.Index);
         }
 
+        // Mueve el scroll de la grilla para que se vea la primera unidad marcada
         private void DesplazarAPrimeraMarcada()
         {
             foreach (DataGridViewRow fila in dgvUnidades.Rows)
@@ -376,6 +394,8 @@ namespace PromacoHerra
                 }
         }
 
+        // Según Interno/Externo muestra el selector de empleado o el combo de proveedores
+        // (o un aviso si no hay proveedores registrados)
         private void ActualizarResponsable()
         {
             bool externo = rbExterno.Checked;
@@ -386,7 +406,7 @@ namespace PromacoHerra
             lblSinProveedores.Visible = externo && !hayProveedores;
         }
 
-        // Estado como chip
+        // Dibuja la columna Estado como chip de color
         private void dgvUnidades_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex != colEstado.Index || e.Graphics == null) return;
@@ -400,6 +420,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // ABRIR
         // ══════════════════════════════════════════════════════════
+
+        // Botón "Abrir mantenimiento": valida que haya unidades marcadas, tipo y responsable
+        // (empleado o proveedor) y registra la entrada a mantenimiento en la base de datos
         private void Abrir()
         {
             var ids = Marcadas().Select(r => r.Field<int>("UnidadId")).ToList();
@@ -431,6 +454,7 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Ayudantes: mensajes de aviso y de error
         private static void Aviso(string m) => MessageBox.Show(m, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private static void Error(string m) => MessageBox.Show(m, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }

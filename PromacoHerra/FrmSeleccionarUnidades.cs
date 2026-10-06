@@ -19,6 +19,8 @@ namespace PromacoHerra
         public List<int> UnidadesSeleccionadas =>
             _unidades.Where(u => _seleccion.Contains(u.UnidadId)).Select(u => u.UnidadId).ToList();
 
+        // Recibe la herramienta y las unidades que ya estaban marcadas; muestra el nombre y datos
+        // de la herramienta y conecta el filtro, las casillas y el botón Confirmar
         public FrmSeleccionarUnidades(HerramientaCatalogoItem item, IEnumerable<int> seleccionadas)
         {
             InitializeComponent();
@@ -41,6 +43,8 @@ namespace PromacoHerra
             CargarLista();
         }
 
+        // Llena la lista con las unidades disponibles que coinciden con el texto del filtro (por código).
+        // _cargando evita que, al marcar casillas por código, se dispare ItemChecked como si fuera el usuario.
         private void CargarLista()
         {
             string filtro = txtFiltro.Text.Trim();
@@ -64,6 +68,7 @@ namespace PromacoHerra
             ActualizarContador();
         }
 
+        // Cuando el usuario marca o desmarca una unidad, se agrega o quita de la selección
         private void lvUnidades_ItemChecked(object? sender, ItemCheckedEventArgs e)
         {
             if (_cargando) return;
@@ -75,6 +80,7 @@ namespace PromacoHerra
             ActualizarContador();
         }
 
+        // Actualiza el texto "Seleccionadas: N"
         private void ActualizarContador()
         {
             lblSeleccionadas.Text = $"Seleccionadas: {_seleccion.Count}";

@@ -15,14 +15,20 @@ namespace PromacoHerra
     //            administrador no puede cambiarse su propio rol.
     public class FrmUsuarioEditor : Form
     {
+        // ══════════════════════════════════════════════════════════
+        // CAMPOS Y RESULTADO
+        // ══════════════════════════════════════════════════════════
+
+        // Regla del nombre de usuario: 3 a 50 caracteres, solo letras, números, punto, guion y guion bajo
         private static readonly Regex FormatoUsuario = new("^[A-Za-z0-9._-]{3,50}$");
         private const string EtiquetaSecundaria = "secundaria";
 
         private readonly DataRow? _usuario;          // null = usuario nuevo
-        private readonly bool _esYo;
-        private readonly bool _tieneMovimientos;
+        private readonly bool _esYo;                 // true si se está editando al propio usuario en sesión
+        private readonly bool _tieneMovimientos;     // true si el usuario ya registró mantenimientos
         private DataTable _roles = new();
 
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirInterfaz)
         private readonly EmpleadoPickerControl pickerEmpleado = new();
         private readonly MaterialTextBox txtUsuario = new();
         private readonly MaterialComboBox cboRol = new();
@@ -31,6 +37,7 @@ namespace PromacoHerra
         private readonly MaterialButton btnGuardar = new();
         private readonly MaterialButton btnCancelar = new();
 
+        // Datos que FrmUsuarios lee al cerrar este diálogo con "OK"
         public int UsuarioId { get; private set; }
         public string Username { get; private set; } = "";
         /// <summary>Solo al crear: la contraseña temporal generada.</summary>
@@ -38,6 +45,8 @@ namespace PromacoHerra
 
         private bool EsNuevo => _usuario == null;
 
+        // Si recibe un usuario, guarda su Id y revisa si es el propio usuario o si tiene movimientos
+        // (eso bloquea algunos campos). Después arma la interfaz y, al cargar, llena los datos.
         /// <param name="usuario">Fila de sp_Usuario_ObtenerTodos; null para crear uno nuevo.</param>
         public FrmUsuarioEditor(DataRow? usuario = null)
         {
@@ -60,6 +69,12 @@ namespace PromacoHerra
             Load += (_, _) => CargarDatos();
         }
 
+        // ══════════════════════════════════════════════════════════
+        // INTERFAZ — creación de controles por código
+        // ══════════════════════════════════════════════════════════
+
+        // Coloca de arriba hacia abajo: título, explicación, selector de empleado, nombre de
+        // usuario, rol (con su descripción), aviso de contraseña temporal, error y botones
         private void ConstruirInterfaz()
         {
             Text = EsNuevo ? "Nuevo usuario" : "Editar usuario";
@@ -137,6 +152,12 @@ namespace PromacoHerra
             CancelButton = btnCancelar;
         }
 
+        // ══════════════════════════════════════════════════════════
+        // DATOS — llenar el formulario
+        // ══════════════════════════════════════════════════════════
+
+        // Carga la lista de roles desde la base de datos y, si se está editando, rellena
+        // los campos con los datos actuales del usuario
         private void CargarDatos()
         {
             try { _roles = RolService.ObtenerTodos(); }
@@ -162,11 +183,13 @@ namespace PromacoHerra
             if (_esYo) lblRolDescripcion.Text = "No puedes cambiar tu propio rol: otro administrador debe hacerlo.";
         }
 
+        // Muestra debajo del combo qué puede hacer el rol seleccionado
         private void MostrarDescripcionRol()
         {
             lblRolDescripcion.Text = cboRol.SelectedItem is DataRowView r ? r["Descripcion"] as string ?? "" : "";
         }
 
+        // Ayudantes de interfaz: colocar un control y bajar "y", y crear etiquetas con formato
         private void Agregar(Control c, int x, ref int y, int alto)
         {
             c.Location = new Point(x, y);
@@ -185,6 +208,12 @@ namespace PromacoHerra
             Tag = EtiquetaSecundaria
         };
 
+        // ══════════════════════════════════════════════════════════
+        // GUARDAR
+        // ══════════════════════════════════════════════════════════
+
+        // Valida empleado, nombre de usuario y rol. Si es nuevo, genera una contraseña temporal
+        // y crea el usuario; si es edición, actualiza sus datos (sin tocar la contraseña).
         private void Guardar()
         {
             string username = txtUsuario.Text.Trim();

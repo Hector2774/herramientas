@@ -17,10 +17,12 @@ namespace PromacoHerra
     // Con incluirInactivos (reportes) también lista a los inactivos, marcados como tales.
     public class FrmBuscarEmpleado : Form
     {
+        // Un empleado tal como se muestra en la grilla
         private sealed record Fila(int EmpleadoId, string Codigo, string Nombre, string Departamento, bool Activo);
 
         private const string TodosLosDepartamentos = "Todos los departamentos";
 
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirUI)
         private readonly Panel pnlHeader = new();
         private readonly Label lblTitulo = new();
         private readonly Label lblSubtitulo = new();
@@ -44,13 +46,15 @@ namespace PromacoHerra
         private readonly DataGridViewTextBoxColumn colDepartamento = EmpleadoGrid.Columna("DEPARTAMENTO", 220);
 
         private readonly bool _incluirInactivos;
-        private List<Fila> _todos = new();
+        private List<Fila> _todos = new();   // todos los empleados cargados (el filtro trabaja sobre esta lista)
 
+        // Resultado: datos del empleado elegido, que lee quien abrió este diálogo
         public int EmpleadoIdSeleccionado { get; private set; }
         public string NombreSeleccionado { get; private set; } = string.Empty;
         public string DepartamentoSeleccionado { get; private set; } = string.Empty;
         public string CodigoSeleccionado { get; private set; } = string.Empty;
 
+        // Arma la interfaz y la grilla; los empleados se cargan al abrirse (Load)
         public FrmBuscarEmpleado(bool incluirInactivos = false)
         {
             _incluirInactivos = incluirInactivos;
@@ -63,6 +67,8 @@ namespace PromacoHerra
         }
 
         // ── Construcción de la UI (sin Designer) ───────────────────
+        // Crea las 4 zonas: encabezado, barra de búsqueda/filtro, grilla y pie con los botones,
+        // y conecta los eventos de búsqueda, filtro y botones
         private void ConstruirUI()
         {
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -149,6 +155,7 @@ namespace PromacoHerra
             btnCancelar.Click += (s, e) => { DialogResult = DialogResult.Cancel; Close(); };
         }
 
+        // Coloca a la derecha el contador de resultados y los botones del pie
         private void AlinearDerecha()
         {
             lblResultados.Left = pnlFiltros.Width - 22 - lblResultados.Width;
@@ -157,6 +164,7 @@ namespace PromacoHerra
             lblSeleccion.Width = Math.Max(100, btnSeleccionar.Left - 20 - lblSeleccion.Left);
         }
 
+        // Crea la grilla de empleados y conecta: dibujo de celdas, selección, teclado y doble clic
         private void ConstruirGrid()
         {
             colAvatar.Resizable = DataGridViewTriState.False;
@@ -172,6 +180,7 @@ namespace PromacoHerra
             dgv.BringToFront();
         }
 
+        // Fondos blancos, textos secundarios en gris y estilo de los botones
         private void AplicarEstilos()
         {
             BackColor = Color.White;
@@ -185,6 +194,7 @@ namespace PromacoHerra
             btnCancelar.Variant = MaterialButtonVariant.Secondary;
         }
 
+        // Dibuja una línea divisoria fina abajo (encabezado) o arriba (pie) de un panel
         private static void Linea(PaintEventArgs e, Control c, bool abajo)
         {
             using var pen = new Pen(ThemeManager.BorderColor);
@@ -204,6 +214,8 @@ namespace PromacoHerra
             BeginInvoke(new Action(() => { dgv.ClearSelection(); ActualizarSeleccion(); }));
         }
 
+        // Consulta los empleados en la base de datos (solo activos, salvo que se pidan también
+        // los inactivos), los guarda en _todos y llena el combo de departamentos
         private void CargarEmpleados()
         {
             DataTable dt;
@@ -240,6 +252,8 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
         }
 
         // ── Filtro local (sin nuevas consultas a la BD) ────────────
+        // Muestra solo los empleados que coinciden con el texto (nombre, código o departamento)
+        // y con el departamento elegido; actualiza el contador y el aviso "sin resultados"
         private void FiltrarGrid()
         {
             string texto = txtBuscar.Text.Trim();
@@ -268,9 +282,11 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             ActualizarSeleccion();
         }
 
+        // Empleado de la fila seleccionada (o null si no hay ninguna)
         private Fila? FilaSeleccionada =>
             dgv.SelectedRows.Count > 0 ? dgv.SelectedRows[0].Tag as Fila : null;
 
+        // Habilita "Seleccionar" solo si hay una fila elegida y muestra sus datos en el pie
         private void ActualizarSeleccion()
         {
             var f = FilaSeleccionada;
@@ -281,6 +297,8 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             lblSeleccion.ForeColor = f == null ? ThemeManager.TextSecondary : ThemeManager.TextPrimary;
         }
 
+        // Dibuja cada celda a mano: avatar con iniciales, código, nombre (gris si está inactivo)
+        // y chip de color del departamento
         private void Dgv_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.Graphics == null || dgv.Rows[e.RowIndex].Tag is not Fila f) return;
@@ -300,6 +318,7 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
         }
 
         // ── Teclado ──────────────────────────────────────────────────
+        // En la caja de búsqueda, ↓ o Enter saltan a la primera fila de la grilla
         private void TxtBuscar_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Down || e.KeyCode == Keys.Enter)
@@ -310,6 +329,7 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             }
         }
 
+        // Pasa el foco a la grilla y selecciona la primera fila
         private void SeleccionarPrimeraFila()
         {
             if (dgv.Rows.Count == 0) return;
@@ -318,6 +338,7 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
             dgv.Rows[0].Selected = true;
         }
 
+        // En la grilla: Enter elige el empleado; una letra regresa a la búsqueda y la agrega al texto
         private void Dgv_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -339,6 +360,7 @@ ORDER  BY e.Activo DESC, e.Nombre ASC");
         }
 
         // ── Confirmación de selección ───────────────────────────────
+        // Guarda los datos del empleado elegido en las propiedades públicas y cierra con "OK"
         private void ConfirmarSeleccion()
         {
             if (FilaSeleccionada is not Fila f) return;

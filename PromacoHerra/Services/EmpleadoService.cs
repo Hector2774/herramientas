@@ -53,8 +53,7 @@ namespace PromacoHerra.Services
             catch (TaskCanceledException)
             {
                 throw new Exception(
-                    "La API tardó demasiado en responder.\n" +
-                    "Verifica que el servicio esté corriendo en Fedora.");
+                    "El servicio tardó demasiado en responder.");
             }
         }
 
@@ -70,7 +69,7 @@ namespace PromacoHerra.Services
 
             // Una respuesta vacía desactivaría a todos los empleados
             if (empleados.Count == 0)
-                throw new Exception("La API de RRHH no devolvió empleados. No se modificó la base local.");
+                throw new Exception("El servicio no devolvió empleados. No se modificó la base local.");
 
             // La parte de BD corre fuera del hilo de la UI para que el formulario no se congele
             return await Task.Run(() => GuardarEnBd(empleados));

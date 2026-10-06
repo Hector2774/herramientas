@@ -10,8 +10,18 @@ using PromacoHerra.Services;
 
 namespace PromacoHerra
 {
+    // Ventana principal del sistema (se abre después del login).
+    // A la izquierda está el menú lateral (sidebar) y a la derecha un panel donde se
+    // "incrustan" los demás formularios (Inicio, Herramientas, Empleados, etc.), de modo
+    // que todo el sistema funciona dentro de una sola ventana.
     public partial class FrmPrincipal : Form
     {
+        // ══════════════════════════════════════════════════════════
+        // INICIO — construcción del menú lateral
+        // ══════════════════════════════════════════════════════════
+
+        // Crea los ítems del menú. "Usuarios" solo aparece si el usuario en sesión tiene
+        // permiso para administrar usuarios. Al hacer clic en un ítem se llama a AbrirSeccion.
         public FrmPrincipal()
         {
             InitializeComponent();
@@ -29,10 +39,16 @@ namespace PromacoHerra
             if (Sesion.AdministraUsuarios)
                 sidebar.AgregarItem("usuarios", "Usuarios", IconChar.UserShield);
             sidebar.AgregarItem("password", "Mi contraseña", IconChar.Key, alFinal: true);
-            sidebar.AgregarItem("salir", "Salir", IconChar.RightFromBracket, alFinal: true);
+            sidebar.AgregarItem("salir", "Cerrar sesión", IconChar.RightFromBracket, alFinal: true);
             sidebar.ItemSeleccionado += (s, clave) => AbrirSeccion(clave);
         }
 
+        // ══════════════════════════════════════════════════════════
+        // NAVEGACIÓN — mostrar formularios dentro del panel central
+        // ══════════════════════════════════════════════════════════
+
+        // Quita el formulario que estaba abierto y coloca el nuevo dentro del panel central,
+        // sin bordes y ocupando todo el espacio (como si fuera una "página" del sistema).
         private void AbrirFormulario(Form frm)
         {
             panelContenedor.Controls.Clear();
@@ -61,6 +77,8 @@ namespace PromacoHerra
         // Permite que un formulario incrustado (p. ej. el dashboard) abra otro en el panel
         public void Navegar(Form frm) => AbrirFormulario(frm);
 
+        // Decide qué hacer según el ítem del menú que se pulsó: abrir una sección en el panel,
+        // abrir el diálogo de cambio de contraseña o cerrar la sesión.
         private void AbrirSeccion(string clave)
         {
             switch (clave)
@@ -76,18 +94,41 @@ namespace PromacoHerra
                     using (var frm = new FrmCambiarPassword(obligatorio: false))
                         frm.ShowDialog(this);
                     break;
-                case "salir": Application.Exit(); break;
+                case "salir": CerrarSesion(); break;
             }
         }
 
+        // ══════════════════════════════════════════════════════════
+        // SESIÓN Y CIERRE — cerrar sesión o salir del sistema
+        // ══════════════════════════════════════════════════════════
+
+        // Indica si la ventana se está cerrando por "Cerrar sesión" (volver al login)
+        // o por la X (salir de la aplicación)
+        private bool _cerrandoSesion;
+
+        // Cierra la sesión del usuario actual y vuelve a la pantalla de login (sin cerrar la aplicación)
+        private void CerrarSesion()
+        {
+            _cerrandoSesion = true;
+            Sesion.Cerrar();
+            Close();
+        }
+
+        // Al abrirse la ventana principal se muestra el dashboard (Inicio) por defecto
         private void FrmPrincipal_Load(object? sender, EventArgs e)
         {
             AbrirFormulario(new FrmDashboard());
         }
 
+        // Al cerrarse la ventana: si fue por "Cerrar sesión" se vuelve a mostrar el login
+        // (que estaba oculto); en cualquier otro caso se cierra toda la aplicación
         private void FrmPrincipal_FormClosed(object? sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+            var login = Application.OpenForms.OfType<FrmLogin>().FirstOrDefault();
+            if (_cerrandoSesion && login != null)
+                login.MostrarDeNuevo();
+            else
+                Application.Exit();   // cerrar la ventana con la X sigue saliendo del sistema
         }
     }
 }

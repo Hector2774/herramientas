@@ -14,6 +14,10 @@ namespace PromacoHerra
     // ni editan. La búsqueda y el filtro por departamento trabajan sobre la lista en memoria.
     public partial class FrmEmpleados : Form
     {
+        // ══════════════════════════════════════════════════════════
+        // CAMPOS E INICIO
+        // ══════════════════════════════════════════════════════════
+
         private const string TodosLosDepartamentos = "Todos los departamentos";
         private const string TextoSincronizar = "Sincronizar desde RRHH";
 
@@ -29,6 +33,8 @@ namespace PromacoHerra
         private readonly DataGridViewTextBoxColumn colNombre = EmpleadoGrid.Columna("NOMBRE");
         private readonly DataGridViewTextBoxColumn colDepartamento = EmpleadoGrid.Columna("DEPARTAMENTO", 200);
 
+        // Arma la grilla, aplica colores y conecta los eventos: botón Sincronizar, caja de
+        // búsqueda, combo de departamento y reacomodo de controles al cambiar el tamaño
         public FrmEmpleados()
         {
             InitializeComponent();
@@ -47,6 +53,7 @@ namespace PromacoHerra
             pnlVacio.Resize += (s, e) => CentrarEstadoVacio();
         }
 
+        // Colores de fondo, textos secundarios e íconos según la paleta del sistema
         private void AplicarEstilos()
         {
             pnlHeader.BackColor = ThemeManager.AppBackground;
@@ -64,6 +71,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // GRILLA
         // ══════════════════════════════════════════════════════════
+
+        // Crea la tabla de empleados con sus 4 columnas (avatar, código, nombre, departamento)
+        // y la agrega al panel de contenido
         private void ConstruirGrid()
         {
             colAvatar.Resizable = DataGridViewTriState.False;
@@ -98,12 +108,15 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // CARGA Y FILTROS
         // ══════════════════════════════════════════════════════════
+
+        // Al abrir el formulario se cargan los empleados guardados en la base de datos
         private void FrmEmpleados_Load(object? sender, EventArgs e)
         {
             CargarLocales();
             BeginInvoke(new Action(() => ActiveControl = null));   // que se vea el placeholder
         }
 
+        // Lee los empleados de la base de datos local y refresca el combo, el subtítulo y la tabla
         private void CargarLocales()
         {
             try
@@ -136,6 +149,8 @@ namespace PromacoHerra
             cboDepartamento.SelectedIndex = idx < 0 ? 0 : idx;
         }
 
+        // Texto bajo el título: cantidad de empleados, fecha de la última sincronización y,
+        // si se sincronizó en esta sesión, cuántos fueron nuevos o actualizados
         private void ActualizarSubtitulo()
         {
             var partes = new List<string> { _empleados.Count == 1 ? "1 empleado" : $"{_empleados.Count} empleados" };
@@ -150,6 +165,8 @@ namespace PromacoHerra
             lblSubtitulo.Text = string.Join("  ·  ", partes);
         }
 
+        // Filtra la lista según el texto buscado (nombre o código) y el departamento elegido,
+        // vuelve a llenar la tabla y muestra el estado "vacío" si no hay empleados
         private void AplicarFiltros()
         {
             string termino = txtBuscar.Text.Trim();
@@ -180,6 +197,7 @@ namespace PromacoHerra
             if (sinDatos) CentrarEstadoVacio();
         }
 
+        // Centra el ícono y los textos del mensaje "no hay empleados"
         private void CentrarEstadoVacio()
         {
             int centroX = pnlVacio.Width / 2;
@@ -192,6 +210,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // SINCRONIZACIÓN
         // ══════════════════════════════════════════════════════════
+
+        // Botón "Sincronizar desde RRHH": descarga los empleados de la API de Recursos Humanos
+        // (en segundo plano, sin congelar la ventana), los guarda y recarga la lista
         private async void BtnSincronizar_Click(object? sender, EventArgs e)
         {
             btnSincronizar.Enabled = false;

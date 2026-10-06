@@ -15,6 +15,7 @@ namespace PromacoHerra
     {
         private readonly bool _obligatorio;
 
+        // Controles del formulario (este formulario no tiene Designer: se arma por código en ConstruirInterfaz)
         private readonly MaterialTextBox txtActual = new();
         private readonly MaterialTextBox txtNueva = new();
         private readonly MaterialTextBox txtConfirmar = new();
@@ -22,6 +23,7 @@ namespace PromacoHerra
         private readonly MaterialButton btnGuardar = new();
         private readonly MaterialButton btnCancelar = new();
 
+        // Recibe si el cambio es obligatorio o voluntario, arma la interfaz y aplica los colores del tema
         public FrmCambiarPassword(bool obligatorio)
         {
             _obligatorio = obligatorio;
@@ -35,8 +37,16 @@ namespace PromacoHerra
                 if (c is Label { Tag: EtiquetaSecundaria }) c.ForeColor = ThemeManager.TextSecondary;
         }
 
+        // Marca para reconocer las etiquetas de texto secundario (gris) después de aplicar el tema
         private const string EtiquetaSecundaria = "secundaria";
 
+        // ══════════════════════════════════════════════════════════
+        // INTERFAZ — creación de controles por código
+        // ══════════════════════════════════════════════════════════
+
+        // Coloca de arriba hacia abajo: título, texto de introducción, campos de contraseña,
+        // reglas de la contraseña, mensaje de error y los botones Guardar / Cancelar.
+        // La variable "y" va bajando a medida que se agrega cada control.
         private void ConstruirInterfaz()
         {
             Text = "Cambiar contraseña";
@@ -93,6 +103,7 @@ namespace PromacoHerra
             Shown += (_, _) => (_obligatorio ? txtNueva : txtActual).Focus();
         }
 
+        // Agrega una etiqueta + su caja de contraseña (con caracteres ocultos). Al escribir se borra el error.
         private void Campo(string etiqueta, MaterialTextBox txt, int x, int ancho, ref int y)
         {
             Agregar(new Label { Text = etiqueta, Font = new Font("Segoe UI", 9F, FontStyle.Bold), AutoSize = true }, x, ref y, 20);
@@ -103,6 +114,7 @@ namespace PromacoHerra
             Agregar(txt, x, ref y, 50);
         }
 
+        // Ayudante: pone un control en la posición (x, y) y baja "y" para el siguiente
         private void Agregar(Control c, int x, ref int y, int alto)
         {
             c.Location = new Point(x, y);
@@ -110,6 +122,7 @@ namespace PromacoHerra
             y += alto;
         }
 
+        // Ayudante: crea una etiqueta de texto secundario (explicaciones en gris)
         private static Label Secundaria(string texto, int ancho, int alto) => new()
         {
             Text = texto,
@@ -118,6 +131,12 @@ namespace PromacoHerra
             Tag = EtiquetaSecundaria
         };
 
+        // ══════════════════════════════════════════════════════════
+        // GUARDAR — validar y cambiar la contraseña
+        // ══════════════════════════════════════════════════════════
+
+        // Botón "Guardar contraseña": revisa que la confirmación coincida, que sea distinta de la
+        // actual y que cumpla las reglas de seguridad; luego la guarda en la base de datos
         private void Guardar()
         {
             // Sin Trim: los espacios forman parte de la contraseña
@@ -147,6 +166,7 @@ namespace PromacoHerra
             Close();
         }
 
+        // Muestra el mensaje de error en rojo dentro del formulario y emite un sonido de aviso
         private void MostrarError(string mensaje)
         {
             lblError.Text = mensaje;

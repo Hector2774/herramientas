@@ -28,6 +28,7 @@ namespace PromacoHerra
         private static readonly Color Accent = ThemeManager.AccentBlue;
         private static readonly Color AccentSoft = ThemeManager.AccentBlueSoft;
 
+        // Fuentes usadas al dibujar (se crean una sola vez para no repetirlas en cada repintado)
         private static readonly Font FuenteTitulo = new("Segoe UI Semibold", 10F);
         private static readonly Font FuenteSaludo = new("Segoe UI Semibold", 15F);
         private static readonly Font Fuente7 = new("Segoe UI", 7F);
@@ -43,19 +44,23 @@ namespace PromacoHerra
         private int _vencidos, _activos, _disponibles, _enMantenimiento, _daniadas;
         // Dona: unidades por estado
         private int _uDisponibles, _uPrestadas, _uVencidas, _uMantenimiento, _uDanadas;
+        // Datos de cada gráfico / tarjeta (se llenan en LoadDashboard)
         private List<(DateTime Fecha, int Prestamos, int Devoluciones)> _actividadMensual = new();
         private List<(string Depto, int Total)> _departamentos = new();
         private DataTable _proximasDevoluciones = new();
         private DataTable _sinStockList = new();
         private DataTable _actividadReciente = new();
-        private string? _error;
+        private string? _error;   // mensaje de error si falló la carga (se muestra dentro de las tarjetas)
 
+        // Las 5 tarjetas de indicadores de la fila superior
         private readonly KpiTile kpiVencidos = new("Préstamos vencidos", IconChar.TriangleExclamation, Paleta.Rojo, Paleta.RojoSuave) { Clickeable = true };
         private readonly KpiTile kpiActivos = new("Préstamos activos", IconChar.Handshake, ThemeManager.AccentBlue, ThemeManager.AccentBlueSoft);
         private readonly KpiTile kpiDisponibles = new("Disponibles", IconChar.CircleCheck, Paleta.Verde, Paleta.VerdeSuave);
         private readonly KpiTile kpiMantenimiento = new("En mantenimiento", IconChar.ScrewdriverWrench, Paleta.Naranja, Paleta.NaranjaSuave);
         private readonly KpiTile kpiDanadas = new("Dañadas", IconChar.HeartCrack, Paleta.Violeta, Paleta.VioletaSuave);
 
+        // Coloca las tarjetas KPI, conecta cada panel con la función que lo dibuja
+        // (PintarDona, PintarLineas, etc.) y al abrirse carga los datos
         public FrmDashboard()
         {
             InitializeComponent();
@@ -90,6 +95,10 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DATOS
         // ══════════════════════════════════════════════════════════
+
+        // Consulta en la base de datos todo lo que muestra el tablero (KPIs, unidades por estado,
+        // actividad de 30 días, departamentos, próximas devoluciones, sin stock y actividad de hoy)
+        // y luego manda a redibujar todo
         private void LoadDashboard()
         {
             Cursor = Cursors.WaitCursor;
@@ -135,6 +144,7 @@ namespace PromacoHerra
             Invalidate(true);
         }
 
+        // Pone los números y textos pequeños en las 5 tarjetas KPI
         private void ActualizarKpis()
         {
             kpiVencidos.Valor = _vencidos;
@@ -153,6 +163,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // HELPERS DE DIBUJO
         // ══════════════════════════════════════════════════════════
+        // Funciones pequeñas que reutilizan todas las tarjetas al dibujarse
+
+        // Forma de rectángulo con esquinas redondeadas
         private static GraphicsPath RoundedRect(Rectangle r, int radius) => RoundedGeometry.RoundedRect(r, radius);
 
         // Tarjeta blanca redondeada con borde; devuelve el área interior
@@ -167,11 +180,13 @@ namespace PromacoHerra
             return r;
         }
 
+        // Escribe texto en una línea; si no cabe lo corta con "…"
         private static void Texto(Graphics g, string texto, Font fuente, Color color, Rectangle r,
             TextFormatFlags extra = TextFormatFlags.Left) =>
             TextRenderer.DrawText(g, texto, fuente, r, color,
                 extra | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
 
+        // Dibuja una "pastilla" de color con texto, alineada a la derecha (p. ej. "VENCIDO", "Agotado")
         private static Rectangle Chip(Graphics g, string texto, Color fondo, Color frente, int derecha, int centroY)
         {
             var tam = TextRenderer.MeasureText(g, texto, Fuente8B, Size.Empty, TextFormatFlags.NoPadding);
@@ -184,11 +199,14 @@ namespace PromacoHerra
             return r;
         }
 
+        // Recorta un texto a "max" caracteres agregando "…"
         private static string Truncar(string? s, int max) =>
             string.IsNullOrEmpty(s) ? "" : s.Length <= max ? s : s[..(max - 1)].TrimEnd() + "…";
 
+        // "1 vencido" / "3 vencidos"
         private static string Plural(int n, string singular, string plural) => n == 1 ? $"1 {singular}" : $"{n} {plural}";
 
+        // Mensaje centrado para cuando una tarjeta no tiene datos
         private static void Vacio(Graphics g, Rectangle area, string texto, Color? color = null) =>
             TextRenderer.DrawText(g, texto, Fuente9, area, color ?? FgSecondary,
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak);
@@ -196,6 +214,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // TOPBAR
         // ══════════════════════════════════════════════════════════
+
+        // Barra superior: saludo según la hora ("Buenos días, Juan"), resumen del día en una
+        // pastilla gris y la fecha a la derecha
         private void PintarTopbar(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -245,6 +266,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DONA: unidades por estado
         // ══════════════════════════════════════════════════════════
+
+        // Gráfico de dona: cada color es un estado de las unidades; en el centro el total
+        // y abajo la leyenda con cantidad y porcentaje
         private void PintarDona(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -310,6 +334,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // LÍNEAS: actividad últimos 30 días
         // ══════════════════════════════════════════════════════════
+
+        // Gráfico de líneas: préstamos (azul) y devoluciones (verde) por día en los últimos
+        // 30 días, con guías horizontales y fechas cada 5 días
         private void PintarLineas(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -381,6 +408,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // BARRAS POR DEPARTAMENTO
         // ══════════════════════════════════════════════════════════
+
+        // Barras horizontales: cuántos préstamos activos tiene cada departamento
+        // (la barra más larga = el departamento con más préstamos)
         private void PintarDepartamentos(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -413,6 +443,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // PRÓXIMAS DEVOLUCIONES
         // ══════════════════════════════════════════════════════════
+
+        // Lista de préstamos que vencen pronto (o ya vencieron), con un chip de color según los
+        // días restantes: rojo vencido, naranja hoy, amarillo ≤ 2 días, verde el resto
         private void PintarProximas(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -454,6 +487,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // SIN STOCK + ALERTAS
         // ══════════════════════════════════════════════════════════
+
+        // Tarjeta partida en dos: arriba las herramientas agotadas, abajo un cuadro de alertas
+        // (vencidos, dañadas, en reparación) en rojo, o verde si no hay ninguna
         private void PintarStockAlertas(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -506,6 +542,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // ACTIVIDAD DE HOY
         // ══════════════════════════════════════════════════════════
+
+        // Crea una tarjeta pequeña por cada préstamo o devolución registrado hoy
+        // (o una tarjeta de "sin actividad" si no hubo ninguno)
         private void ConstruirActividad()
         {
             flpActividad.SuspendLayout();
@@ -530,6 +569,7 @@ namespace PromacoHerra
             flpActividad.ResumeLayout();
         }
 
+        // Una tarjeta de actividad: chip "Préstamo"/"Devolución", hora, avatar, empleado y herramientas
         private static PanelGdi TarjetaActividad(DataRow r)
         {
             bool esPrestamo = r["Tipo"]?.ToString() == "Préstamo";

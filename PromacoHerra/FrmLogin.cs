@@ -13,6 +13,10 @@ using System.Windows.Forms;
 
 namespace PromacoHerra
 {
+    // Pantalla de inicio de sesión: es el primer formulario que abre la aplicación (ver Program.cs).
+    // Tiene dos paneles: a la izquierda la marca (logo y nombre) y a la derecha los campos de
+    // usuario y contraseña. Si el login es correcto abre FrmPrincipal y se oculta (no se cierra,
+    // para poder volver a mostrarse al cerrar sesión).
     public partial class FrmLogin : Form
     {
         private const string NombreApp = "Gestión de Herramientas";
@@ -21,6 +25,7 @@ namespace PromacoHerra
         // Logo en blanco + rojo sobre transparente, generado del logo original (ver LogoParaFondoOscuro)
         private readonly Bitmap? _logo = LogoParaFondoOscuro();
 
+        // Aplica el tema visual y conecta los botones Entrar y Salir con sus funciones
         public FrmLogin()
         {
             InitializeComponent();
@@ -55,6 +60,7 @@ namespace PromacoHerra
             CentrarCampos();
         }
 
+        // Mantiene el bloque de campos centrado en el panel derecho aunque cambie el tamaño de la ventana
         private void CentrarCampos()
         {
             pnlCampos.Location = new Point(
@@ -157,17 +163,25 @@ namespace PromacoHerra
             return logo;
         }
 
+        // Libera la imagen del logo de memoria cuando se cierra el formulario
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             _logo?.Dispose();
             base.OnFormClosed(e);
         }
 
+        // ══════════════════════════════════════════════════════════
+        // INICIO DE SESIÓN — validar credenciales y entrar al sistema
+        // ══════════════════════════════════════════════════════════
+
+        // NOTA: este método no está conectado a ningún botón (sobrante); el que funciona es btnLogin_Click
         private void BtnLogin_Click(object? sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
+        // Botón "Entrar": valida que se llenaron los campos, verifica usuario y contraseña en la
+        // base de datos, obliga a cambiar la contraseña si es temporal y abre la ventana principal
         private void btnLogin_Click(object sender, EventArgs e)
         {
             string user = txtUsuario.Text.Trim();
@@ -210,6 +224,16 @@ namespace PromacoHerra
             }
         }
 
+        // Al cerrar sesión desde el sistema: se vuelve a mostrar el login listo para otro usuario
+        public void MostrarDeNuevo()
+        {
+            txtPassword.Clear();
+            Show();
+            Activate();
+            txtUsuario.Focus();
+        }
+
+        // Botón "Salir" del login: cierra toda la aplicación
         private void btnSalir_Click(object sender, EventArgs e)
         {
             Application.Exit();

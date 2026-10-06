@@ -20,6 +20,7 @@ namespace PromacoHerra
     // "Enviar a mantenimiento" abre FrmAbrirMantenimiento con las unidades marcadas.
     public class FrmUnidades : Form
     {
+        // Una opción del combo de acciones masivas: el texto que se ve y el estado que aplica
         private sealed record Accion(string Texto, string Estado)
         {
             public override string ToString() => Texto;
@@ -28,10 +29,11 @@ namespace PromacoHerra
         private const string EstadoMantenimiento = "Mantenimiento";
         private static readonly Font FuenteCodigo = new("Consolas", 9.5F);
 
-        private readonly int _herramientaId;
-        private string _codigo = "";
-        private DataTable _unidades = new();
+        private readonly int _herramientaId;   // herramienta cuyas unidades se muestran
+        private string _codigo = "";           // código de la herramienta (para filtrar en mantenimiento)
+        private DataTable _unidades = new();   // unidades cargadas en la grilla
 
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirInterfaz)
         // Encabezado
         private readonly Label lblTitulo = new();
         private readonly Label lblSubtitulo = new();
@@ -64,6 +66,7 @@ namespace PromacoHerra
         private readonly MaterialButton btnAgregar = new();
         private readonly MaterialButton btnCerrar = new();
 
+        // Recibe la herramienta, arma la interfaz y al abrirse carga sus datos y unidades
         public FrmUnidades(int herramientaId)
         {
             _herramientaId = herramientaId;
@@ -76,6 +79,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // INTERFAZ
         // ══════════════════════════════════════════════════════════
+
+        // Crea las zonas de la ventana (encabezado, grilla, barra de acciones y pie) y conecta
+        // cada control con su función
         private void ConstruirInterfaz()
         {
             Text = "Unidades de stock";
@@ -236,6 +242,7 @@ namespace PromacoHerra
             CancelButton = btnCerrar;
         }
 
+        // Colores de los chips de stock, botones y grilla
         private void AplicarEstilos()
         {
             BackColor = ThemeManager.CardBackground;
@@ -270,6 +277,7 @@ namespace PromacoHerra
             colCodigo.DefaultCellStyle.Font = FuenteCodigo;
         }
 
+        // Líneas divisorias finas en el borde superior / inferior de un panel
         private static void LineaSuperior(PaintEventArgs e, Control c)
         {
             using var pen = new Pen(ThemeManager.BorderColor);
@@ -285,6 +293,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DATOS
         // ══════════════════════════════════════════════════════════
+
+        // Lee la herramienta (si ya no existe o está inactiva cierra la ventana), llena el
+        // encabezado con los contadores de stock y carga la lista de unidades en la grilla
         private void Cargar()
         {
             DataTable dtH;
@@ -323,9 +334,11 @@ namespace PromacoHerra
             ActualizarSeleccion();
         }
 
+        // Ids de las unidades que tienen la casilla marcada
         private List<int> UnidadesMarcadas() =>
             _unidades.AsEnumerable().Where(r => r.Field<bool>("Sel")).Select(r => r.Field<int>("UnidadId")).ToList();
 
+        // Muestra la barra de acciones solo si hay unidades marcadas, con el contador
         private void ActualizarSeleccion()
         {
             int n = UnidadesMarcadas().Count;
@@ -333,6 +346,7 @@ namespace PromacoHerra
             lblSeleccion.Text = n == 1 ? "1 unidad seleccionada" : $"{n} unidades seleccionadas";
         }
 
+        // Marca o desmarca todas las unidades ("Quitar selección" la usa con false)
         private void MarcarTodas(bool valor)
         {
             foreach (DataRow r in _unidades.Rows) r["Sel"] = valor;
@@ -348,6 +362,7 @@ namespace PromacoHerra
             _ => null
         };
 
+        // Zona dentro de la celda donde se dibuja el selector Bueno / Dañado / Perdido
         private static Rectangle AreaCondicion(Rectangle celda) =>
             new(celda.X + 10, celda.Y + 7, celda.Width - 14, celda.Height - 14);
 
@@ -412,6 +427,10 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // ACCIONES
         // ══════════════════════════════════════════════════════════
+
+        // Botón "Aplicar" de la barra: aplica la acción elegida en el combo a todas las unidades
+        // marcadas (si es mantenimiento, abre su propio formulario). Las que no se pueden
+        // cambiar (prestadas, etc.) se omiten y se informa cuántas
         private void Aplicar()
         {
             if (cboAccion.SelectedItem is not Accion accion) return;
@@ -456,6 +475,7 @@ namespace PromacoHerra
             Cargar();
         }
 
+        // Switch "Préstamos activos / suspendidos": permite o bloquea prestar esta herramienta
         private void AlternarPrestamo()
         {
             bool habilitado = swPrestamos.Activo;
@@ -473,6 +493,7 @@ namespace PromacoHerra
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
+        // Botón "Agregar": crea la cantidad indicada de unidades nuevas para esta herramienta
         private void AgregarUnidades()
         {
             int cantidad = (int)nudAgregar.Value;
@@ -490,6 +511,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // HELPERS
         // ══════════════════════════════════════════════════════════
+
+        // Atajos para los cuadros de mensaje: aviso, éxito, error y confirmación Sí/No
         private void Aviso(string m) => MessageBox.Show(m, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void OK(string m) => MessageBox.Show(m, "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
         private void Error(string m) => MessageBox.Show(m, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

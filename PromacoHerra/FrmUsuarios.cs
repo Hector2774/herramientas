@@ -15,6 +15,7 @@ namespace PromacoHerra
     // Los usuarios no se eliminan: préstamos y mantenimientos guardan quién los registró.
     public class FrmUsuarios : Form
     {
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirInterfaz)
         private readonly Label lblTitulo = new();
         private readonly Label lblSubtitulo = new();
         private readonly MaterialButton btnNuevo = new();
@@ -32,8 +33,9 @@ namespace PromacoHerra
         private readonly MaterialButton btnEditar = new();
         private readonly MaterialButton btnEstado = new();
 
-        private DataRow? _seleccionado;
+        private DataRow? _seleccionado;   // usuario seleccionado en la grilla (null si no hay ninguno)
 
+        // Arma la interfaz, aplica colores y al abrirse carga la lista de usuarios
         public FrmUsuarios()
         {
             ConstruirInterfaz();
@@ -45,6 +47,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // INTERFAZ
         // ══════════════════════════════════════════════════════════
+
+        // Ayudante: crea una columna de la grilla enlazada a un campo de la consulta.
+        // "peso" define qué proporción del ancho ocupa.
         private static DataGridViewTextBoxColumn Columna(string propiedad, string encabezado, float peso) => new()
         {
             DataPropertyName = propiedad,
@@ -54,6 +59,8 @@ namespace PromacoHerra
             ReadOnly = true
         };
 
+        // Crea las tres zonas de la pantalla: encabezado (arriba), grilla (centro) y
+        // barra de acciones (abajo), y conecta cada botón con su acción
         private void ConstruirInterfaz()
         {
             Text = "Usuarios";
@@ -131,6 +138,7 @@ namespace PromacoHerra
             Controls.Add(pnlHeader);
         }
 
+        // Acomoda los botones de la barra inferior de derecha a izquierda; el texto ocupa el resto
         private void AlinearAcciones()
         {
             int y = pnlAcciones.Padding.Top;
@@ -144,6 +152,7 @@ namespace PromacoHerra
             lblSeleccion.SetBounds(0, y, Math.Max(0, x - 10), 40);
         }
 
+        // Colores, fuentes y tamaños de la grilla y los botones
         private void AplicarEstilos()
         {
             BackColor = ThemeManager.AppBackground;
@@ -180,6 +189,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DATOS
         // ══════════════════════════════════════════════════════════
+
+        // Trae todos los usuarios de la base de datos y los muestra en la grilla.
+        // Si se indica un Id, deja seleccionado ese usuario (p. ej. el que se acaba de crear o editar).
         private void Cargar(int? seleccionarId)
         {
             try
@@ -205,6 +217,8 @@ namespace PromacoHerra
             ActualizarSeleccion();
         }
 
+        // Cada vez que cambia la fila seleccionada: actualiza el texto de la barra inferior y
+        // habilita o deshabilita los botones según el usuario (activo/inactivo, si es uno mismo)
         private void ActualizarSeleccion()
         {
             _seleccionado = dgvUsuarios.SelectedRows.Count > 0 && dgvUsuarios.SelectedRows[0].DataBoundItem is DataRowView v
@@ -242,6 +256,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // ACCIONES
         // ══════════════════════════════════════════════════════════
+
+        // Botón "Nuevo usuario": abre el editor vacío; si se crea, muestra la contraseña temporal
         private void NuevoUsuario()
         {
             using var frm = new FrmUsuarioEditor();
@@ -251,6 +267,7 @@ namespace PromacoHerra
             Cargar(frm.UsuarioId);
         }
 
+        // Botón "Editar" (o doble clic): abre el editor con los datos del usuario seleccionado
         private void EditarUsuario()
         {
             if (_seleccionado == null) return;
@@ -259,6 +276,8 @@ namespace PromacoHerra
             Cargar(frm.UsuarioId);
         }
 
+        // Botón "Restablecer contraseña": pide confirmación, genera una contraseña temporal nueva
+        // y la guarda (la anterior deja de funcionar)
         private void RestablecerPassword()
         {
             if (_seleccionado == null) return;
@@ -278,6 +297,8 @@ namespace PromacoHerra
             Cargar(id);
         }
 
+        // Botón "Activar / Desactivar": un usuario desactivado no puede entrar al sistema,
+        // pero se conserva su historial
         private void CambiarEstado()
         {
             if (_seleccionado == null) return;
@@ -314,12 +335,16 @@ namespace PromacoHerra
                 titulo, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        // Ayudante: muestra un mensaje de error
         private static void Error(string mensaje) =>
             MessageBox.Show(mensaje, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         // ══════════════════════════════════════════════════════════
         // GRILLA: textos y chips
         // ══════════════════════════════════════════════════════════
+
+        // Cambia el texto que se muestra en algunas columnas: el empleado junto a su código y
+        // la situación de la contraseña en palabras (en lugar de verdadero/falso)
         private void dgvUsuarios_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex < 0 || dgvUsuarios.Rows[e.RowIndex].DataBoundItem is not DataRowView v) return;
@@ -338,6 +363,8 @@ namespace PromacoHerra
             }
         }
 
+        // Dibuja las columnas Rol y Estado como "chips" de color (violeta = administrador,
+        // verde = activo, rojo = inactivo, amarillo = empleado inactivo)
         private void dgvUsuarios_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.Graphics == null) return;

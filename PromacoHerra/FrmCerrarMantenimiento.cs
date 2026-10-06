@@ -17,8 +17,9 @@ namespace PromacoHerra
         private const string Moneda = Dinero.Simbolo;
 
         private readonly int _mantenimientoId;
-        private readonly bool _externo;
+        private readonly bool _externo;   // true si el servicio lo hace un proveedor externo (taller)
 
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirInterfaz)
         private readonly MaterialRadioButton rbReparada = new();
         private readonly MaterialRadioButton rbBaja = new();
         private readonly MaterialCheckBox chkGarantia = new();
@@ -30,6 +31,7 @@ namespace PromacoHerra
         private readonly MaterialButton btnCerrar = new();
         private readonly MaterialButton btnCancelar = new();
 
+        // Recibe el mantenimiento a cerrar, detecta si es externo o interno y arma la pantalla
         /// <param name="mantenimiento">Fila de sp_Mantenimiento_ObtenerActivos.</param>
         public FrmCerrarMantenimiento(DataRow mantenimiento)
         {
@@ -42,6 +44,13 @@ namespace PromacoHerra
             ActualizarCostos();
         }
 
+        // ══════════════════════════════════════════════════════════
+        // INTERFAZ — creación de controles por código
+        // ══════════════════════════════════════════════════════════
+
+        // Arma de arriba hacia abajo: datos de la unidad, resultado (reparada / baja), costos,
+        // folio de factura (solo externos), total, notas y botones. Mano de obra y folio
+        // solo aparecen si el servicio es externo.
         private void ConstruirInterfaz(DataRow m)
         {
             Text = "Cerrar mantenimiento";
@@ -151,6 +160,7 @@ namespace PromacoHerra
             CancelButton = btnCancelar;
         }
 
+        // Ayudantes de interfaz: colocar un control y bajar "y", y crear etiquetas con formato
         private void Agregar(Control c, int x, ref int y, int alto)
         {
             c.Location = new Point(x, y);
@@ -173,6 +183,12 @@ namespace PromacoHerra
             AutoEllipsis = true
         };
 
+        // ══════════════════════════════════════════════════════════
+        // COSTOS
+        // ══════════════════════════════════════════════════════════
+
+        // Prepara una caja numérica para dinero (2 decimales, separador de miles);
+        // al cambiar el valor se recalcula el total
         private void ConfigurarMonto(NumericUpDown nud)
         {
             nud.DecimalPlaces = 2;
@@ -182,6 +198,7 @@ namespace PromacoHerra
             nud.ValueChanged += (_, _) => ActualizarCostos();
         }
 
+        // Calcula y muestra el total (materiales + mano de obra si es externo).
         // En garantía no hay costo: se ponen en cero y se bloquean
         private void ActualizarCostos()
         {
@@ -193,6 +210,12 @@ namespace PromacoHerra
             lblTotal.Text = garantia ? "Total: sin costo (garantía)" : $"Total: {Moneda} {total:N2}";
         }
 
+        // ══════════════════════════════════════════════════════════
+        // GUARDAR
+        // ══════════════════════════════════════════════════════════
+
+        // Botón "Cerrar mantenimiento": si es baja pide confirmación; luego registra en la base
+        // de datos el resultado, los costos, la garantía, el folio y las notas
         private void Cerrar()
         {
             bool reparada = rbReparada.Checked;

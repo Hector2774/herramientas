@@ -20,13 +20,16 @@ namespace PromacoHerra
         private static readonly Font FuenteTituloDetalle = new("Segoe UI", 8.5F, FontStyle.Bold);
         private static readonly Font FuenteDetalle = new("Segoe UI", 9.5F);
 
-        private readonly DataTable _datos;
+        private readonly DataTable _datos;   // los mantenimientos de la herramienta (llegan ya consultados)
 
+        // Controles del formulario (no tiene Designer: se arman por código en ConstruirInterfaz)
+        // Tarjetas de indicadores (KPI) de la parte superior
         private readonly KpiTile kpiTotal = new("Mantenimientos", IconChar.ScrewdriverWrench, ThemeManager.AccentBlue, ThemeManager.AccentBlueSoft);
         private readonly KpiTile kpiCosto = new("Costo total", IconChar.MoneyBillWave, Paleta.Verde, Paleta.VerdeSuave);
         private readonly KpiTile kpiDuracion = new("Duración promedio", IconChar.Clock, Paleta.Naranja, Paleta.NaranjaSuave);
         private readonly KpiTile kpiCorrectivos = new("Correctivos", IconChar.HeartCrack, Paleta.Rojo, Paleta.RojoSuave);
 
+        // Grilla y sus columnas
         private readonly DataGridView dgv = new();
         private readonly DataGridViewTextBoxColumn colUnidad = Columna("Unidad", "Unidad", 11);
         private readonly DataGridViewTextBoxColumn colTipo = Columna("Tipo", "Tipo", 11);
@@ -38,6 +41,7 @@ namespace PromacoHerra
         private readonly DataGridViewTextBoxColumn colResultado = Columna("Resultado", "Resultado", 10);
         private readonly DataGridViewTextBoxColumn colCosto = Columna("Costo total", "Costo", 9);
 
+        // Panel de detalle inferior
         private readonly Label lblSinSeleccion = new();
         private readonly Label lblTrabajo = new();
         private readonly Label lblNotas = new();
@@ -47,6 +51,8 @@ namespace PromacoHerra
         private readonly TableLayoutPanel tlpDetalle = new();
         private readonly MaterialButton btnCerrar = new() { Text = "Cerrar", Size = new Size(120, 40) };
 
+        // Recibe el nombre de la herramienta y su historial; arma la pantalla, calcula los
+        // indicadores y llena la grilla
         /// <param name="nombreHerramienta">Nombre y código, para el encabezado.</param>
         /// <param name="datos">Resultado de sp_Mantenimiento_ObtenerPorHerramienta.</param>
         public FrmHistorialMantenimiento(string nombreHerramienta, DataTable datos)
@@ -60,6 +66,7 @@ namespace PromacoHerra
             Shown += (_, _) => { dgv.ClearSelection(); MostrarDetalle(null); };
         }
 
+        // Ayudante: crea una columna de la grilla enlazada a un campo de los datos
         private static DataGridViewTextBoxColumn Columna(string propiedad, string encabezado, float peso) => new()
         {
             DataPropertyName = propiedad,
@@ -72,6 +79,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // INTERFAZ
         // ══════════════════════════════════════════════════════════
+
+        // Crea las zonas de la ventana: encabezado, fila de 4 indicadores, grilla de
+        // mantenimientos, panel de detalle y pie con el botón Cerrar
         private void ConstruirInterfaz(string nombreHerramienta)
         {
             Text = "Historial de mantenimiento";
@@ -181,6 +191,7 @@ namespace PromacoHerra
             return flp;
         }
 
+        // Colores, fuentes y tamaños de la grilla, etiquetas secundarias y botón Cerrar
         private void AplicarEstilos()
         {
             BackColor = ThemeManager.AppBackground;
@@ -215,6 +226,7 @@ namespace PromacoHerra
             colCosto.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight;
         }
 
+        // Recorre todos los controles del formulario, incluidos los que están dentro de paneles
         private static System.Collections.Generic.IEnumerable<Control> Todos(Control raiz)
         {
             foreach (Control c in raiz.Controls)
@@ -227,6 +239,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DATOS
         // ══════════════════════════════════════════════════════════
+
+        // Calcula los 4 indicadores: total de mantenimientos (y cuántos en curso), costo total
+        // (con % materiales / mano de obra), duración promedio y cantidad de correctivos
         private void CargarIndicadores()
         {
             var filas = _datos.AsEnumerable().ToList();
@@ -253,6 +268,8 @@ namespace PromacoHerra
             kpiCorrectivos.Delta = $"{garantia} en garantía · {Cantidad(bajas, "baja")}";
         }
 
+        // Llena el panel inferior con el mantenimiento seleccionado: trabajo solicitado, notas,
+        // desglose del costo, garantía/factura y quién reportó el daño
         private void MostrarDetalle(DataRow? r)
         {
             lblSinSeleccion.Visible = r == null;
@@ -279,6 +296,9 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // GRILLA: textos y chips
         // ══════════════════════════════════════════════════════════
+
+        // Da formato a los textos de la grilla: fechas dd/MM/yyyy, duración en días, costo en
+        // lempiras ("Pendiente" si sigue en curso)
         private void dgv_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.RowIndex < 0 || dgv.Rows[e.RowIndex].DataBoundItem is not DataRowView v) return;
@@ -298,6 +318,8 @@ namespace PromacoHerra
             e.FormattingApplied = true;
         }
 
+        // Dibuja las columnas Tipo y Resultado como chips de color
+        // (naranja = en curso, verde = reparada, rojo = baja)
         private void dgv_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.Graphics == null) return;
@@ -320,8 +342,10 @@ namespace PromacoHerra
         }
 
         // ── Auxiliares ──
+        // Convierte un valor de la base de datos a dinero (vacío = 0)
         private static decimal Monto(object valor) => valor == DBNull.Value ? 0 : Convert.ToDecimal(valor);
 
+        // Devuelve el texto, o un texto alternativo si viene vacío
         private static string Texto(object valor, string siVacio) =>
             valor is string s && !string.IsNullOrWhiteSpace(s) ? s : siVacio;
 
@@ -332,6 +356,7 @@ namespace PromacoHerra
                 ? (Math.Round(dias) == 1 ? "1 día" : $"{Math.Round(dias):0} días")
                 : $"{dias:0.0} días";
 
+        // "1 registro" / "5 registros"
         private static string Cantidad(int n, string singular, string? plural = null) =>
             n == 1 ? $"1 {singular}" : $"{n} {plural ?? singular + "s"}";
     }

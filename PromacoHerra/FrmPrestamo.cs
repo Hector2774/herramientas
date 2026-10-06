@@ -20,14 +20,17 @@ namespace PromacoHerra
     {
         private const string SinCategoria = "Sin categoría";
 
-        private List<HerramientaCatalogoItem> _catalogo = new();
-        private readonly Dictionary<int, HerramientaCardControl> _tarjetas = new();
+        private List<HerramientaCatalogoItem> _catalogo = new();                          // herramientas disponibles para prestar
+        private readonly Dictionary<int, HerramientaCardControl> _tarjetas = new();     // HerramientaId → su tarjeta en pantalla
 
         // HerramientaId → UnidadIds seleccionadas, en el orden en que se agregaron
         private readonly Dictionary<int, List<int>> _seleccion = new();
 
+        // Categorías marcadas en los chips de filtro (vacío = mostrar todas)
         private readonly HashSet<string> _categoriasActivas = new(StringComparer.OrdinalIgnoreCase);
 
+        // Aplica estilos y conecta los eventos: carga, botones Guardar/Cancelar, selección de
+        // empleado, búsqueda y doble clic en la lista de seleccionadas
         public FrmPrestamo()
         {
             InitializeComponent();
@@ -62,6 +65,8 @@ namespace PromacoHerra
         }
 
         // ── Carga inicial ──────────────────────────────────────────
+        // Al abrir: muestra quién aprueba (el usuario en sesión), pone las fechas por defecto
+        // (devolución en 7 días) y carga el catálogo de herramientas
         private void FrmPrestamo_Load(object? sender, EventArgs e)
         {
             // Lo aprueba el empleado del usuario en sesión
@@ -74,6 +79,8 @@ namespace PromacoHerra
             CargarCatalogo();
         }
 
+        // Trae de la base de datos las herramientas con unidades disponibles y redibuja
+        // tarjetas, chips de categoría, filtros y resumen
         private void CargarCatalogo()
         {
             try
@@ -101,6 +108,7 @@ namespace PromacoHerra
             ActualizarResumen();
         }
 
+        // Crea una tarjeta por herramienta del catálogo y conecta sus botones "+", "−" y "Ver unidades"
         private void ConstruirTarjetas()
         {
             flpCatalogo.SuspendLayout();
@@ -126,6 +134,8 @@ namespace PromacoHerra
         }
 
         // ── Chips de categoría ─────────────────────────────────────
+        // Crea un chip "Todas" + un chip por cada categoría del catálogo. Clic en un chip lo
+        // activa o desactiva como filtro (se pueden combinar varias categorías)
         private void ConstruirChips()
         {
             var categorias = _catalogo.Select(CategoriaDe).Distinct(StringComparer.OrdinalIgnoreCase)
@@ -155,10 +165,13 @@ namespace PromacoHerra
             flpCategorias.ResumeLayout();
         }
 
+        // Categoría de una herramienta, o "Sin categoría" si no tiene
         private static string CategoriaDe(HerramientaCatalogoItem h) =>
             string.IsNullOrWhiteSpace(h.Categoria) ? SinCategoria : h.Categoria;
 
         // ── Búsqueda + filtro por categoría ────────────────────────
+        // Muestra u oculta cada tarjeta según las categorías marcadas y el texto buscado
+        // (nombre, código, marca, categoría o código de unidad)
         private void AplicarFiltros()
         {
             foreach (ChipToggle chip in flpCategorias.Controls)
@@ -198,6 +211,7 @@ namespace PromacoHerra
                 CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) >= 0;
 
         // ── Selección de unidades ──────────────────────────────────
+        // Unidades ya seleccionadas de una herramienta (lista vacía si ninguna)
         private List<int> SeleccionDe(HerramientaCatalogoItem item) =>
             _seleccion.TryGetValue(item.HerramientaId, out var lista) ? lista : new List<int>();
 
@@ -223,6 +237,7 @@ namespace PromacoHerra
             ActualizarResumen();
         }
 
+        // "Ver unidades ›" → abre FrmSeleccionarUnidades para elegir exactamente qué unidades prestar
         private void AbrirSelectorUnidades(HerramientaCatalogoItem item)
         {
             using var frm = new FrmSeleccionarUnidades(item, SeleccionDe(item));
@@ -234,6 +249,7 @@ namespace PromacoHerra
             ActualizarResumen();
         }
 
+        // Doble clic en la lista de seleccionadas → abre el selector de unidades de esa herramienta
         private void lvSeleccion_DoubleClick(object? sender, EventArgs e)
         {
             if (lvSeleccion.SelectedItems.Count == 0) return;
@@ -286,6 +302,8 @@ namespace PromacoHerra
         }
 
         // ── Guardar ────────────────────────────────────────────────
+        // Botón "Guardar": valida (empleado elegido, que no se apruebe a sí mismo, al menos una
+        // herramienta y fecha de devolución futura) y registra el préstamo en la base de datos
         private void btnGuardar_Click(object? sender, EventArgs e)
         {
             if (pickerEmpleado.EmpleadoId == 0)
@@ -341,11 +359,13 @@ namespace PromacoHerra
             }
         }
 
+        // Botón "Cancelar": descarta lo que se estaba llenando
         private void btnCancelar_Click(object? sender, EventArgs e)
         {
             LimpiarFormulario();
         }
 
+        // Deja el formulario en blanco para un nuevo préstamo y recarga el catálogo
         private void LimpiarFormulario()
         {
             pickerEmpleado.Limpiar();

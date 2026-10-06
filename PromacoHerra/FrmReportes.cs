@@ -25,6 +25,11 @@ namespace PromacoHerra
     {
         private const string Moneda = Dinero.Simbolo;
 
+        // ══════════════════════════════════════════════════════════
+        // TIPOS INTERNOS Y CAMPOS
+        // ══════════════════════════════════════════════════════════
+
+        // Los 7 reportes disponibles (una tarjeta por cada uno)
         private enum Reporte { Historial, Vencidos, PorEmpleado, Ranking, Mantenimiento, Danadas, Inventario }
 
         // Cómo se dibuja (y exporta) cada columna
@@ -35,13 +40,16 @@ namespace PromacoHerra
             HerramientaUnidad, TipoMantenimiento, Duracion, Costo, Condicion, Disponibles
         }
 
+        // Definición de una columna del reporte: campo de los datos, título, cómo se dibuja y su ancho
         private sealed record Col(string Campo, string Titulo, Render Render, int Ancho = 0, float Peso = 100);
 
+        // Opción de un combo de filtro: el valor que se manda a la consulta y el texto que se ve
         private sealed record Opcion(object? Valor, string Texto)
         {
             public override string ToString() => Texto;
         }
 
+        // Datos de cada reporte: título, descripción, ícono, qué filtros usa y si filtra por fechas
         private sealed record InfoReporte(string Titulo, string Descripcion, IconChar Icono, Control[] Filtros, bool UsaFechas);
 
         private static readonly Font FuenteNegrita = new("Segoe UI", 9.5F, FontStyle.Bold);
@@ -71,11 +79,11 @@ namespace PromacoHerra
         private readonly MaterialComboBox cboMostrar = Combo();
         private readonly DateTimePicker dtpDesde = Fecha();
         private readonly DateTimePicker dtpHasta = Fecha();
-        private readonly Dictionary<Control, Panel> _campos = new();
+        private readonly Dictionary<Control, Panel> _campos = new();   // control de filtro → su panel con etiqueta
 
-        private readonly Dictionary<Reporte, InfoReporte> _info = new();
-        private readonly Dictionary<Reporte, ReporteCard> _tarjetas = new();
-        private Reporte _reporte = Reporte.Historial;
+        private readonly Dictionary<Reporte, InfoReporte> _info = new();       // configuración de cada reporte
+        private readonly Dictionary<Reporte, ReporteCard> _tarjetas = new();   // tarjeta en pantalla de cada reporte
+        private Reporte _reporte = Reporte.Historial;                          // reporte elegido actualmente
 
         // Resultado actual (lo usan la grilla y la exportación)
         private readonly DataGridView dgvReporte = new();
@@ -83,6 +91,8 @@ namespace PromacoHerra
         private List<Col> _columnas = new();
         private string _periodo = "";
 
+        // Arma KPIs, filtros, tarjetas y grilla, y conecta los botones Generar / Excel / PDF.
+        // Clic en el KPI "Préstamos vencidos" abre directamente ese reporte.
         public FrmReportes()
         {
             InitializeComponent();
@@ -106,6 +116,7 @@ namespace PromacoHerra
             flpTarjetas.Resize += (s, e) => AjustarTarjetas();
         }
 
+        // Ayudantes: crean un combo de solo selección y un selector de fecha dd/MM/yyyy
         private static MaterialComboBox Combo() => new() { DropDownStyle = ComboBoxStyle.DropDownList };
 
         private static DateTimePicker Fecha() => new()
@@ -115,6 +126,7 @@ namespace PromacoHerra
             Width = 130
         };
 
+        // Colores de textos, íconos y estilo de los botones
         private void AplicarEstilos()
         {
             lblSubtitulo.ForeColor = ThemeManager.TextSecondary;
@@ -132,6 +144,7 @@ namespace PromacoHerra
             btnPDF.Variant = MaterialButtonVariant.Default;
         }
 
+        // Coloca a la derecha el botón Generar y los botones Excel / PDF
         private void AlinearDerecha()
         {
             btnGenerar.Location = new Point(pnlFiltros.Width - 20 - btnGenerar.Width, 30);
@@ -144,6 +157,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // CONSTRUCCIÓN
         // ══════════════════════════════════════════════════════════
+
+        // Coloca las 5 tarjetas KPI en la fila superior
         private void ConstruirKpis()
         {
             var tiles = new[] { kpiVencidos, kpiActivos, kpiDisponibles, kpiMantenimiento, kpiDanadas };
@@ -155,6 +170,8 @@ namespace PromacoHerra
             }
         }
 
+        // Crea todos los filtros posibles, llena sus opciones fijas y define para cada reporte
+        // qué filtros muestra (_info). Al cambiar de reporte solo se muestran los que le tocan.
         // Cada control de filtro va dentro de un "campo": etiqueta pequeña en mayúsculas + control
         private void ConstruirFiltros()
         {
@@ -198,6 +215,7 @@ namespace PromacoHerra
                 new Control[] { cboCategoria, cboMostrar }, false);
         }
 
+        // Envuelve un control de filtro en un panel con su etiqueta encima
         private void Campo(string etiqueta, Control control, int ancho)
         {
             var panel = new Panel { Size = new Size(ancho, 64), Margin = new Padding(0, 0, 14, 0), BackColor = Color.White };
@@ -216,6 +234,7 @@ namespace PromacoHerra
             _campos[control] = panel;
         }
 
+        // Ayudante: llena un combo con opciones y selecciona la primera
         private static void Llenar(MaterialComboBox cbo, params Opcion[] opciones)
         {
             cbo.Items.Clear();
@@ -223,12 +242,14 @@ namespace PromacoHerra
             cbo.SelectedIndex = 0;
         }
 
+        // Leen el valor elegido en los filtros (null = "Todos")
         private static object? Valor(MaterialComboBox cbo) => (cbo.SelectedItem as Opcion)?.Valor;
         private static int? ValorInt(MaterialComboBox cbo) => Valor(cbo) as int?;
         private static string? ValorTexto(MaterialComboBox cbo) => Valor(cbo) as string;
         private int? EmpleadoFiltro => pickEmpleado.EmpleadoId > 0 ? pickEmpleado.EmpleadoId : null;
         private int? HerramientaFiltro => pickHerramienta.HerramientaId > 0 ? pickHerramienta.HerramientaId : null;
 
+        // Crea una tarjeta por reporte; al hacer clic se elige ese reporte y se genera
         private void ConstruirTarjetas()
         {
             foreach (var (tipo, info) in _info)
@@ -254,6 +275,7 @@ namespace PromacoHerra
             }
         }
 
+        // Crea la grilla de resultados (las columnas se definen al generar cada reporte)
         private void ConstruirGrid()
         {
             dgvReporte.Dock = DockStyle.Fill;
@@ -273,6 +295,7 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // CARGA INICIAL
         // ══════════════════════════════════════════════════════════
+        // Al abrir: carga las listas de los filtros y genera el reporte "Historial" por defecto
         private void FrmReportes_Load(object? sender, EventArgs e)
         {
             try
@@ -288,6 +311,7 @@ namespace PromacoHerra
             Generar();
         }
 
+        // Llena los filtros que dependen de la base de datos: categorías y departamentos
         private void CargarListas()
         {
             pickEmpleado.EstablecerTodos("Todos los empleados");
@@ -302,6 +326,7 @@ namespace PromacoHerra
                 .Concat(dep.AsEnumerable().Select(r => new Opcion(r.Field<int>("DepartamentoId"), r.Field<string>("Nombre") ?? ""))).ToArray());
         }
 
+        // Consulta los indicadores y los muestra con cuánto cambiaron hoy ("↑ 2 nuevos hoy")
         private void CargarKpis()
         {
             try
@@ -332,6 +357,8 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // SELECCIÓN Y GENERACIÓN
         // ══════════════════════════════════════════════════════════
+
+        // Marca la tarjeta elegida y muestra solo los filtros de ese reporte
         private void SeleccionarReporte(Reporte tipo)
         {
             _reporte = tipo;
@@ -343,6 +370,7 @@ namespace PromacoHerra
             flpFiltros.ResumeLayout();
         }
 
+        // Botón "Generar": valida las fechas, refresca los KPIs y ejecuta el reporte elegido
         private void Generar()
         {
             if (_info[_reporte].UsaFechas && dtpDesde.Value.Date > dtpHasta.Value.Date)
@@ -377,6 +405,9 @@ namespace PromacoHerra
         // Línea que acompaña al título en las exportaciones
         private string PeriodoFechas => $"Período: {dtpDesde.Value:dd/MM/yyyy} — {dtpHasta.Value:dd/MM/yyyy}";
 
+        // ── Un método por reporte: consulta los datos con los filtros y define sus columnas ──
+
+        // Historial de préstamos (filtra por empleado, herramienta, estado y fechas)
         private void CargarHistorial()
         {
             var dt = ReporteService.HistorialPorPrestamo(EmpleadoFiltro, HerramientaFiltro,
@@ -393,6 +424,7 @@ namespace PromacoHerra
             });
         }
 
+        // Préstamos vencidos a hoy, con días de atraso y botón "Notificar"
         private void CargarVencidos()
         {
             var dt = ReporteService.Vencidos(EmpleadoFiltro, ValorInt(cboCategoria));
@@ -407,6 +439,7 @@ namespace PromacoHerra
             });
         }
 
+        // Totales de préstamos por empleado (activos, vencidos, devueltos) en el período
         private void CargarPorEmpleado()
         {
             var dt = ReporteService.PrestamosPorEmpleado(dtpDesde.Value, dtpHasta.Value, ValorInt(cboDepartamento));
@@ -421,6 +454,7 @@ namespace PromacoHerra
             });
         }
 
+        // Herramientas más prestadas; calcula el puesto y el % de demanda respecto a la primera
         private void CargarRanking()
         {
             var dt = ReporteService.RankingHerramientas(dtpDesde.Value, dtpHasta.Value, ValorInt(cboCategoria));
@@ -446,6 +480,7 @@ namespace PromacoHerra
             });
         }
 
+        // Historial de mantenimientos con costo y duración, más una línea de resumen con totales
         private void CargarMantenimiento()
         {
             var dt = ReporteService.HistorialMantenimiento(dtpDesde.Value, dtpHasta.Value,
@@ -472,6 +507,7 @@ namespace PromacoHerra
             lblResumen.Visible = true;
         }
 
+        // Unidades devueltas dañadas o perdidas, con el empleado responsable
         private void CargarDanadas()
         {
             var dt = ReporteService.DanadasPerdidas(dtpDesde.Value, dtpHasta.Value,
@@ -495,6 +531,7 @@ namespace PromacoHerra
             }
         }
 
+        // Stock actual por herramienta y su % de disponibilidad
         private void CargarInventario()
         {
             var dt = ReporteService.InventarioCategoria(ValorInt(cboCategoria), ValorTexto(cboMostrar) ?? "Todas");
@@ -553,6 +590,7 @@ namespace PromacoHerra
             BeginInvoke(new Action(() => dgvReporte.ClearSelection()));
         }
 
+        // Centra el ícono y el texto del mensaje "sin incidentes"
         private void CentrarSinIncidentes()
         {
             int cx = pnlSinIncidentes.Width / 2, cy = pnlSinIncidentes.Height / 2;
@@ -563,10 +601,13 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // DIBUJO DE CELDAS
         // ══════════════════════════════════════════════════════════
+        // Atajos para leer un campo de la fila como texto (S), número (I) o fecha (F)
         private static string S(DataRowView r, string campo) => r.Row.Table.Columns.Contains(campo) ? r[campo]?.ToString() ?? "" : "";
         private static int I(DataRowView r, string campo) => r[campo] == DBNull.Value ? 0 : Convert.ToInt32(r[campo]);
         private static DateTime? F(DataRowView r, string campo) => r[campo] is DateTime d ? d : null;
 
+        // Dibuja cada celda según el "Render" de su columna: texto, fecha, chip de estado,
+        // avatar de empleado, barra de %, puesto del ranking, costo, etc.
         private void dgvReporte_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex < 0 || e.Graphics == null) return;
@@ -719,6 +760,7 @@ namespace PromacoHerra
                 string.IsNullOrEmpty(depto) ? "Sin departamento" : depto, FuenteChica);
         }
 
+        // Texto principal en negrita y uno secundario más pequeño debajo
         private static void DibujarDosLineas(Graphics g, Rectangle b, string principal, string secundario, Font fuenteSecundaria)
         {
             var flags = TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding;
@@ -745,6 +787,7 @@ namespace PromacoHerra
                 TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
         }
 
+        // Barra horizontal de progreso con el porcentaje al lado
         private static void DibujarBarra(Graphics g, Rectangle b, double pct, Color color)
         {
             pct = Math.Max(0, Math.Min(100, pct));
@@ -762,6 +805,7 @@ namespace PromacoHerra
                 TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
         }
 
+        // Dibuja un botón con borde azul dentro de la celda (usado por "Notificar")
         private static void DibujarBoton(Graphics g, Rectangle b, string texto)
         {
             var r = new Rectangle(b.X + 8, b.Y + (b.Height - 28) / 2, Math.Min(96, b.Width - 16), 28);
@@ -789,6 +833,7 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
         // EXPORTACIÓN
         // ══════════════════════════════════════════════════════════
+        // Columnas que van al archivo (todas menos el botón "Notificar")
         private List<Col> ColumnasExportables => _columnas.Where(c => c.Render != Render.Notificar).ToList();
 
         // Texto plano de una celda; en PDF los estados van entre paréntesis: "(Activo)"
@@ -817,6 +862,7 @@ namespace PromacoHerra
             };
         }
 
+        // Verifica que haya un reporte con resultados antes de exportar
         private bool HayDatos()
         {
             if (_datos != null && _datos.Rows.Count > 0) return true;
@@ -825,8 +871,10 @@ namespace PromacoHerra
             return false;
         }
 
+        // Título del reporte actual (se usa en el nombre del archivo y el encabezado)
         private string Titulo => _info[_reporte].Titulo;
 
+        // Botón "Excel": pide dónde guardar y genera el archivo .xlsx
         private void ExportarExcel()
         {
             if (!HayDatos()) return;
@@ -849,6 +897,7 @@ namespace PromacoHerra
             }
         }
 
+        // Crea el Excel (librería ClosedXML): título, período, fecha, encabezados y filas
         private void GuardarExcel(string ruta)
         {
             var cols = ColumnasExportables;
@@ -895,6 +944,7 @@ namespace PromacoHerra
             }
         }
 
+        // Botón "PDF": pide dónde guardar y genera el archivo .pdf
         private void ExportarPDF()
         {
             if (!HayDatos()) return;
@@ -917,6 +967,7 @@ namespace PromacoHerra
             }
         }
 
+        // Crea el PDF (librería iText) en hoja horizontal: título, período y tabla con los datos
         private void GuardarPDF(string ruta)
         {
             var cols = ColumnasExportables;
