@@ -5,7 +5,7 @@
 -- Crea todas las tablas, restricciones, índices, vistas, funciones y
 -- procedimientos almacenados en su estado actual. Para una instalación
 -- nueva se ejecuta este script y luego 001_datos_iniciales.sql.
--- (Database/migraciones/ guarda la historia de cambios 002–020; una
+-- (Database/migraciones/ guarda la historia de cambios 002–021; una
 --  instalación nueva NO necesita ejecutarlos: ya están incluidos aquí.)
 --
 -- Pasos:
@@ -618,6 +618,47 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[UnidadIncidente](
+	[IncidenteId] [int] IDENTITY(1,1) NOT NULL,
+	[UnidadId] [int] NOT NULL,
+	[HerramientaId] [int] NOT NULL,
+	[Tipo] [varchar](20) COLLATE Modern_Spanish_CI_AS NOT NULL,
+	[Fecha] [datetime2](0) NOT NULL,
+	[Nota] [nvarchar](250) COLLATE Modern_Spanish_CI_AS NULL,
+	[RegistradoPorId] [int] NULL,
+ CONSTRAINT [PK_UnidadIncidente] PRIMARY KEY CLUSTERED
+(
+	[IncidenteId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_UnidadIncidente_UnidadId] ON [dbo].[UnidadIncidente]
+(
+	[UnidadId] ASC
+)
+INCLUDE([Fecha]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[UnidadIncidente] ADD  CONSTRAINT [DF_UnidadIncidente_Fecha]  DEFAULT (sysdatetime()) FOR [Fecha]
+GO
+ALTER TABLE [dbo].[UnidadIncidente]  WITH CHECK ADD  CONSTRAINT [FK_UnidadIncidente_Unidad] FOREIGN KEY([UnidadId], [HerramientaId])
+REFERENCES [dbo].[HerramientaUnidad] ([UnidadId], [HerramientaId])
+GO
+ALTER TABLE [dbo].[UnidadIncidente] CHECK CONSTRAINT [FK_UnidadIncidente_Unidad]
+GO
+ALTER TABLE [dbo].[UnidadIncidente]  WITH CHECK ADD  CONSTRAINT [FK_UnidadIncidente_Usuario] FOREIGN KEY([RegistradoPorId])
+REFERENCES [dbo].[Usuario] ([UsuarioId])
+GO
+ALTER TABLE [dbo].[UnidadIncidente] CHECK CONSTRAINT [FK_UnidadIncidente_Usuario]
+GO
+ALTER TABLE [dbo].[UnidadIncidente]  WITH CHECK ADD  CONSTRAINT [CK_UnidadIncidente_Tipo] CHECK  (([Tipo]='Dañada' OR [Tipo]='Perdida'))
+GO
+ALTER TABLE [dbo].[UnidadIncidente] CHECK CONSTRAINT [CK_UnidadIncidente_Tipo]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 -- StockTotal = unidades que siguen siendo de la empresa (no perdidas ni dadas de baja)
 CREATE   VIEW vw_HerramientaStock
@@ -663,25 +704,30 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Último reporte de daño de la unidad que todavía no se atiende: la devolución "Dañado"
--- posterior al inicio de su último mantenimiento. Solo aplica a unidades en estado Dañada.
+-- Último reporte de daño de la unidad que todavía no se atiende, posterior al inicio de su
+-- último mantenimiento: la devolución "Dañado" (ReportadoPor = quien la devolvió) o el daño
+-- marcado en almacén sin préstamo de por medio (UnidadIncidente; ReportadoPor = NULL).
+-- Solo aplica a unidades en estado Dañada.
 CREATE   FUNCTION fn_UnidadReporteDanio (@UnidadId INT)
 RETURNS TABLE
 AS
 RETURN
-    SELECT TOP (1)
-           pd.PrestamoDetalleId,
-           pd.FechaDevuelta         AS FechaReporte,
-           e.Nombre                 AS ReportadoPor,
-           pd.ObservacionDevolucion AS Nota
-    FROM   PrestamoDetalle pd
-    INNER  JOIN Prestamo p ON p.PrestamoId = pd.PrestamoId
-    INNER  JOIN Empleado e ON e.EmpleadoId = p.EmpleadoId
-    WHERE  pd.UnidadId         = @UnidadId
-      AND  pd.EstadoDevolucion = 'Dañado'
-      AND  pd.FechaDevuelta    > ISNULL((SELECT MAX(m.FechaInicio) FROM Mantenimiento m
-                                         WHERE  m.UnidadId = @UnidadId), '19000101')
-    ORDER  BY pd.FechaDevuelta DESC;
+    SELECT TOP (1) x.PrestamoDetalleId, x.FechaReporte, x.ReportadoPor, x.Nota
+    FROM  (SELECT pd.PrestamoDetalleId,
+                  pd.FechaDevuelta         AS FechaReporte,
+                  e.Nombre                 AS ReportadoPor,
+                  pd.ObservacionDevolucion AS Nota
+           FROM   PrestamoDetalle pd
+           INNER  JOIN Prestamo p ON p.PrestamoId = pd.PrestamoId
+           INNER  JOIN Empleado e ON e.EmpleadoId = p.EmpleadoId
+           WHERE  pd.UnidadId = @UnidadId AND pd.EstadoDevolucion = 'Dañado'
+           UNION  ALL
+           SELECT NULL, CAST(i.Fecha AS DATETIME2(7)), NULL, i.Nota
+           FROM   UnidadIncidente i
+           WHERE  i.UnidadId = @UnidadId AND i.Tipo = 'Dañada') x
+    WHERE  x.FechaReporte > ISNULL((SELECT MAX(m.FechaInicio) FROM Mantenimiento m
+                                    WHERE  m.UnidadId = @UnidadId), '19000101')
+    ORDER  BY x.FechaReporte DESC;
 GO
 
 SET ANSI_NULLS ON
@@ -1518,12 +1564,15 @@ GO
 -- Estados manuales: Disponible, Dañada, Perdida, Baja.
 -- Prestada / En Mantenimiento solo cambian por préstamo, devolución o mantenimiento.
 -- Dar de baja el grupo completo además desactiva la herramienta.
+-- Marcar Dañada o Perdida deja constancia en UnidadIncidente (cuándo, quién lo registró y la nota),
+-- para que un daño o pérdida sin préstamo de por medio aparezca en reportes.
 -- ============================================================
 CREATE   PROCEDURE sp_Unidad_CambiarEstado
-    @HerramientaId INT,
-    @UnidadIds     VARCHAR(MAX)  = NULL,
-    @NuevoEstado   VARCHAR(20),
-    @Observacion   NVARCHAR(250) = NULL
+    @HerramientaId   INT,
+    @UnidadIds       VARCHAR(MAX)  = NULL,
+    @NuevoEstado     VARCHAR(20),
+    @Observacion     NVARCHAR(250) = NULL,
+    @RegistradoPorId INT           = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -1574,16 +1623,24 @@ BEGIN
                 THROW 50000, 'Hay unidades prestadas, en mantenimiento o ya dadas de baja. Registre primero la devolución o cierre el mantenimiento.', 1;
         END
 
+        DECLARE @Cambiadas TABLE (UnidadId INT PRIMARY KEY, HerramientaId INT);
+
         UPDATE u
         SET    Estado        = @NuevoEstado,
                FechaBaja     = CASE WHEN @NuevoEstado = 'Baja' THEN SYSDATETIME() END,
                Observaciones = ISNULL(NULLIF(@Observacion, N''), u.Observaciones)
+        OUTPUT inserted.UnidadId, inserted.HerramientaId INTO @Cambiadas
         FROM   HerramientaUnidad u
         INNER  JOIN @Objetivo    o ON o.UnidadId = u.UnidadId
         WHERE  o.Estado NOT IN ('Prestada', 'En Mantenimiento', 'Baja')
           AND  o.Estado <> @NuevoEstado;
 
         DECLARE @Afectadas INT = @@ROWCOUNT;
+
+        IF @NuevoEstado IN ('Dañada', 'Perdida')
+            INSERT INTO UnidadIncidente (UnidadId, HerramientaId, Tipo, Nota, RegistradoPorId)
+            SELECT UnidadId, HerramientaId, @NuevoEstado, NULLIF(@Observacion, N''), @RegistradoPorId
+            FROM   @Cambiadas;
 
         IF @UnidadIds IS NULL AND @NuevoEstado = 'Baja'
             UPDATE Herramienta
@@ -2641,38 +2698,88 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- @Condicion: 'Dañada' | 'Perdida' | NULL
+-- Incluye las devoluciones dañadas o perdidas (con el empleado responsable) y los daños o
+-- pérdidas marcados en almacén sin préstamo de por medio (Origen = 'Almacén', sin responsable).
+-- Al filtrar por empleado solo quedan las devoluciones.
+--
+-- Situacion: qué pasó después con la pieza, para distinguir lo vigente del historial.
+--   Se mira lo primero que le ocurrió después del reporte: un mantenimiento o un nuevo préstamo.
+--     · mantenimiento → 'En reparación' (abierto), 'Reparada' o 'Dada de baja'
+--     · nuevo préstamo sin mantenimiento antes → 'Resuelta' (o 'Recuperada' si estaba perdida)
+--     · nada todavía → según su estado actual: 'Sigue dañada', 'Sigue perdida', 'Dada de baja'
+--       o 'Resuelta' / 'Recuperada' (se marcó otra vez en buen estado)
+-- @Situacion: 'SinResolver' (sigue dañada, en reparación o sigue perdida) | 'Resuelta' | NULL
 CREATE   PROCEDURE sp_Reporte_DanadasPerdidas
     @FechaDesde DATE        = NULL,
     @FechaHasta DATE        = NULL,
     @Condicion  VARCHAR(20) = NULL,
-    @EmpleadoId INT         = NULL
+    @EmpleadoId INT         = NULL,
+    @Situacion  VARCHAR(20) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SELECT h.Nombre        AS Herramienta,
-           u.CodigoUnidad,
-           CASE pd.EstadoDevolucion WHEN 'Dañado' THEN 'Dañada' ELSE 'Perdida' END AS Condicion,
-           pd.ObservacionDevolucion AS Nota,
-           p.PrestamoId,
-           e.Codigo        AS CodigoEmpleado,
-           e.Nombre        AS Empleado,
-           d.Nombre        AS Departamento,
-           pd.FechaDevuelta AS FechaDevolucion
-    FROM   PrestamoDetalle pd
-    INNER  JOIN Prestamo             p ON p.PrestamoId    = pd.PrestamoId
-    INNER  JOIN Empleado             e ON e.EmpleadoId    = p.EmpleadoId
-    LEFT   JOIN Departamento         d ON d.DepartamentoId = e.DepartamentoId
-    INNER  JOIN Herramienta          h ON h.HerramientaId = pd.HerramientaId
-    INNER  JOIN vw_HerramientaUnidad u ON u.UnidadId      = pd.UnidadId
-    WHERE  pd.EstadoDevolucion IN ('Dañado', 'Perdido')
-      AND  (@FechaDesde IS NULL OR pd.FechaDevuelta >= @FechaDesde)
-      AND  (@FechaHasta IS NULL OR pd.FechaDevuelta <  DATEADD(DAY, 1, @FechaHasta))
-      AND  (@Condicion IS NULL
-            OR (@Condicion = 'Dañada'  AND pd.EstadoDevolucion = 'Dañado')
-            OR (@Condicion = 'Perdida' AND pd.EstadoDevolucion = 'Perdido'))
-      AND  (@EmpleadoId IS NULL OR p.EmpleadoId = @EmpleadoId)
-    ORDER  BY pd.FechaDevuelta DESC;
+    SELECT x.*, st.Situacion
+    FROM  (SELECT h.Nombre        AS Herramienta,
+                  u.CodigoUnidad,
+                  CASE pd.EstadoDevolucion WHEN 'Dañado' THEN 'Dañada' ELSE 'Perdida' END AS Condicion,
+                  pd.ObservacionDevolucion AS Nota,
+                  'Devolución'    AS Origen,
+                  p.PrestamoId,
+                  p.EmpleadoId,
+                  e.Codigo        AS CodigoEmpleado,
+                  e.Nombre        AS Empleado,
+                  d.Nombre        AS Departamento,
+                  CAST(NULL AS NVARCHAR(120)) AS RegistradoPor,
+                  pd.FechaDevuelta AS FechaDevolucion,
+                  pd.UnidadId
+           FROM   PrestamoDetalle pd
+           INNER  JOIN Prestamo             p ON p.PrestamoId     = pd.PrestamoId
+           INNER  JOIN Empleado             e ON e.EmpleadoId     = p.EmpleadoId
+           LEFT   JOIN Departamento         d ON d.DepartamentoId = e.DepartamentoId
+           INNER  JOIN Herramienta          h ON h.HerramientaId  = pd.HerramientaId
+           INNER  JOIN vw_HerramientaUnidad u ON u.UnidadId       = pd.UnidadId
+           WHERE  pd.EstadoDevolucion IN ('Dañado', 'Perdido')
+           UNION  ALL
+           SELECT h.Nombre, u.CodigoUnidad, i.Tipo, i.Nota, 'Almacén',
+                  NULL, NULL, NULL, NULL, NULL,
+                  re.Nombre,
+                  CAST(i.Fecha AS DATETIME2(7)),
+                  i.UnidadId
+           FROM   UnidadIncidente i
+           INNER  JOIN Herramienta          h  ON h.HerramientaId = i.HerramientaId
+           INNER  JOIN vw_HerramientaUnidad u  ON u.UnidadId      = i.UnidadId
+           LEFT   JOIN Usuario              us ON us.UsuarioId    = i.RegistradoPorId
+           LEFT   JOIN Empleado             re ON re.EmpleadoId   = us.EmpleadoId) x
+    INNER  JOIN HerramientaUnidad hu ON hu.UnidadId = x.UnidadId
+    OUTER  APPLY (SELECT TOP (1) m.FechaInicio, m.FechaFin, m.Resultado
+                  FROM   Mantenimiento m
+                  WHERE  m.UnidadId = x.UnidadId AND m.FechaInicio >= x.FechaDevolucion
+                  ORDER  BY m.FechaInicio) m
+    OUTER  APPLY (SELECT MIN(p2.FechaPrestamo) AS Fecha
+                  FROM   PrestamoDetalle d2
+                  INNER  JOIN Prestamo p2 ON p2.PrestamoId = d2.PrestamoId
+                  WHERE  d2.UnidadId = x.UnidadId AND p2.FechaPrestamo > x.FechaDevolucion) sig
+    CROSS  APPLY (SELECT CASE
+                      WHEN m.FechaInicio IS NOT NULL AND (sig.Fecha IS NULL OR m.FechaInicio <= sig.Fecha)
+                          THEN CASE WHEN m.FechaFin IS NULL THEN 'En reparación'
+                                    WHEN m.Resultado = 'Baja' THEN 'Dada de baja'
+                                    ELSE 'Reparada' END
+                      WHEN sig.Fecha IS NOT NULL
+                          THEN CASE WHEN x.Condicion = 'Perdida' THEN 'Recuperada' ELSE 'Resuelta' END
+                      WHEN hu.Estado = 'Dañada'  THEN 'Sigue dañada'
+                      WHEN hu.Estado = 'Perdida' THEN 'Sigue perdida'
+                      WHEN hu.Estado = 'Baja'    THEN 'Dada de baja'
+                      WHEN x.Condicion = 'Perdida' THEN 'Recuperada'
+                      ELSE 'Resuelta' END AS Situacion) st
+    WHERE  (@FechaDesde IS NULL OR x.FechaDevolucion >= @FechaDesde)
+      AND  (@FechaHasta IS NULL OR x.FechaDevolucion <  DATEADD(DAY, 1, @FechaHasta))
+      AND  (@Condicion  IS NULL OR x.Condicion = @Condicion)
+      AND  (@EmpleadoId IS NULL OR x.EmpleadoId = @EmpleadoId)
+      AND  (@Situacion  IS NULL
+            OR (@Situacion = 'SinResolver' AND st.Situacion IN ('Sigue dañada', 'En reparación', 'Sigue perdida'))
+            OR (@Situacion = 'Resuelta'    AND st.Situacion NOT IN ('Sigue dañada', 'En reparación', 'Sigue perdida')))
+    ORDER  BY x.FechaDevolucion DESC;
 END
 GO
 

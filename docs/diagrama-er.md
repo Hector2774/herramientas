@@ -29,6 +29,9 @@ erDiagram
     Empleado |o--o{ Mantenimiento : "repara (interno)"
     Usuario |o--o{ Mantenimiento : "registra / cierra"
 
+    HerramientaUnidad ||--o{ UnidadIncidente : "se marca dañada / perdida"
+    Usuario |o--o{ UnidadIncidente : "registra"
+
     Departamento {
         int DepartamentoId PK
         varchar Nombre
@@ -141,6 +144,15 @@ erDiagram
         int RegistradoPorId FK
         int CerradoPorId FK
     }
+    UnidadIncidente {
+        int IncidenteId PK
+        int UnidadId FK
+        int HerramientaId FK
+        varchar Tipo "Dañada o Perdida"
+        datetime2 Fecha
+        nvarchar Nota
+        int RegistradoPorId FK
+    }
     SincronizacionEmpleados {
         int SincronizacionId PK
         datetime2 Fecha
@@ -165,6 +177,10 @@ erDiagram
   no su nombre.
 - **Contraseñas.** Solo se guarda el hash PBKDF2-SHA256 con sal (`Usuario.PasswordHash`). La columna
   `Usuario.Password` es de la versión anterior: queda vacía en cuanto cada usuario inicia sesión.
+- **Daños y pérdidas sin préstamo.** Una pieza puede dañarse por desgaste o perderse en el almacén sin
+  que nadie la tenga prestada. Al marcarla así desde "Unidades" queda un registro en `UnidadIncidente`
+  (cuándo, quién lo registró y la nota), sin responsable, para que aparezca en el reporte de dañadas y
+  perdidas junto con las devoluciones.
 - **Nada se borra.** Herramientas, unidades y usuarios se dan de baja o se desactivan; préstamos y
   mantenimientos los siguen referenciando. Categorías, marcas, ubicaciones y proveedores tienen
   `Activo`: si ya se usaron, eliminarlos los desactiva; solo se borran si nadie los usa.

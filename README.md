@@ -83,7 +83,7 @@ sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/ins
 
 En SSMS: abrir cada script, seleccionar la base `PROMACO_Herramientas` y ejecutar.
 
-> `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 020). Una instalación
+> `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 021). Una instalación
 > nueva **no** los necesita: ya están incluidos en `000_esquema.sql`.
 
 **Opcional: datos de demostración.** Para ver el sistema con información (dashboard, reportes, vencidos,

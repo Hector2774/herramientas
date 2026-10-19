@@ -37,7 +37,7 @@ namespace PromacoHerra
         {
             Texto, Secundario, Prestamo, Empleado, Fecha, FechaHora, EstadoPrestamo, DiasVencido, Notificar,
             ActivosEmpleado, Numero, NumeroGrande, Rank, HerramientaRanking, Categoria, Barra, Decimal1,
-            HerramientaUnidad, TipoMantenimiento, Duracion, Costo, Condicion, Disponibles
+            HerramientaUnidad, TipoMantenimiento, Duracion, Costo, Condicion, Situacion, Disponibles
         }
 
         // Definición de una columna del reporte: campo de los datos, título, cómo se dibuja y su ancho
@@ -76,6 +76,7 @@ namespace PromacoHerra
         private readonly MaterialComboBox cboTipoMant = Combo();
         private readonly MaterialComboBox cboEstadoMant = Combo();
         private readonly MaterialComboBox cboCondicion = Combo();
+        private readonly MaterialComboBox cboSituacion = Combo();
         private readonly MaterialComboBox cboMostrar = Combo();
         private readonly DateTimePicker dtpDesde = Fecha();
         private readonly DateTimePicker dtpHasta = Fecha();
@@ -197,6 +198,7 @@ namespace PromacoHerra
             Campo("Tipo", cboTipoMant, 150);
             Campo("Estado", cboEstadoMant, 130);
             Campo("Condición", cboCondicion, 130);
+            Campo("Situación", cboSituacion, 140);
             Campo("Mostrar", cboMostrar, 220);
 
             Llenar(cboEstadoPrestamo, new Opcion(null, "Todos"), new Opcion("Activo", "Activo"),
@@ -205,6 +207,7 @@ namespace PromacoHerra
                    new Opcion("Correctivo", "Correctivo"), new Opcion("Calibración", "Calibración"));
             Llenar(cboEstadoMant, new Opcion(null, "Todos"), new Opcion("Activo", "Activo"), new Opcion("Cerrado", "Cerrado"));
             Llenar(cboCondicion, new Opcion(null, "Todas"), new Opcion("Dañada", "Dañada"), new Opcion("Perdida", "Perdida"));
+            Llenar(cboSituacion, new Opcion(null, "Todas"), new Opcion("SinResolver", "Sin resolver"), new Opcion("Resuelta", "Resueltas"));
             Llenar(cboMostrar, new Opcion("Todas", "Todas"), new Opcion("StockBajo", "Solo stock bajo (< 30 %)"),
                    new Opcion("SinDisponibles", "Solo sin disponibles"));
 
@@ -222,7 +225,7 @@ namespace PromacoHerra
             _info[Reporte.Mantenimiento] = new("Historial de mantenimiento", "Costos, duración y técnicos", IconChar.ScrewdriverWrench,
                 new Control[] { pickHerramienta, dtpDesde, dtpHasta, cboTipoMant, cboEstadoMant }, true);
             _info[Reporte.Danadas] = new("Dañadas y perdidas", "Incidentes en devoluciones", IconChar.TriangleExclamation,
-                new Control[] { dtpDesde, dtpHasta, cboCondicion, pickEmpleado }, true);
+                new Control[] { dtpDesde, dtpHasta, cboCondicion, cboSituacion, pickEmpleado }, true);
             _info[Reporte.Inventario] = new("Inventario por categoría", "Disponibilidad actual del stock", IconChar.BoxesStacked,
                 new Control[] { cboCategoria, cboMostrar }, false);
         }
@@ -531,16 +534,27 @@ namespace PromacoHerra
         private void CargarDanadas()
         {
             var dt = ReporteService.DanadasPerdidas(Desde, Hasta,
-                ValorTexto(cboCondicion), EmpleadoFiltro);
+                ValorTexto(cboCondicion), EmpleadoFiltro, ValorTexto(cboSituacion));
             Mostrar(dt, PeriodoFechas, new()
             {
                 new("Herramienta", "Herramienta / Unidad", Render.HerramientaUnidad, 0, 28),
                 new("Condicion", "Condición", Render.Condicion, 110),
+                new("Situacion", "Situación actual", Render.Situacion, 130),
                 new("Empleado", "Responsable", Render.Empleado, 0, 30),
                 new("PrestamoId", "Préstamo", Render.Prestamo, 90),
-                new("FechaDevolucion", "Fecha devolución", Render.Fecha, 130),
+                new("FechaDevolucion", "Fecha", Render.Fecha, 110),
                 new("Nota", "Nota", Render.Secundario, 0, 24),
             });
+
+            // Resumen: cuántos casos siguen vigentes y cuántos ya se resolvieron
+            if (dt.Rows.Count > 0)
+            {
+                int Cuenta(params string[] situaciones) => dt.AsEnumerable().Count(r => situaciones.Contains(r.Field<string>("Situacion")));
+                lblResumen.Text = $"Total: {dt.Rows.Count}     |     Siguen dañadas: {Cuenta("Sigue dañada")}     |     " +
+                                  $"En reparación: {Cuenta("En reparación")}     |     Siguen perdidas: {Cuenta("Sigue perdida")}     |     " +
+                                  $"Resueltas: {Cuenta("Reparada", "Resuelta", "Recuperada", "Dada de baja")}";
+                lblResumen.Visible = true;
+            }
 
             // Sin incidentes: mensaje positivo en lugar de "sin resultados"
             if (dt.Rows.Count == 0)
@@ -622,6 +636,11 @@ namespace PromacoHerra
         // DIBUJO DE CELDAS
         // ══════════════════════════════════════════════════════════
         // Atajos para leer un campo de la fila como texto (S), número (I) o fecha (F)
+        // Dañadas y perdidas sin préstamo de por medio: quién lo registró en el almacén
+        private static string MarcadaEnAlmacen(DataRow r) =>
+            r.Table.Columns.Contains("RegistradoPor") && r["RegistradoPor"] is string quien && quien != ""
+                ? $"Marcada en almacén por {quien}" : "Marcada en almacén";
+
         private static string S(DataRowView r, string campo) => r.Row.Table.Columns.Contains(campo) ? r[campo]?.ToString() ?? "" : "";
         private static int I(DataRowView r, string campo) => r[campo] == DBNull.Value ? 0 : Convert.ToInt32(r[campo]);
         private static DateTime? F(DataRowView r, string campo) => r[campo] is DateTime d ? d : null;
@@ -647,10 +666,13 @@ namespace PromacoHerra
                         dgvReporte.DefaultCellStyle.Font!, ThemeManager.TextSecondary);
                     break;
                 case Render.Prestamo:
-                    EmpleadoGrid.DibujarTexto(g, b, $"#{S(r, c.Campo)}", FuenteMono, ThemeManager.TextSecondary);
+                    EmpleadoGrid.DibujarTexto(g, b, S(r, c.Campo) is { Length: > 0 } p ? $"#{p}" : "—", FuenteMono, ThemeManager.TextSecondary);
                     break;
                 case Render.Empleado:
-                    DibujarEmpleado(g, b, S(r, "CodigoEmpleado"), S(r, "Empleado"), S(r, "Departamento"));
+                    if (S(r, "Empleado") == "")
+                        DibujarDosLineas(g, b, "Sin responsable", MarcadaEnAlmacen(r.Row), FuenteChica);   // daño o pérdida sin préstamo
+                    else
+                        DibujarEmpleado(g, b, S(r, "CodigoEmpleado"), S(r, "Empleado"), S(r, "Departamento"));
                     break;
                 case Render.Fecha:
                     EmpleadoGrid.DibujarTexto(g, b, F(r, c.Campo)?.ToString("dd/MM/yyyy") ?? "—",
@@ -759,6 +781,21 @@ namespace PromacoHerra
                     StatusChip.DibujarEnCelda(g, b, cond, fondo, frente);
                     break;
                 }
+                case Render.Situacion:
+                {
+                    // Rojo / violeta / naranja = todavía vigente; verde = resuelto; gris = dada de baja
+                    string sit = S(r, c.Campo);
+                    var (fondo, frente) = sit switch
+                    {
+                        "Sigue dañada" => (Paleta.RojoSuave, Paleta.Rojo),
+                        "Sigue perdida" => (Paleta.VioletaSuave, Paleta.Violeta),
+                        "En reparación" => (Paleta.NaranjaSuave, Paleta.Naranja),
+                        "Dada de baja" => (Paleta.GrisSuave, Paleta.Gris),
+                        _ => (Paleta.VerdeSuave, Paleta.Verde)
+                    };
+                    StatusChip.DibujarEnCelda(g, b, sit, fondo, frente);
+                    break;
+                }
                 case Render.Disponibles:
                 {
                     double pct = r["PctDisponible"] == DBNull.Value ? 0 : Convert.ToDouble(r["PctDisponible"]);
@@ -865,11 +902,13 @@ namespace PromacoHerra
 
             return c.Render switch
             {
-                Render.Prestamo => $"#{v}",
-                Render.Empleado => $"{row["Empleado"]} ({(row["Departamento"] is string d && d != "" ? d : "Sin departamento")})",
+                Render.Prestamo => v == DBNull.Value ? "—" : $"#{v}",
+                Render.Empleado => row["Empleado"] == DBNull.Value
+                    ? $"Sin responsable ({MarcadaEnAlmacen(row)})"
+                    : $"{row["Empleado"]} ({(row["Departamento"] is string d && d != "" ? d : "Sin departamento")})",
                 Render.Fecha => Fecha("dd/MM/yyyy"),
                 Render.FechaHora => Fecha("dd/MM/yyyy HH:mm"),
-                Render.EstadoPrestamo or Render.TipoMantenimiento or Render.Condicion => Estado(v?.ToString() ?? ""),
+                Render.EstadoPrestamo or Render.TipoMantenimiento or Render.Condicion or Render.Situacion => Estado(v?.ToString() ?? ""),
                 Render.DiasVencido or Render.Duracion => $"{v} días",
                 Render.Barra => v == DBNull.Value ? "0%" : $"{Convert.ToDouble(v):0}%",
                 Render.Decimal1 => v == DBNull.Value ? "—" : Convert.ToDouble(v).ToString("0.0"),

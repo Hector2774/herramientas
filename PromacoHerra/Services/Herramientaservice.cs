@@ -248,7 +248,8 @@ namespace PromacoHerra.Services
                 Db.Param("@HerramientaId", herramientaId),
                 Db.Param("@UnidadIds", unidadIds == null ? DBNull.Value : string.Join(",", unidadIds)),
                 Db.Param("@NuevoEstado", nuevoEstado),
-                Db.Param("@Observacion", (object?)observacion ?? DBNull.Value));
+                Db.Param("@Observacion", (object?)observacion ?? DBNull.Value),
+                Db.Param("@RegistradoPorId", Sesion.Activa ? Sesion.UsuarioId : null));
 
             return dt.Rows.Count > 0
                 ? (Convert.ToInt32(dt.Rows[0]["Afectadas"]), Convert.ToInt32(dt.Rows[0]["Omitidas"]))

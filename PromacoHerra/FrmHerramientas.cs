@@ -986,7 +986,7 @@ namespace PromacoHerra
 
             string reporte = r["ReportadoPor"] is string quien
                 ? $"Devuelta dañada por {quien}" + (r["FechaReporte"] is DateTime f ? $" el {f:dd/MM/yyyy}" : "")
-                : "Marcada como dañada en almacén";
+                : "Marcada como dañada en almacén" + (r["FechaReporte"] is DateTime fa ? $" el {fa:dd/MM/yyyy}" : "");
             if (r["NotaReporte"] is string nota && nota != "") reporte += $": \"{nota}\"";
             lblAccionInfo.Text = $"{r["Herramienta"]}  ·  {r["CodigoUnidad"]}  ·  {reporte}";
             MostrarAccion("Enviar a mantenimiento", FontAwesome.Sharp.IconChar.Wrench);

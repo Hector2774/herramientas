@@ -207,12 +207,14 @@ namespace PromacoHerra.Services
                 Db.Param("@Estado", N(estado)));
 
         /// <summary>condicion: 'Dañada', 'Perdida' o null.</summary>
-        public static DataTable DanadasPerdidas(DateTime? desde, DateTime? hasta, string? condicion, int? empleadoId) =>
+        /// <summary>situacion: 'SinResolver' (sigue dañada, en reparación o sigue perdida), 'Resuelta' o null.</summary>
+        public static DataTable DanadasPerdidas(DateTime? desde, DateTime? hasta, string? condicion, int? empleadoId, string? situacion) =>
             Db.QuerySP("sp_Reporte_DanadasPerdidas",
                 Db.Param("@FechaDesde", N(desde?.Date)),
                 Db.Param("@FechaHasta", N(hasta?.Date)),
                 Db.Param("@Condicion", N(condicion)),
-                Db.Param("@EmpleadoId", N(empleadoId)));
+                Db.Param("@EmpleadoId", N(empleadoId)),
+                Db.Param("@Situacion", N(situacion)));
 
         /// <summary>mostrar: 'Todas', 'StockBajo' (&lt; 30 %) o 'SinDisponibles'.</summary>
         public static DataTable InventarioCategoria(int? categoriaId, string mostrar) =>
