@@ -30,7 +30,7 @@ cada préstamo.
 - **Préstamos.** Nadie puede aprobar su propio préstamo: el aprobador es el empleado del usuario que inició sesión. La fecha de devolución debe ser posterior a hoy, y los préstamos fuera de plazo se marcan como vencidos.
 - **Devoluciones.** Las unidades dañadas no vuelven al stock hasta pasar por mantenimiento; las perdidas se descuentan. El préstamo se cierra solo cuando no le quedan unidades pendientes.
 - **Mantenimiento.** Preventivo, correctivo o calibración; interno (técnico de la empresa) o externo (proveedor). Se registra lo que cuesta a la empresa en lempiras (L.): materiales, más mano de obra solo si es externo. En garantía no hay costo. Una unidad irreparable se da de baja.
-- **Nada se borra.** Herramientas, unidades y usuarios se dan de baja o se desactivan, para conservar el historial.
+- **Nada se borra.** Herramientas, unidades y usuarios se dan de baja o se desactivan, para conservar el historial. Las categorías, marcas, ubicaciones y proveedores que ya se usaron también se desactivan; solo se borran si nadie los usó.
 
 ### Seguridad
 
@@ -83,7 +83,7 @@ sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/ins
 
 En SSMS: abrir cada script, seleccionar la base `PROMACO_Herramientas` y ejecutar.
 
-> `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 018). Una instalación
+> `Database/migraciones/` guarda la historia de cambios de la base (scripts 002 a 020). Una instalación
 > nueva **no** los necesita: ya están incluidos en `000_esquema.sql`.
 
 **Opcional: datos de demostración.** Para ver el sistema con información (dashboard, reportes, vencidos,
@@ -96,6 +96,17 @@ sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/dem
 Simula día por día préstamos, devoluciones (a tiempo, con atraso, dañadas o perdidas) y mantenimientos
 con sus costos, respetando las mismas reglas que la aplicación. En una base recién instalada crea además
 las 20 herramientas y empleados de ejemplo. Solo se puede cargar una vez por base.
+
+Con los días, esos datos se quedan atrás (sin préstamos recientes). Para ponerlos al día, por ejemplo
+la mañana de una presentación, ejecutar:
+
+```bash
+sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/demo/actividad_reciente.sql
+```
+
+Continúa la operación desde el último movimiento hasta ese momento, cierra los mantenimientos que llevan
+más de una semana abiertos y deja movimiento del día (préstamos, una devolución, un mantenimiento) y al
+menos dos préstamos vencidos. Se puede ejecutar cada día; si ya se ejecutó hoy, no hace nada.
 
 ### 2. Configurar la conexión
 

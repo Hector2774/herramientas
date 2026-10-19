@@ -79,6 +79,13 @@ namespace PromacoHerra
         private readonly MaterialComboBox cboMostrar = Combo();
         private readonly DateTimePicker dtpDesde = Fecha();
         private readonly DateTimePicker dtpHasta = Fecha();
+        // "Todas": ignora Desde/Hasta y trae los registros de cualquier fecha
+        private readonly MaterialCheckBox chkTodasFechas = new()
+        {
+            Text = "Todas",
+            Font = new Font("Segoe UI", 9.5F),
+            Size = new Size(76, 24)
+        };
         private readonly Dictionary<Control, Panel> _campos = new();   // control de filtro → su panel con etiqueta
 
         private readonly Dictionary<Reporte, InfoReporte> _info = new();       // configuración de cada reporte
@@ -175,11 +182,16 @@ namespace PromacoHerra
         // Cada control de filtro va dentro de un "campo": etiqueta pequeña en mayúsculas + control
         private void ConstruirFiltros()
         {
-            Campo("Empleado", pickEmpleado, 230);
-            Campo("Herramienta", pickHerramienta, 210);
+            Campo("Empleado", pickEmpleado, 210);
+            Campo("Herramienta", pickHerramienta, 200);
             Campo("Estado", cboEstadoPrestamo, 130);
             Campo("Desde", dtpDesde, 130);
-            Campo("Hasta", dtpHasta, 130);
+            Campo("Hasta", dtpHasta, 130 + 12 + chkTodasFechas.Width);
+            // La casilla "Todas" va a la derecha de la fecha "Hasta", dentro del mismo campo
+            dtpHasta.Width = 130;
+            chkTodasFechas.Location = new Point(dtpHasta.Right + 12, dtpHasta.Top + (dtpHasta.Height - chkTodasFechas.Height) / 2);
+            _campos[dtpHasta].Controls.Add(chkTodasFechas);
+            chkTodasFechas.CheckedChanged += (s, e) => dtpDesde.Enabled = dtpHasta.Enabled = !chkTodasFechas.Checked;
             Campo("Categoría", cboCategoria, 190);
             Campo("Departamento", cboDepartamento, 230);
             Campo("Tipo", cboTipoMant, 150);
@@ -208,7 +220,7 @@ namespace PromacoHerra
             _info[Reporte.Ranking] = new("Herramientas más usadas", "Ranking de demanda en el período", IconChar.Trophy,
                 new Control[] { dtpDesde, dtpHasta, cboCategoria }, true);
             _info[Reporte.Mantenimiento] = new("Historial de mantenimiento", "Costos, duración y técnicos", IconChar.ScrewdriverWrench,
-                new Control[] { dtpDesde, dtpHasta, cboTipoMant, cboEstadoMant }, true);
+                new Control[] { pickHerramienta, dtpDesde, dtpHasta, cboTipoMant, cboEstadoMant }, true);
             _info[Reporte.Danadas] = new("Dañadas y perdidas", "Incidentes en devoluciones", IconChar.TriangleExclamation,
                 new Control[] { dtpDesde, dtpHasta, cboCondicion, pickEmpleado }, true);
             _info[Reporte.Inventario] = new("Inventario por categoría", "Disponibilidad actual del stock", IconChar.BoxesStacked,
@@ -319,7 +331,8 @@ namespace PromacoHerra
 
             var cat = CategoriaService.ObtenerTodas();
             Llenar(cboCategoria, new[] { new Opcion(null, "Todas las categorías") }
-                .Concat(cat.AsEnumerable().Select(r => new Opcion(r.Field<int>("CategoriaId"), r.Field<string>("Nombre") ?? ""))).ToArray());
+                .Concat(cat.AsEnumerable().Select(r => new Opcion(r.Field<int>("CategoriaId"),
+                    (r.Field<string>("Nombre") ?? "") + (r.Field<bool>("Activo") ? "" : " (desactivada)")))).ToArray());
 
             var dep = Db.Query("SELECT DepartamentoId, Nombre FROM Departamento ORDER BY Nombre");
             Llenar(cboDepartamento, new[] { new Opcion(null, "Todos los departamentos") }
@@ -373,7 +386,7 @@ namespace PromacoHerra
         // Botón "Generar": valida las fechas, refresca los KPIs y ejecuta el reporte elegido
         private void Generar()
         {
-            if (_info[_reporte].UsaFechas && dtpDesde.Value.Date > dtpHasta.Value.Date)
+            if (_info[_reporte].UsaFechas && !chkTodasFechas.Checked && dtpDesde.Value.Date > dtpHasta.Value.Date)
             {
                 MessageBox.Show("La fecha \"Desde\" no puede ser posterior a \"Hasta\".", "Fechas",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -403,15 +416,21 @@ namespace PromacoHerra
         }
 
         // Línea que acompaña al título en las exportaciones
-        private string PeriodoFechas => $"Período: {dtpDesde.Value:dd/MM/yyyy} — {dtpHasta.Value:dd/MM/yyyy}";
+        private string PeriodoFechas => chkTodasFechas.Checked
+            ? "Período: todas las fechas"
+            : $"Período: {dtpDesde.Value:dd/MM/yyyy} — {dtpHasta.Value:dd/MM/yyyy}";
+
+        // Rango de fechas a consultar (null = sin límite, cuando está marcada "Todas")
+        private DateTime? Desde => chkTodasFechas.Checked ? null : dtpDesde.Value;
+        private DateTime? Hasta => chkTodasFechas.Checked ? null : dtpHasta.Value;
 
         // ── Un método por reporte: consulta los datos con los filtros y define sus columnas ──
 
-        // Historial de préstamos (filtra por empleado, herramienta, estado y fechas)
+        // Historial de préstamos (filtra por empleado, herramienta, estado y fechas o todas)
         private void CargarHistorial()
         {
             var dt = ReporteService.HistorialPorPrestamo(EmpleadoFiltro, HerramientaFiltro,
-                dtpDesde.Value, dtpHasta.Value, ValorTexto(cboEstadoPrestamo));
+                Desde, Hasta, ValorTexto(cboEstadoPrestamo));
             Mostrar(dt, PeriodoFechas, new()
             {
                 new("PrestamoId", "Préstamo", Render.Prestamo, 80),
@@ -442,7 +461,7 @@ namespace PromacoHerra
         // Totales de préstamos por empleado (activos, vencidos, devueltos) en el período
         private void CargarPorEmpleado()
         {
-            var dt = ReporteService.PrestamosPorEmpleado(dtpDesde.Value, dtpHasta.Value, ValorInt(cboDepartamento));
+            var dt = ReporteService.PrestamosPorEmpleado(Desde, Hasta, ValorInt(cboDepartamento));
             Mostrar(dt, PeriodoFechas, new()
             {
                 new("Empleado", "Empleado", Render.Empleado, 0, 40),
@@ -457,7 +476,7 @@ namespace PromacoHerra
         // Herramientas más prestadas; calcula el puesto y el % de demanda respecto a la primera
         private void CargarRanking()
         {
-            var dt = ReporteService.RankingHerramientas(dtpDesde.Value, dtpHasta.Value, ValorInt(cboCategoria));
+            var dt = ReporteService.RankingHerramientas(Desde, Hasta, ValorInt(cboCategoria));
 
             // Ranking y demanda relativa al primero
             dt.Columns.Add("Rank", typeof(int));
@@ -480,10 +499,11 @@ namespace PromacoHerra
             });
         }
 
-        // Historial de mantenimientos con costo y duración, más una línea de resumen con totales
+        // Historial de mantenimientos (filtra por herramienta, fechas, tipo y estado) con costo y duración,
+        // más una línea de resumen con totales
         private void CargarMantenimiento()
         {
-            var dt = ReporteService.HistorialMantenimiento(dtpDesde.Value, dtpHasta.Value,
+            var dt = ReporteService.HistorialMantenimiento(HerramientaFiltro, Desde, Hasta,
                 ValorTexto(cboTipoMant), ValorTexto(cboEstadoMant));
             Mostrar(dt, PeriodoFechas, new()
             {
@@ -510,7 +530,7 @@ namespace PromacoHerra
         // Unidades devueltas dañadas o perdidas, con el empleado responsable
         private void CargarDanadas()
         {
-            var dt = ReporteService.DanadasPerdidas(dtpDesde.Value, dtpHasta.Value,
+            var dt = ReporteService.DanadasPerdidas(Desde, Hasta,
                 ValorTexto(cboCondicion), EmpleadoFiltro);
             Mostrar(dt, PeriodoFechas, new()
             {

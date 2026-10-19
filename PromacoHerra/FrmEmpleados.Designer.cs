@@ -233,7 +233,7 @@ namespace PromacoHerra
             lblVacioSubtitulo.Name = "lblVacioSubtitulo";
             lblVacioSubtitulo.Size = new Size(552, 24);
             lblVacioSubtitulo.TabIndex = 2;
-            lblVacioSubtitulo.Text = "Presiona 'Sincronizar desde RRHH' para cargar la lista de empleados";
+            lblVacioSubtitulo.Text = "Presiona 'Sincronizar Empleados' para cargar la lista de empleados";
             lblVacioSubtitulo.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FrmEmpleados

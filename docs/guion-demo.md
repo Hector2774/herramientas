@@ -11,6 +11,9 @@ ni cuánto costaba mantenerla; ahora cada pieza tiene historial y cada movimient
 ## Antes de empezar (preparación, el día anterior)
 
 - [ ] SQL Server encendido y la base `PROMACO_Herramientas` con los datos de demostración cargados.
+- [ ] **La mañana de la defensa** (de preferencia después de las 7:00), poner los datos al día:
+  `sqlcmd -S localhost -E -C -I -f 65001 -b -d PROMACO_Herramientas -i Database/demo/actividad_reciente.sql`
+  Así el dashboard muestra préstamos, una devolución y un mantenimiento **de hoy**, y hay vencidos para mostrar.
 - [ ] La aplicación compilada y probada una vez de principio a fin (seguir este guion completo).
 - [ ] Tener a mano tu usuario y contraseña de administrador.
 - [ ] Elegir de antemano para la parte en vivo:

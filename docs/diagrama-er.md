@@ -60,16 +60,19 @@ erDiagram
         int CategoriaId PK
         varchar Nombre UK
         varchar Descripcion
+        bit Activo
     }
     Marca {
         int MarcaId PK
         varchar NombreMarca
         varchar Descripcion
+        bit Activo
     }
     Ubicacion {
         int UbicacionId PK
         varchar Nombre
         varchar Descripcion
+        bit Activo
     }
     Herramienta {
         int HerramientaId PK
@@ -163,4 +166,5 @@ erDiagram
 - **Contraseñas.** Solo se guarda el hash PBKDF2-SHA256 con sal (`Usuario.PasswordHash`). La columna
   `Usuario.Password` es de la versión anterior: queda vacía en cuanto cada usuario inicia sesión.
 - **Nada se borra.** Herramientas, unidades y usuarios se dan de baja o se desactivan; préstamos y
-  mantenimientos los siguen referenciando.
+  mantenimientos los siguen referenciando. Categorías, marcas, ubicaciones y proveedores tienen
+  `Activo`: si ya se usaron, eliminarlos los desactiva; solo se borran si nadie los usa.

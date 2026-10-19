@@ -19,7 +19,7 @@ namespace PromacoHerra
         // ══════════════════════════════════════════════════════════
 
         private const string TodosLosDepartamentos = "Todos los departamentos";
-        private const string TextoSincronizar = "Sincronizar desde RRHH";
+        private const string TextoSincronizar = "Sincronizar Empleados";
 
         private readonly EmpleadoService _service = new EmpleadoService();
         private List<EmpleadoDTO> _empleados = new();
@@ -211,7 +211,7 @@ namespace PromacoHerra
         // SINCRONIZACIÓN
         // ══════════════════════════════════════════════════════════
 
-        // Botón "Sincronizar desde RRHH": descarga los empleados de la API de Recursos Humanos
+        // Botón "Sincronizar Empleados": descarga los empleados de la API de Recursos Humanos
         // (en segundo plano, sin congelar la ventana), los guarda y recarga la lista
         private async void BtnSincronizar_Click(object? sender, EventArgs e)
         {

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace PromacoHerra.Controls
 {
     // CheckBox plano dibujado a mano (owner-draw), coherente con el resto de la familia Material.
-    // Hoy ningún formulario usa CheckBox todavía; queda listo para cuando se necesite.
+    // Se usa en Reportes (casilla "Todas" de las fechas).
     public class MaterialCheckBox : CheckBox
     {
         private const int BoxSize = 18;

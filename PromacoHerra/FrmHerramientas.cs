@@ -306,18 +306,28 @@ namespace PromacoHerra
                 CargarCombo(cboCategoriaF, categorias, "Nombre", "CategoriaId");
                 CargarCombo(cboMarcaF, MarcaService.ObtenerTodas(), "Nombre", "MarcaId");
                 CargarCombo(cboUbicacionF, UbicacionService.ObtenerTodas(), "Nombre", "UbicacionId");
-                ConstruirChips(categorias);
+                // Chips: las categorías activas y las desactivadas que aún tienen herramientas
+                ConstruirChips(new DataView(categorias, "Activo = 1 OR Herramientas > 0", "", DataViewRowState.CurrentRows).ToTable());
             }
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
         }
 
-        // Ayudante: enlaza un combo a una tabla (texto visible + Id) y lo deja sin selección
+        // Ayudante: enlaza un combo a una tabla (texto visible + Id) y lo deja sin selección.
+        // Solo ofrece los registros activos (ver FiltrarCombo).
         private static void CargarCombo(MaterialComboBox cbo, DataTable dt, string display, string value)
         {
-            cbo.DataSource = dt;
+            cbo.DataSource = new DataView(dt, "Activo = 1", "", DataViewRowState.CurrentRows);
             cbo.DisplayMember = display;
             cbo.ValueMember = value;
             cbo.SelectedIndex = -1;
+        }
+
+        // Ayudante: deja en el combo los registros activos y, si la herramienta tiene uno
+        // desactivado, también ese, para que se vea y no se pierda al guardar
+        private static void FiltrarCombo(MaterialComboBox cbo, int? idActual)
+        {
+            if (cbo.DataSource is not DataView dv) return;
+            dv.RowFilter = idActual == null ? "Activo = 1" : $"Activo = 1 OR {cbo.ValueMember} = {idActual.Value}";
         }
 
         // Ayudante: selecciona en el combo el registro con ese Id (o ninguno si no existe)
@@ -454,6 +464,9 @@ namespace PromacoHerra
             txtCodigoF.Text = h.Codigo;
             txtNombreF.Text = h.Nombre;
             txtCaracteristicasF.Text = h.Caracteristicas;
+            FiltrarCombo(cboCategoriaF, h.CategoriaId);
+            FiltrarCombo(cboMarcaF, h.MarcaId);
+            FiltrarCombo(cboUbicacionF, h.UbicacionId);
             SeleccionarEnCombo(cboCategoriaF, h.CategoriaId);
             SeleccionarEnCombo(cboMarcaF, h.MarcaId);
             SeleccionarEnCombo(cboUbicacionF, h.UbicacionId);
@@ -475,6 +488,9 @@ namespace PromacoHerra
             txtCodigoF.Text = "(automático)";
             txtNombreF.Clear();
             txtCaracteristicasF.Clear();
+            FiltrarCombo(cboCategoriaF, null);
+            FiltrarCombo(cboMarcaF, null);
+            FiltrarCombo(cboUbicacionF, null);
             cboCategoriaF.SelectedIndex = -1;
             cboMarcaF.SelectedIndex = -1;
             cboUbicacionF.SelectedIndex = -1;
@@ -675,12 +691,13 @@ namespace PromacoHerra
         {
             try
             {
+                // Los desactivados no se listan (los proveedores ya vienen filtrados)
                 dgvCatalogo.DataSource = CatalogoActual switch
                 {
-                    TipoCatalogo.Marcas => MarcaService.ObtenerTodas(),
-                    TipoCatalogo.Ubicaciones => UbicacionService.ObtenerTodas(),
+                    TipoCatalogo.Marcas => SoloActivos(MarcaService.ObtenerTodas()),
+                    TipoCatalogo.Ubicaciones => SoloActivos(UbicacionService.ObtenerTodas()),
                     TipoCatalogo.Proveedores => ProveedorService.ObtenerTodos(),
-                    _ => CategoriaService.ObtenerTodas()
+                    _ => SoloActivos(CategoriaService.ObtenerTodas())
                 };
             }
             catch (Exception ex) { Error(Errores.Mensaje(ex)); }
@@ -692,6 +709,9 @@ namespace PromacoHerra
             dgvCatalogo.ClearSelection();
             LimpiarFormCatalogo();
         }
+
+        private static DataView SoloActivos(DataTable dt) =>
+            new(dt, "Activo = 1", "", DataViewRowState.CurrentRows);
 
         // Deja en blanco el formulario del catálogo (modo "Agregar") con textos de ayuda adecuados
         private void LimpiarFormCatalogo()
@@ -784,7 +804,7 @@ namespace PromacoHerra
         }
 
         // Botón "Eliminar": pide confirmación (avisando cuántas herramientas o mantenimientos
-        // lo usan) y elimina el registro
+        // lo usan) y elimina el registro; si ya se usó, la base de datos solo lo desactiva
         private void btnCatEliminar_Click(object? sender, EventArgs e)
         {
             if (_catalogoId == null || dgvCatalogo.CurrentRow?.DataBoundItem is not DataRowView r) return;
@@ -792,7 +812,8 @@ namespace PromacoHerra
             string que = NombreCatalogo;
             string aviso = usadas == 0 ? ""
                 : EsProveedores ? $"\n\nTiene {usadas} mantenimiento(s) registrados: se desactivará y su historial se conserva."
-                : $"\n\n{usadas} herramienta(s) quedarán sin {que}.";
+                : $"\n\nLa usan {usadas} herramienta(s): se desactivará para no ofrecerla en herramientas nuevas, " +
+                  $"pero esas herramientas conservan su {que}.";
             if (Confirmar($"¿Eliminar {Articulo} {que} \"{r["Nombre"]}\"?{aviso}") != DialogResult.Yes) return;
             try
             {

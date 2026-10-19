@@ -198,8 +198,9 @@ namespace PromacoHerra.Services
                 Db.Param("@CategoriaId", N(categoriaId)));
 
         /// <summary>estado: 'Activo' (sin cerrar), 'Cerrado' o null.</summary>
-        public static DataTable HistorialMantenimiento(DateTime? desde, DateTime? hasta, string? tipo, string? estado) =>
+        public static DataTable HistorialMantenimiento(int? herramientaId, DateTime? desde, DateTime? hasta, string? tipo, string? estado) =>
             Db.QuerySP("sp_Reporte_HistorialMantenimiento",
+                Db.Param("@HerramientaId", N(herramientaId)),
                 Db.Param("@FechaDesde", N(desde?.Date)),
                 Db.Param("@FechaHasta", N(hasta?.Date)),
                 Db.Param("@Tipo", N(tipo)),

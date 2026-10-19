@@ -27,7 +27,7 @@ namespace PromacoHerra.Services
                 Db.Param("@Nombre", nombre),
                 Db.Param("@Descripcion", descripcion));
 
-        /// <summary>Elimina la categoría; sus herramientas quedan sin categoría.</summary>
+        /// <summary>Elimina la categoría; si alguna herramienta la usa, solo la desactiva.</summary>
         public static void Eliminar(int id) =>
             Db.ExecuteSP("sp_Categoria_Eliminar", Db.Param("@CategoriaId", id));
     }
@@ -51,7 +51,7 @@ namespace PromacoHerra.Services
                 Db.Param("@Nombre", nombre),
                 Db.Param("@Descripcion", descripcion));
 
-        /// <summary>Elimina la marca; sus herramientas quedan sin marca.</summary>
+        /// <summary>Elimina la marca; si alguna herramienta la usa, solo la desactiva.</summary>
         public static void Eliminar(int id) =>
             Db.ExecuteSP("sp_Marca_Eliminar", Db.Param("@MarcaId", id));
     }
@@ -75,7 +75,7 @@ namespace PromacoHerra.Services
                 Db.Param("@Nombre", nombre),
                 Db.Param("@Descripcion", descripcion));
 
-        /// <summary>Elimina la ubicación; sus herramientas quedan sin ubicación.</summary>
+        /// <summary>Elimina la ubicación; si alguna herramienta la usa, solo la desactiva.</summary>
         public static void Eliminar(int id) =>
             Db.ExecuteSP("sp_Ubicacion_Eliminar", Db.Param("@UbicacionId", id));
     }

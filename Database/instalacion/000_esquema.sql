@@ -5,7 +5,7 @@
 -- Crea todas las tablas, restricciones, índices, vistas, funciones y
 -- procedimientos almacenados en su estado actual. Para una instalación
 -- nueva se ejecuta este script y luego 001_datos_iniciales.sql.
--- (Database/migraciones/ guarda la historia de cambios 002–018; una
+-- (Database/migraciones/ guarda la historia de cambios 002–020; una
 --  instalación nueva NO necesita ejecutarlos: ya están incluidos aquí.)
 --
 -- Pasos:
@@ -36,11 +36,14 @@ CREATE TABLE [dbo].[CategoriaHerramienta](
 	[CategoriaId] [int] IDENTITY(1,1) NOT NULL,
 	[Nombre] [varchar](120) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	[Descripcion] [varchar](400) COLLATE Modern_Spanish_CI_AS NULL,
+	[Activo] [bit] NOT NULL,
  CONSTRAINT [PK_CategoriaHerramienta] PRIMARY KEY CLUSTERED 
 (
 	[CategoriaId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[CategoriaHerramienta] ADD  CONSTRAINT [DF_CategoriaHerramienta_Activo]  DEFAULT ((1)) FOR [Activo]
 GO
 SET ANSI_PADDING ON
 GO
@@ -108,11 +111,14 @@ CREATE TABLE [dbo].[Marca](
 	[MarcaId] [int] IDENTITY(1,1) NOT NULL,
 	[NombreMarca] [varchar](100) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	[Descripcion] [varchar](250) COLLATE Modern_Spanish_CI_AS NULL,
+	[Activo] [bit] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[MarcaId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Marca] ADD  CONSTRAINT [DF_Marca_Activo]  DEFAULT ((1)) FOR [Activo]
 GO
 SET ANSI_PADDING ON
 GO
@@ -130,6 +136,7 @@ CREATE TABLE [dbo].[Ubicacion](
 	[UbicacionId] [int] IDENTITY(1,1) NOT NULL,
 	[Nombre] [varchar](120) COLLATE Modern_Spanish_CI_AS NOT NULL,
 	[Descripcion] [varchar](250) COLLATE Modern_Spanish_CI_AS NULL,
+	[Activo] [bit] NOT NULL,
  CONSTRAINT [PK_Ubicacion] PRIMARY KEY CLUSTERED 
 (
 	[UbicacionId] ASC
@@ -139,6 +146,8 @@ CREATE TABLE [dbo].[Ubicacion](
 	[Nombre] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Ubicacion] ADD  CONSTRAINT [DF_Ubicacion_Activo]  DEFAULT ((1)) FOR [Activo]
 GO
 
 SET ANSI_NULLS ON
@@ -689,7 +698,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF NOT EXISTS (SELECT 1 FROM CategoriaHerramienta WHERE CategoriaId = @CategoriaId)
+    IF NOT EXISTS (SELECT 1 FROM CategoriaHerramienta WHERE CategoriaId = @CategoriaId AND Activo = 1)
     BEGIN
         RAISERROR('La categoría especificada no existe.', 16, 1);
         RETURN;
@@ -713,23 +722,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+-- Con herramientas que la usen (activas o dadas de baja) solo se desactiva, para conservar el historial
 CREATE   PROCEDURE sp_Categoria_Eliminar
     @CategoriaId INT
 AS
 BEGIN
     SET NOCOUNT ON;
-    SET XACT_ABORT ON;
 
-    BEGIN TRY
-        BEGIN TRANSACTION;
-        UPDATE Herramienta SET CategoriaId = NULL WHERE CategoriaId = @CategoriaId;
+    IF EXISTS (SELECT 1 FROM Herramienta WHERE CategoriaId = @CategoriaId)
+        UPDATE CategoriaHerramienta SET Activo = 0 WHERE CategoriaId = @CategoriaId;
+    ELSE
         DELETE FROM CategoriaHerramienta WHERE CategoriaId = @CategoriaId;
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
 END
 GO
 
@@ -739,6 +742,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- 5. Insertar categoría
+-- Si el nombre pertenece a una categoría desactivada, se reactiva con los datos nuevos
 CREATE   PROCEDURE sp_Categoria_Insertar
     @Nombre      VARCHAR(120),
     @Descripcion VARCHAR(400) = NULL
@@ -746,9 +750,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM CategoriaHerramienta WHERE Nombre = @Nombre)
+    IF EXISTS (SELECT 1 FROM CategoriaHerramienta WHERE Nombre = @Nombre AND Activo = 1)
     BEGIN
         RAISERROR('Ya existe una categoría con ese nombre.', 16, 1);
+        RETURN;
+    END
+
+    IF EXISTS (SELECT 1 FROM CategoriaHerramienta WHERE Nombre = @Nombre)
+    BEGIN
+        UPDATE CategoriaHerramienta
+        SET    Activo = 1, Descripcion = @Descripcion
+        WHERE  Nombre = @Nombre;
+
+        SELECT CategoriaId FROM CategoriaHerramienta WHERE Nombre = @Nombre;
         RETURN;
     END
 
@@ -765,6 +779,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- ── Categorías ───────────────────────────────────────────────
+-- Devuelve también las desactivadas (Activo = 0): las herramientas que las tienen las
+-- siguen mostrando y los reportes pueden filtrar por ellas. La pantalla decide cuáles ofrecer.
 CREATE   PROCEDURE sp_Categoria_ObtenerTodas
 AS
 BEGIN
@@ -772,6 +788,7 @@ BEGIN
     SELECT c.CategoriaId,
            c.Nombre,
            c.Descripcion,
+           c.Activo,
            (SELECT COUNT(*) FROM Herramienta h
             WHERE  h.CategoriaId = c.CategoriaId AND h.Activa = 1) AS Herramientas
     FROM   CategoriaHerramienta c
@@ -1369,6 +1386,7 @@ GO
 -- @StockTotal mayor al actual agrega unidades nuevas.
 -- Para reducir el stock hay que dar de baja (o marcar perdidas) unidades concretas.
 -- @FotoNombre NULL = conservar la foto actual (la foto se cambia con sp_Herramienta_ActualizarFoto).
+-- Una categoría, marca o ubicación desactivada se puede conservar, pero no asignar de nuevo.
 CREATE   PROCEDURE sp_Herramienta_Actualizar
     @HerramientaId   INT,
     @Nombre          VARCHAR(120),
@@ -1385,6 +1403,16 @@ BEGIN
 
     IF NOT EXISTS (SELECT 1 FROM Herramienta WHERE HerramientaId = @HerramientaId)
         THROW 50000, 'La herramienta especificada no existe.', 1;
+
+    IF EXISTS (SELECT 1 FROM CategoriaHerramienta c INNER JOIN Herramienta h ON h.HerramientaId = @HerramientaId
+               WHERE c.CategoriaId = @CategoriaId AND c.Activo = 0 AND ISNULL(h.CategoriaId, 0) <> @CategoriaId)
+        THROW 50000, 'La categoría elegida está desactivada. Elija otra.', 1;
+    IF EXISTS (SELECT 1 FROM Marca m INNER JOIN Herramienta h ON h.HerramientaId = @HerramientaId
+               WHERE m.MarcaId = @MarcaId AND m.Activo = 0 AND ISNULL(h.MarcaId, 0) <> @MarcaId)
+        THROW 50000, 'La marca elegida está desactivada. Elija otra.', 1;
+    IF EXISTS (SELECT 1 FROM Ubicacion u INNER JOIN Herramienta h ON h.HerramientaId = @HerramientaId
+               WHERE u.UbicacionId = @UbicacionId AND u.Activo = 0 AND ISNULL(h.UbicacionId, 0) <> @UbicacionId)
+        THROW 50000, 'La ubicación elegida está desactivada. Elija otra.', 1;
 
     DECLARE @StockActual INT = (SELECT StockTotal FROM vw_HerramientaStock WHERE HerramientaId = @HerramientaId);
 
@@ -1630,6 +1658,13 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
+
+    IF EXISTS (SELECT 1 FROM CategoriaHerramienta WHERE CategoriaId = @CategoriaId AND Activo = 0)
+        THROW 50000, 'La categoría elegida está desactivada. Elija otra.', 1;
+    IF EXISTS (SELECT 1 FROM Marca WHERE MarcaId = @MarcaId AND Activo = 0)
+        THROW 50000, 'La marca elegida está desactivada. Elija otra.', 1;
+    IF EXISTS (SELECT 1 FROM Ubicacion WHERE UbicacionId = @UbicacionId AND Activo = 0)
+        THROW 50000, 'La ubicación elegida está desactivada. Elija otra.', 1;
 
     BEGIN TRY
         BEGIN TRANSACTION;
@@ -2148,7 +2183,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF NOT EXISTS (SELECT 1 FROM Marca WHERE MarcaId = @MarcaId)
+    IF NOT EXISTS (SELECT 1 FROM Marca WHERE MarcaId = @MarcaId AND Activo = 1)
     BEGIN
         RAISERROR('La marca especificada no existe.', 16, 1);
         RETURN;
@@ -2172,23 +2207,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+-- Con herramientas que la usen (activas o dadas de baja) solo se desactiva, para conservar el historial
 CREATE   PROCEDURE sp_Marca_Eliminar
     @MarcaId INT
 AS
 BEGIN
     SET NOCOUNT ON;
-    SET XACT_ABORT ON;
 
-    BEGIN TRY
-        BEGIN TRANSACTION;
-        UPDATE Herramienta SET MarcaId = NULL WHERE MarcaId = @MarcaId;
+    IF EXISTS (SELECT 1 FROM Herramienta WHERE MarcaId = @MarcaId)
+        UPDATE Marca SET Activo = 0 WHERE MarcaId = @MarcaId;
+    ELSE
         DELETE FROM Marca WHERE MarcaId = @MarcaId;
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
 END
 GO
 
@@ -2198,6 +2227,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- 2. Insertar marca
+-- Si el nombre pertenece a una marca desactivada, se reactiva con los datos nuevos
 CREATE   PROCEDURE sp_Marca_Insertar
     @Nombre      VARCHAR(120),
     @Descripcion VARCHAR(400) = NULL
@@ -2205,9 +2235,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM Marca WHERE NombreMarca = @Nombre)
+    IF EXISTS (SELECT 1 FROM Marca WHERE NombreMarca = @Nombre AND Activo = 1)
     BEGIN
         RAISERROR('Ya existe una marca con ese nombre.', 16, 1);
+        RETURN;
+    END
+
+    IF EXISTS (SELECT 1 FROM Marca WHERE NombreMarca = @Nombre)
+    BEGIN
+        UPDATE Marca
+        SET    Activo = 1, Descripcion = @Descripcion
+        WHERE  NombreMarca = @Nombre;
+
+        SELECT MarcaId FROM Marca WHERE NombreMarca = @Nombre;
         RETURN;
     END
 
@@ -2231,6 +2271,7 @@ BEGIN
     SELECT m.MarcaId,
            m.NombreMarca AS Nombre,
            m.Descripcion,
+           m.Activo,
            (SELECT COUNT(*) FROM Herramienta h
             WHERE  h.MarcaId = m.MarcaId AND h.Activa = 1) AS Herramientas
     FROM   Marca m
@@ -2804,6 +2845,7 @@ GO
 
 -- @Estado: 'Activo' (sin cerrar) | 'Cerrado' | NULL
 CREATE   PROCEDURE sp_Reporte_HistorialMantenimiento
+    @HerramientaId INT      = NULL,
     @FechaDesde DATE        = NULL,
     @FechaHasta DATE        = NULL,
     @Tipo       VARCHAR(50) = NULL,
@@ -2834,7 +2876,8 @@ BEGIN
     INNER  JOIN vw_HerramientaUnidad u ON u.UnidadId      = m.UnidadId
     LEFT   JOIN Empleado             e ON e.EmpleadoId    = m.EmpleadoId
     LEFT   JOIN Proveedor            p ON p.ProveedorId   = m.ProveedorId
-    WHERE  (@FechaDesde IS NULL OR m.FechaInicio >= @FechaDesde)
+    WHERE  (@HerramientaId IS NULL OR m.HerramientaId = @HerramientaId)
+      AND  (@FechaDesde IS NULL OR m.FechaInicio >= @FechaDesde)
       AND  (@FechaHasta IS NULL OR m.FechaInicio <  DATEADD(DAY, 1, @FechaHasta))
       AND  (@Tipo IS NULL OR m.TipoMantenimiento = @Tipo)
       AND  (@Estado IS NULL
@@ -3234,7 +3277,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF NOT EXISTS (SELECT 1 FROM Ubicacion WHERE UbicacionId = @UbicacionId)
+    IF NOT EXISTS (SELECT 1 FROM Ubicacion WHERE UbicacionId = @UbicacionId AND Activo = 1)
     BEGIN
         RAISERROR('La ubicación especificada no existe.', 16, 1);
         RETURN;
@@ -3258,23 +3301,17 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+-- Con herramientas que la usen (activas o dadas de baja) solo se desactiva, para conservar el historial
 CREATE   PROCEDURE sp_Ubicacion_Eliminar
     @UbicacionId INT
 AS
 BEGIN
     SET NOCOUNT ON;
-    SET XACT_ABORT ON;
 
-    BEGIN TRY
-        BEGIN TRANSACTION;
-        UPDATE Herramienta SET UbicacionId = NULL WHERE UbicacionId = @UbicacionId;
+    IF EXISTS (SELECT 1 FROM Herramienta WHERE UbicacionId = @UbicacionId)
+        UPDATE Ubicacion SET Activo = 0 WHERE UbicacionId = @UbicacionId;
+    ELSE
         DELETE FROM Ubicacion WHERE UbicacionId = @UbicacionId;
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
 END
 GO
 
@@ -3284,6 +3321,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- 8. Insertar ubicación
+-- Si el nombre pertenece a una ubicación desactivada, se reactiva con los datos nuevos
 CREATE   PROCEDURE sp_Ubicacion_Insertar
     @Nombre      VARCHAR(120),
     @Descripcion VARCHAR(250) = NULL
@@ -3291,9 +3329,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM Ubicacion WHERE Nombre = @Nombre)
+    IF EXISTS (SELECT 1 FROM Ubicacion WHERE Nombre = @Nombre AND Activo = 1)
     BEGIN
         RAISERROR('Ya existe una ubicación con ese nombre.', 16, 1);
+        RETURN;
+    END
+
+    IF EXISTS (SELECT 1 FROM Ubicacion WHERE Nombre = @Nombre)
+    BEGIN
+        UPDATE Ubicacion
+        SET    Activo = 1, Descripcion = @Descripcion
+        WHERE  Nombre = @Nombre;
+
+        SELECT UbicacionId FROM Ubicacion WHERE Nombre = @Nombre;
         RETURN;
     END
 
@@ -3316,6 +3364,7 @@ BEGIN
     SELECT u.UbicacionId,
            u.Nombre,
            u.Descripcion,
+           u.Activo,
            (SELECT COUNT(*) FROM Herramienta h
             WHERE  h.UbicacionId = u.UbicacionId AND h.Activa = 1) AS Herramientas
     FROM   Ubicacion u
