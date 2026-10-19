@@ -246,7 +246,10 @@ límite y decir cómo se resolvería) que improvisarla.
     validarlo, aceptable en una red interna. En producción se instalaría un certificado válido.
 
 52. **¿Qué pasa si un usuario deja la sesión abierta y se va?**
-    Pista: no hay cierre de sesión por inactividad. Puede ser una mejora sencilla.
+    Pista: después de 15 minutos sin teclado ni mouse, el sistema cierra los diálogos abiertos, cierra la
+    sesión y vuelve al login con un aviso. Así nadie puede prestar herramientas a nombre de quien dejó
+    el equipo abierto. Lo que no se haya guardado en ese momento se pierde, igual que en la banca en
+    línea.
 
 ---
 
@@ -411,5 +414,4 @@ límite y decir cómo se resolvería) que improvisarla.
 | Pruebas | Manuales, con datos simulados | "Siguiente paso: xUnit para servicios y una base de prueba para los procedimientos." |
 | Bloqueo por intentos fallidos | No existe | "Bloqueo temporal después de 5 intentos." |
 | Bitácora de cambios | Solo responsables de préstamos y mantenimientos | "Tabla de auditoría o Temporal Tables." |
-| Cierre de sesión por inactividad | No existe | "Cerrar la sesión tras N minutos sin uso." |
 | Licencia de iText (AGPL) | Uso interno | "Para venderlo, licencia comercial o cambiar a PdfSharp." |

@@ -233,6 +233,13 @@ namespace PromacoHerra
             txtUsuario.Focus();
         }
 
+        // Después de cerrar la sesión por inactividad: avisa por qué se volvió al login
+        public void AvisarCierrePorInactividad() =>
+            BeginInvoke(() => MessageBox.Show(this,
+                $"La sesión se cerró porque no hubo actividad durante {Inactividad.Limite.TotalMinutes:0} minutos.\n" +
+                "Ingrese de nuevo para continuar.",
+                "Sesión cerrada", MessageBoxButtons.OK, MessageBoxIcon.Information));
+
         // Botón "Salir" del login: cierra toda la aplicación
         private void btnSalir_Click(object sender, EventArgs e)
         {

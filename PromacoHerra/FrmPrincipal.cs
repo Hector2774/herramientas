@@ -41,6 +41,11 @@ namespace PromacoHerra
             sidebar.AgregarItem("password", "Mi contraseña", IconChar.Key, alFinal: true);
             sidebar.AgregarItem("salir", "Cerrar sesión", IconChar.RightFromBracket, alFinal: true);
             sidebar.ItemSeleccionado += (s, clave) => AbrirSeccion(clave);
+
+            // Cierre de sesión por inactividad: se revisa cada 15 segundos
+            Inactividad.Iniciar();
+            _revisarInactividad.Tick += (s, e) => RevisarInactividad();
+            _revisarInactividad.Start();
         }
 
         // ══════════════════════════════════════════════════════════
@@ -106,6 +111,27 @@ namespace PromacoHerra
         // o por la X (salir de la aplicación)
         private bool _cerrandoSesion;
 
+        private readonly System.Windows.Forms.Timer _revisarInactividad = new() { Interval = 15_000 };
+        private bool _porInactividad;
+
+        // Si nadie tocó el teclado ni el mouse en 15 minutos, se cierra la sesión. Antes se cierran
+        // los diálogos que estén abiertos (formularios y mensajes); la sesión se cierra en la
+        // siguiente revisión, un segundo después, cuando ya no queda ninguno.
+        private void RevisarInactividad()
+        {
+            if (Inactividad.TiempoInactivo < Inactividad.Limite) return;
+
+            if (Inactividad.CerrarDialogos())
+            {
+                _revisarInactividad.Interval = 1_000;
+                return;
+            }
+
+            _revisarInactividad.Stop();
+            _porInactividad = true;
+            CerrarSesion();
+        }
+
         // Cierra la sesión del usuario actual y vuelve a la pantalla de login (sin cerrar la aplicación)
         private void CerrarSesion()
         {
@@ -124,9 +150,13 @@ namespace PromacoHerra
         // (que estaba oculto); en cualquier otro caso se cierra toda la aplicación
         private void FrmPrincipal_FormClosed(object? sender, FormClosedEventArgs e)
         {
+            _revisarInactividad.Dispose();
             var login = Application.OpenForms.OfType<FrmLogin>().FirstOrDefault();
             if (_cerrandoSesion && login != null)
+            {
                 login.MostrarDeNuevo();
+                if (_porInactividad) login.AvisarCierrePorInactividad();
+            }
             else
                 Application.Exit();   // cerrar la ventana con la X sigue saliendo del sistema
         }

@@ -36,6 +36,7 @@ cada préstamo.
 
 - Contraseñas guardadas como hash **PBKDF2-SHA256** con sal por usuario; nunca en texto plano.
 - Contraseñas temporales (usuario nuevo o restablecido) que se deben cambiar en el primer ingreso.
+- La sesión se cierra sola tras 15 minutos sin uso del teclado ni del mouse (puesto de bodega compartido).
 - Roles en tabla propia (Administrador, Operador). Solo los roles que administran usuarios ven el módulo Usuarios, y los procedimientos almacenados también lo validan.
 - Todo el acceso a datos pasa por procedimientos almacenados con parámetros (sin SQL concatenado).
 
